@@ -1,0 +1,19 @@
+{
+  "name": "nrser",
+  "version": "0.1.0",
+  "description": "my js utils",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/nrser/nrser.js.git"
+  },
+  "author": "nrser",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/nrser/nrser.js/issues"
+  },
+  "homepage": "https://github.com/nrser/nrser.js#readme"
+}
