@@ -1,0 +1,4 @@
+---
+qb.project:
+  bin: false
+  hub: true

@@ -1,0 +1,38 @@
+---
+# playbook to setup the dev env for this repo
+- name: dev setup for nrser/nrser.js
+
+  hosts: localhost
+
+  pre_tasks:
+  - name: load dev_setup facts
+    dev_setup_facts:
+    tags:
+    - always
+
+  roles:
+  - role: nrser.dev_setup
+    # repos that are co-developed but don't make sense as submodules
+    dev_setup_repos: []
+    # example:
+    # - owner: nrser
+    #   name: qb
+
+    # sources that are used for reference only
+    dev_setup_refs:
+      github: []
+      # example:
+      # - owner: ansible
+        # name: ansible
+        # version: v1.9.4-1
+        # dir_name: ansible-v1.9.4
+        # depth: 1
+      
+      archive: []
+      # example:
+      # - url: https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.23.zip
+      #   file_name: google_appengine_1.9.23.zip
+      #   dir_name: google_appengine_python_sdk_1.9.23
+
+  tasks:
+  
