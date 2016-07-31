@@ -3,6 +3,18 @@
   "version": "0.1.0",
   "description": "my js utils",
   "main": "dist/index.js",
+  "dependencies": {
+    "lodash": "^4.14.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.10.4",
+    "babel-plugin-transform-class-properties": "^6.10.2",
+    "babel-preset-meteor": "^6.11.1",
+    "esdoc": "^0.4.7",
+    "esdoc-es7-plugin": "0.0.3",
+    "shell-escape": "^0.2.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,7 +23,7 @@
     "url": "git+ssh://git@github.com/nrser/nrser.js.git"
   },
   "author": "nrser",
-  "license": "UNLICENSED",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/nrser/nrser.js/issues"
   },
