@@ -1,8 +1,6 @@
-import { _ } from 'meteor/underscore';
+import _ from 'lodash';
 
-import { UtilError } from './errors';
-
-export class SettingError extends UtilError {}
+import { SettingError } from './errors';
 
 export function setting(key, default_) {
   try {

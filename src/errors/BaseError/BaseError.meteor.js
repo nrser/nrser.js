@@ -14,9 +14,9 @@ export class BaseError extends Meteor.Error {
   }
 }
 
-export class UtilError extends BaseError {}
+export class NrserError extends BaseError {}
 
 /**
 * raised by mergeNoConflicts when there is a conflict.
 */
-export class MergeConflictError extends UtilError {}
+export class MergeConflictError extends NrserError {}

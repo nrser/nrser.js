@@ -3,21 +3,36 @@
 * the error and define some helper utils
 */
 
-import { _ } from 'meteor/underscore';
-import { check as meteorCheck, Match as MeteorMatch } from 'meteor/check';
-import { UtilError } from './errors';
+import { _ } from 'lodash';
+import { CheckError } from './errors';
+import { j } from './string.js';
 
-import * as util from '.';
+// handle conditional import for meteor
+// TODO check should be ported to run under node
+let meteorCheck, MeteorMatch;
+
+if (Meteor) {
+  ({meteorCheck, MeteorMatch} = require('meteor/check'));
+} else {
+  // TODO stub out with no-ops and nulls for now
+  
+  const noop = function() {};
+  
+  MeteorMatch = {
+    Maybe: noop,
+    Where() {
+      return function() {};
+    },
+    Integer: null,
+    test: noop,
+  };
+  
+  meteorCheck = noop;
+}
 
 export const Match = {};
 
 _.extend(Match, MeteorMatch);
-
-/**
-* the error *we* throw when a check fails
-* ours has the value that failed attached.
-*/
-export class CheckError extends UtilError {}
 
 export function check(value, pattern) {
   try {
@@ -25,7 +40,7 @@ export function check(value, pattern) {
   } catch (meteorCheckError) {
     const checkError = new CheckError(
       meteorCheckError.message +
-      util.j` (value=${ value }, pattern=${ pattern })`
+      j` (value=${ value }, pattern=${ pattern })`
     );
     
     throw checkError;

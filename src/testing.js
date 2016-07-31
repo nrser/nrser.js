@@ -1,4 +1,10 @@
-import { chai } from 'meteor/practicalmeteor:chai';
+let chai;
+
+if (Meteor) {
+  chai = require('meteor/practicalmeteor:chai');
+} else {
+  chai = require('chai');
+}
 
 export function itMaps({
   func,

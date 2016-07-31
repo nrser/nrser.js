@@ -16,7 +16,9 @@
     "shell-escape": "^0.2.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d dist",
+    "watch": "babel src -d dist -w"
   },
   "repository": {
     "type": "git",
