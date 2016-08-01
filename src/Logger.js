@@ -6,8 +6,7 @@
 */
 
 import _ from 'lodash';
-import { Meteor } from './env.js';
-import { check, match, Match } from './check.js';
+import t from 'tcomb';
 
 // import { setting } from './setting.js';
 
@@ -72,6 +71,9 @@ const LEVELS = {
   trace: 4,
 };
 
+const Level = t.enums.of(_.keys(LEVELS), 'Level');
+const Levels = t.dict(String, Level);
+
 const FORMAT_TOKENS = {
   '%T': (data) => { return data.formattedTimestamp },
   '%L': (data) => { return COLORS[data.level](data.level) },
@@ -88,10 +90,6 @@ const FORMAT_TOKENS = {
     return pad(delta, 4) + "ms";
   },
 };
-
-const MATCH_LEVEL = Match.Where(function(level) {
-  return _.has(LEVELS, level)
-});
 
 // module variables
 // ================
@@ -239,8 +237,8 @@ export class Logger {
   } // snapshot()
   
   static setLevel({name, level}) {
-    check(name, Match.Maybe(String));
-    check(level, MATCH_LEVEL);
+    t.maybe(t.String)(name);
+    Level(level);
     
     if (name) {
       specificLogLevels[name] = level;
@@ -250,9 +248,8 @@ export class Logger {
   } // setLevel()
   
   static setLevels(levels) {
+    Levels(levels);
     _.each(levels, (level, name) => {
-      check(name, String);
-      check(level, MATCH_LEVEL);
       specificLogLevels[name] = level;
     });
   } // setLevels();

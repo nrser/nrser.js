@@ -4,19 +4,24 @@
   "description": "my js utils",
   "main": "dist/index.js",
   "dependencies": {
-    "lodash": "^4.14.1"
+    "lodash": "^4.14.1",
+    "tcomb": "^3.2.9"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
     "babel-plugin-transform-class-properties": "^6.10.2",
     "babel-preset-meteor": "^6.11.1",
+    "chai": "^3.5.0",
     "esdoc": "^0.4.7",
     "esdoc-es7-plugin": "0.0.3",
+    "growl": "^1.9.2",
+    "mocha": "^3.0.0",
     "shell-escape": "^0.2.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --compilers js:babel-core/register",
+    "watch-test": "mocha --compilers js:babel-core/register --watch --growl",
     "build": "babel src -d dist",
     "watch": "babel src -d dist -w"
   },

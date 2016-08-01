@@ -1,7 +1,7 @@
 {
   "presets": [
-    "es2015",
-    "meteor"
+    "meteor",
+    "es2015"
   ],
   "plugins": [
     "transform-class-properties"
