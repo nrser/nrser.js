@@ -72,7 +72,7 @@ const LEVELS = {
 };
 
 const Level = t.enums.of(_.keys(LEVELS), 'Level');
-const Levels = t.dict(String, Level);
+const Levels = t.dict(String, Level, 'Levels');
 
 const FORMAT_TOKENS = {
   '%T': (data) => { return data.formattedTimestamp },
@@ -248,8 +248,13 @@ export class Logger {
   } // setLevel()
   
   static setLevels(levels) {
-    Levels(levels);
-    _.each(levels, (level, name) => {
+    // console.dir({levels});
+    // TODO breaks, no idea why...
+    // Levels(levels);
+    _.forOwn(levels, (level, name) => {
+      // console.dir({level, name, type: (typeof name)});
+      t.String(name);
+      Level(level);
       specificLogLevels[name] = level;
     });
   } // setLevels();
