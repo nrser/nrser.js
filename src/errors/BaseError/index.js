@@ -1,3 +1,5 @@
+import { Meteor } from '../../env.js';
+
 export var BaseError;
 
 if (Meteor) {

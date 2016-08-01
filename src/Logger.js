@@ -5,40 +5,16 @@
 * really, this should be adapted to work in both situations.
 */
 
-let _, Meteor, check, Match;
-
-try {
-  // this will fail if we're not in meteor:
-  Meteor = require('meteor/meteor');
-} catch (e) {
-  Meteor = {
-    isServer: true,
-    isStub: true,
-  }
-}
-
-if (Meteor.isStub) {
-  const noop = function() {};
-  
-  _ = require('underscore');
-  
-  check = noop;
-  
-  Match = {
-    Maybe: noop,
-    Where: noop,
-  }
-} else {
-  _ = require('meteor/underscore')._;
-  ({check, Match} = require('meteor/nrser:util/check.js'));
-}
+import _ from 'lodash';
+import { Meteor } from './env.js';
+import { check, match, Match } from './check.js';
 
 // import { setting } from './setting.js';
 
 let clc;
-if (Meteor.isServer) {
+try {
   clc = require('cli-color');
-}
+} catch (e) {}
 
 // adapted from pince
 // 
@@ -53,7 +29,7 @@ if (Meteor.isServer) {
 
 const IDENTITY = function(x) { return x; };
 
-const COLORS = Meteor.isServer ? {
+const COLORS = clc ? {
   error: clc.red.bold,
   warn: clc.yellow,
   info: clc.bold,
@@ -131,6 +107,8 @@ let baseLogLevel = null;
 const instanceCache = {};
 
 export class Logger {
+  static lastOutputTimestamp = null;
+  
   // static methods
   // ==============
   
@@ -391,13 +369,3 @@ export function logger(name, {level} = {}) {
   
   return instanceCache[name];
 } // logger()
-
-// if (setting('baseLogLevel', null)) {
-//   Logger.setLevel({level: setting('baseLogLevel', null)});
-// }
-// 
-// if (setting('specificLogLevels', null)) {
-//   Logger.setLevels(setting('specificLogLevels'));
-// }
-
-Logger.lastOutputTimestamp = null;

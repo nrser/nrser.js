@@ -6,6 +6,7 @@
 import { _ } from 'lodash';
 import { CheckError } from './errors';
 import { j } from './string.js';
+import { Meteor } from './env.js';
 
 // handle conditional import for meteor
 // TODO check should be ported to run under node
@@ -21,7 +22,7 @@ if (Meteor) {
   MeteorMatch = {
     Maybe: noop,
     Where() {
-      return function() {};
+      return new noop;
     },
     Integer: null,
     test: noop,
@@ -115,7 +116,7 @@ Match.NonNegetiveInteger = Match.Where(function(value) {
 Match.NonNegetiveInteger.name = 'NonNegetiveInteger';
 
 // check if a value is a sub-array
-Match.subarrayOf = function(array) {
+Match.subarrayOf = function subarrayOf(array) {
   check(array, Array);
   
   return Match.Where(function(value) {
@@ -126,4 +127,3 @@ Match.subarrayOf = function(array) {
     });
   });
 };
-Match.subarrayOf.name = 'subarrayOf';

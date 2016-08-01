@@ -1,8 +1,8 @@
-import { _ } from 'meteor/underscore';
+import _ from 'lodash';
 
 import { j } from './index.js';
 import { check } from './check.js';
-import { MergeConflictError } from './errors.js';
+import { MergeConflictError } from './errors';
 
 function groupEach(behavior) {
   return (obj, iteratee, context) => {

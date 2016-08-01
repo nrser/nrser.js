@@ -7,6 +7,8 @@
 * 
 */
 
+import _ from 'lodash';
+
 /**
 * adapted from Meteor's
 * {@link https://github.com/meteor/meteor/blob/release/METEOR%401.4.0.1/packages/meteor/helpers.js helpers.js}
