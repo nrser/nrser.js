@@ -1,8 +1,10 @@
 import _ from 'lodash';
+import t from 'tcomb';
 
-import { j } from './index.js';
-import { check } from './check.js';
+import { j } from './string.js';
 import { MergeConflictError } from './errors';
+
+const Objects = t.list(Object);
 
 function groupEach(behavior) {
   return (obj, iteratee, context) => {
@@ -30,10 +32,11 @@ export const groupByEach = groupEach((result, value, key) => {
 * any keys are duplicated among them.
 */
 export function mergeNoConflicts(...objects) {
+  Objects(objects);
+  
   const result = {};
+  
   _.each(objects, (object) => {
-    check(object, Object);
-    
     _.each(object, (value, key) => {
       if (_.has(result, key)) {
         throw new MergeConflictError(
