@@ -1,18 +1,21 @@
-/**
-* quick hack of `Logger.js` from `nrser:util` package to work
-* outside meteor.
-* 
-* really, this should be adapted to work in both situations.
-*/
-
 import _ from 'lodash';
 import t from 'tcomb';
 
-// import { setting } from './setting.js';
+// optional requires that may or may not be present
 
 let clc;
 try {
   clc = require('cli-color');
+} catch (e) {}
+
+let notifier;
+try {
+  notifier = require('node-notifier');
+} catch (e) {}
+
+let inspect;
+try {
+  inspect = require('util').inspect;
 } catch (e) {}
 
 // adapted from pince
@@ -341,6 +344,19 @@ export class Logger {
   error(...messages) {
     this.log('error', messages);
   } // error
+  
+  /**
+  * 
+  */
+  notify(...messages) {
+    if (notifier) {
+      notifier.notify({
+        title: this.name,
+        message: _.map(messages, inspect),
+      });
+    }
+    this.info(...messages);
+  }
   
   log(level, messages) {
     if (!_.isArray(messages)) {
