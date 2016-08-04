@@ -1,10 +1,11 @@
+// @flow
+
 import _ from 'lodash';
 import t from 'tcomb';
 
-import { j } from './string.js';
-import { MergeConflictError } from './errors';
-
-const Objects = t.list(Object);
+import { j, squish } from './string.js';
+import { Undefined, Empty, ReifiedKeyPath, KeyPath } from './types.js';
+import { MergeConflictError, KeyError } from './errors';
 
 function groupEach(behavior) {
   return (obj, iteratee, context) => {
@@ -31,8 +32,8 @@ export const groupByEach = groupEach((result, value, key) => {
 * merges `objects` together from left right throwing `MergeConflictError` if
 * any keys are duplicated among them.
 */
-export function mergeNoConflicts(...objects) {
-  Objects(objects);
+export function mergeNoConflicts(...objects: Array<Object>) {
+  // Objects(objects);
   
   const result = {};
   
@@ -51,3 +52,37 @@ export function mergeNoConflicts(...objects) {
   
   return result;
 } // mergeNoConflicts
+
+/**
+* gets the value at a key path from an object 
+*
+* @param {Object} object
+*   the object to fetch from.
+* 
+* @param 
+*/
+export function fetch(
+  object: Object,
+  path: KeyPath,
+  {defaultValue} = {}
+): * {
+  KeyPath(path);
+  
+  const result = do {
+    if (_.isEmpty(path)) {
+      object
+    } else {
+      _.get(object, path)
+    }
+  }
+  
+  if (_.isUndefined(result)) {
+    if (_.isUndefined(defaultValue)) {
+      throw new KeyError(`key not found`, {object, path});
+    } else {
+      return defaultValue;
+    }
+  }
+  
+  return result;
+}

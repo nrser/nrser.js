@@ -1,6 +1,7 @@
 import chai from 'chai';
-import { mergeNoConflicts } from '../src/object.js';
-import { MergeConflictError } from '../src/errors/';
+import { itMaps2 } from '../src/testing.js';
+import { mergeNoConflicts, fetch } from '../src/object.js';
+import { MergeConflictError, KeyError } from '../src/errors/';
 
 describe('object.js', () => {
   describe('mergeNoConflicts()', () => {
@@ -23,5 +24,20 @@ describe('object.js', () => {
         mergeNoConflicts({a: 1}, {a: 2})
       }).to.throw(MergeConflictError);
     });
+  });
+  
+  describe("fetch", () => {
+    itMaps2({
+      func: fetch,
+      
+      map: (fetch, throws) => ([
+        fetch({x: 1}, []),                            {x: 1},
+        fetch({x: 1}, ['x']),                         1,
+        fetch({x: [{y: 'why'}]}, ['x', 0, 'y']),      'why',
+        fetch({x: [{y: 'why'}]}, 'x.0.y'),            'why',
+        fetch({}, 'a'),                               throws(KeyError),
+        fetch({}, 'a', {defaultValue: 'blah'}),       'blah',
+      ]),
+    })
   });
 });
