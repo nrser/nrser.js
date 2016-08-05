@@ -2,7 +2,7 @@ import shellescape from 'shell-escape';
 import _ from 'lodash';
 import { execSync as sysExecSync } from 'child_process';
 
-import { tag } from './string.js';
+import { squish, tag } from './string.js';
 
 /**
 * string tag to shell escape interpolations.
