@@ -1,6 +1,6 @@
 import chai from 'chai';
 import { itMaps2 } from '../src/testing.js';
-import { mergeNoConflicts, fetch } from '../src/object.js';
+import { mergeNoConflicts, need } from '../src/object.js';
 import { MergeConflictError, KeyError } from '../src/errors/';
 
 describe('object.js', () => {
@@ -26,17 +26,17 @@ describe('object.js', () => {
     });
   });
   
-  describe("fetch", () => {
+  describe("need", () => {
     itMaps2({
-      func: fetch,
+      func: need,
       
-      map: (fetch, throws) => ([
-        fetch({x: 1}, []),                            {x: 1},
-        fetch({x: 1}, ['x']),                         1,
-        fetch({x: [{y: 'why'}]}, ['x', 0, 'y']),      'why',
-        fetch({x: [{y: 'why'}]}, 'x.0.y'),            'why',
-        fetch({}, 'a'),                               throws(KeyError),
-        fetch({}, 'a', {defaultValue: 'blah'}),       'blah',
+      map: (f, throws) => ([
+        f({x: 1}, []),                            {x: 1},
+        f({x: 1}, ['x']),                         1,
+        f({x: [{y: 'why'}]}, ['x', 0, 'y']),      'why',
+        f({x: [{y: 'why'}]}, 'x.0.y'),            'why',
+        f({}, 'a'),                               throws(KeyError),
+        f({}, 'a', {defaultValue: 'blah'}),       'blah',
       ]),
     })
   });

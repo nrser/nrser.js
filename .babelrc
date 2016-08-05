@@ -6,7 +6,9 @@
   ],
   "passPerPreset": true,
   "plugins": [
+    "syntax-flow",
     "transform-class-properties",
     "tcomb",
+    "transform-flow-strip-types"
   ]
 }

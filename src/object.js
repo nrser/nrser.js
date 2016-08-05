@@ -54,31 +54,33 @@ export function mergeNoConflicts(...objects: Array<Object>) {
 } // mergeNoConflicts
 
 /**
-* gets the value at a key path from an object 
+* gets the value at a key path from an object, throwing `KeyError`
+* if the result is `undefined`.
 *
 * @param {Object} object
-*   the object to fetch from.
+*   the object to retrieve from.
 * 
-* @param 
+* @param {KeyPath} keyPath
+*   the path to the key.
+* 
+* @return the 
 */
-export function fetch(
+export function need(
   object: Object,
-  path: KeyPath,
+  keyPath: KeyPath,
   {defaultValue} = {}
 ): * {
-  KeyPath(path);
-  
   const result = do {
-    if (_.isEmpty(path)) {
+    if (_.isEmpty(keyPath)) {
       object
     } else {
-      _.get(object, path)
+      _.get(object, keyPath)
     }
   }
   
   if (_.isUndefined(result)) {
     if (_.isUndefined(defaultValue)) {
-      throw new KeyError(`key not found`, {object, path});
+      throw new KeyError(`key not found`, {object, keyPath});
     } else {
       return defaultValue;
     }

@@ -1,3 +1,5 @@
+// @flow
+
 import _ from 'lodash';
 import t from 'tcomb';
 import type { $Reify } from 'tcomb';
@@ -19,4 +21,7 @@ export function nonEmptyList(type, name) {
   )
 }
 
+/**
+* @typedef {string | Array<string|number>} KeyPath
+*/
 export type KeyPath = string | Array<string|number>;

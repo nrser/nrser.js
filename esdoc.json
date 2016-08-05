@@ -4,6 +4,7 @@
   "excludes": [
   ],
   "plugins": [
+    {"name": "esdoc-flow-plugin"},
     {"name": "esdoc-es7-plugin"}
   ]
 }
