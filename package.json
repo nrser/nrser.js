@@ -32,8 +32,8 @@
     "shell-escape": "^0.2.0"
   },
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register",
-    "watch-test": "mocha --compilers js:babel-core/register --watch --growl",
+    "test": "gulp test",
+    "test-watch": "gulp test:watch",
     "build": "gulp build",
     "watch": "gulp watch",
     "docs": "esdoc -c ./esdoc.json"
