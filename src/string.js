@@ -103,3 +103,11 @@ export function deindent(callSite) {
 
   return format(output);
 }
+
+export function pad(d, n, p = '0') {
+  d = d.toString();
+  while (d.length < n) {
+    d = p + d;
+  }
+  return d;
+} // pad()

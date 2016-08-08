@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import t from 'tcomb';
 
+import { pad } from './string.js';
+
 // optional requires that may or may not be present
 
 let clc;
@@ -44,14 +46,6 @@ const COLORS = clc ? {
   debug: IDENTITY,
   trace: IDENTITY,
 };
-
-function pad(d, n) {
-  d = d.toString();
-  while (d.length < n) {
-    d = '0' + d;
-  }
-  return d;
-} // pad()
 
 const DATE_FORMAT_TOKENS = {
   'YYYY': (d) => { return pad(d.getFullYear(), 4) },
