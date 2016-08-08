@@ -1,7 +1,7 @@
 import chai from 'chai';
 import _ from 'lodash';
-import { itMaps, itMaps2 } from '../src/testing.js';
-import * as nrser from '../src/index.js';
+import { itMaps, itMaps2 } from '../../dist/testing.js';
+import * as nrser from '../../dist/index.js';
 import t from 'tcomb';
 
 describe('types.js', () => {

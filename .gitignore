@@ -6,6 +6,7 @@
 
 # compiled code
 /dist
+/test/dist
 
 ##############################################################################
 # BEGIN Global/OSX.gitignore

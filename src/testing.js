@@ -1,7 +1,7 @@
 import chai from 'chai';
 import _ from 'lodash';
 import t from 'tcomb';
-import * as nrser from '../src/index.js';
+import * as nrser from '.';
 
 export function itMaps({
   func,
