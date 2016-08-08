@@ -92,31 +92,26 @@ function test() {
 /**
 * compile module source in `/src` to `/dist`.
 */
-gulp.task('src:build', function() {
+gulp.task('build:src', function() {
   return build('.');
 });
 
 /**
 * compile tests source in `/test/src` to `/test/dist`.
 */
-gulp.task('test:build', function() {
+gulp.task('build:test', function() {
   return build('test');
 });
 
 /**
 * compile both module and tests sources.
 */
-gulp.task('build', ['src:build', 'test:build']);
-
-/**
-* run the tests, compiling everything first.
-*/
-gulp.task('test', ['build'], test);
+gulp.task('build', ['build:src', 'build:test']);
 
 /**
 * watch the module and tests sources, re-compiling when they change.
 */
-gulp.task('watch', ['build'], function() {
+gulp.task('build:watch', ['build'], function() {
   gulp.watch('src/**/*.js', ['build:src']);
   gulp.watch('test/src/**/*.js', ['build:test'])
 });
@@ -124,18 +119,28 @@ gulp.task('watch', ['build'], function() {
 /**
 * run the tests after compiling the module source.
 */
-gulp.task('test:build:src', ['src:build'], test);
+gulp.task('build:src:thenTest', ['build:src'], test);
 
 /**
 * run the tests after compiling the tests source.
 */
-gulp.task('test:build:test', ['test:build'], test);
+gulp.task('build:test:thenTest', ['build:test'], test);
+
+/**
+* run the tests, compiling everything first.
+*/
+gulp.task('test', ['build'], test);
 
 /**
 * watch the module and tests sources, re-compiling and re-running the tests
 * when they change.
 */
 gulp.task('test:watch', ['test'], function() {
-  gulp.watch('src/**/*.js', ['test:build:src']);
-  gulp.watch('test/src/**/*.js', ['test:build:test'])
+  gulp.watch('src/**/*.js', ['build:src:thenTest']);
+  gulp.watch('test/src/**/*.js', ['build:tests:thenTest'])
 });
+
+/**
+* general "watch everything", which is just `test:watch`.
+*/
+gulp.task('watch', ['test:watch']);
