@@ -62,7 +62,7 @@ function build(baseDir) {
     .pipe(gulp.dest(path.join(baseDir, 'dist')))
     // at the end, if we didn't set an error, notify about the success
     .on('end', function() {
-      if (compilationError) {
+      if (!compilationError) {
         notifier.notify({
           title: path.join("nrser.js", baseDir, 'src'),
           message: "compiled.",
