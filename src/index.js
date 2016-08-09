@@ -10,6 +10,7 @@ export * from './css.js';
 export * from './Logger.js';
 export * from './object.js';
 export * from './string.js';
+export * from './match.js';
 
 export let fs;
 
