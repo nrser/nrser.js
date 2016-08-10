@@ -8,8 +8,8 @@ import { UpperCaseString } from './string.js';
 */
 export function value(value, name) {
   return t.irreducible(
-    name || 'Value<' + value + '>',
-    v => v === value;
+    name || `Value<${ value  }>`,
+    v => v === value,
   );
 }
 
@@ -17,7 +17,7 @@ export function value(value, name) {
 * `values()` creates a union type for each of the values in the provided
 * object.
 */
-function values(obj, name) {
+export function values(obj, name) {
   const valueTypes = _.mapValues(t.Object(obj), (v) => value(v));
   const type = t.union(_.values(valueTypes));
   type.types = valueTypes;

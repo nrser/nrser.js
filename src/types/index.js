@@ -51,19 +51,19 @@ export function nonEmptyList(type, name) {
 
 export function instanceOf(klass, name) {
   return t.irreducible(
-    name || 'InstanceOf<' + klass.name + '>',
+    name || `InstanceOf<${ klass.name }>`,
     obj => obj instanceof klass,
   );
 }
 
-var ErrorType = exports.ErrorType = instanceOf(Error);
+export const ErrorType = instanceOf(Error);
 
-var PromiseType = exports.PromiseType = instanceOf(_promise2.default);
+export const PromiseType = instanceOf(Promise);
 
 /**
 * @typedef {string | Array<string|number>} KeyPath
 */
 export type KeyPath = string | Array<string|number>;
 
-export * from './stirng.js';
-export * from './values.js';
+export * from './string.js';
+export * from './value.js';

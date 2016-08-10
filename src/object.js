@@ -4,7 +4,7 @@ import _ from 'lodash';
 import t from 'tcomb';
 
 import { j, squish } from './string.js';
-import { Undefined, Empty, ReifiedKeyPath, KeyPath } from './types.js';
+import { Undefined, Empty, ReifiedKeyPath, KeyPath } from './types';
 import { MergeConflictError, KeyError } from './errors';
 
 function groupEach(behavior) {
