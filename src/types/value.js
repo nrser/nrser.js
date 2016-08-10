@@ -1,7 +1,8 @@
 import t from 'tcomb';
 import _ from 'lodash';
 
-import { UpperCaseString } from './string.js';
+import { NonEmptyString, UpperCaseString } from './string.js';
+import { nonEmptyList } from './list.js';
 
 /**
 * create a type that just wraps a specific value. `is()` uses `===`.
@@ -44,10 +45,12 @@ export function values(obj, name) {
 }
 
 values.of = function (array) {
+  nonEmptyList(NonEmptyString)(array);
+  
   var obj = {};
 
   for (var i = 0, len = array.length; i < len; i++) {
-    obj[array[i]] = array[i];
+    obj[array[i].toUpperCase()] = array[i];
   }
 
   return values(obj);

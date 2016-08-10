@@ -1,4 +1,4 @@
-import chai from 'chai';
+import chai, {expect} from 'chai';
 import _ from 'lodash';
 import { itMaps, itMaps2 } from '../../../lib/testing.js';
 import * as nrser from '../../../lib/index.js';
@@ -6,48 +6,58 @@ import t from 'tcomb';
 
 describe('types/value.js', () => {
   describe('value()', () => {
-    chai.expect(nrser.t.value(1).is(1)).to.be.true;
+    expect(nrser.t.value(1).is(1)).to.be.true;
   });
 
   describe('values', () => {
-    const BLAH = nrser.t.values.of(['X', 'Y', 'Z']);
+    describe('values.of()', () => {
+      
+      describe('upper case keys', () => {
+        const BLAH = nrser.t.values.of(['X', 'Y', 'Z']);
 
-    it("has key values as properties", () => {
-      chai.expect(BLAH.X).to.equal('X');
-    });
+        it("has key values as properties", () => {
+          expect(BLAH.X).to.equal('X');
+        });
 
-    describe("type checking value properties", () => {
-      itMaps2({
-        func: v => BLAH.is(v),
+        describe("type checking value properties", () => {
+          itMaps2({
+            func: v => BLAH.is(v),
 
-        map: (f, throws) => [
-          BLAH.X, true,
-          BLAH.Y, true,
-          'X', true,
-          'A', false
-        ]
+            map: (f, throws) => [
+              BLAH.X, true,
+              BLAH.Y, true,
+              'X', true,
+              'A', false
+            ]
+          });
+
+          expect(BLAH.is(BLAH.X)).to.be.true;
+        });
+
+        describe("Value type properties for the values", () => {
+          itMaps2({
+            func: value => BLAH.types.X.is(value),
+
+            map: (f, throws) => [
+              BLAH.X, true,
+              BLAH.Y, false
+            ]
+          });
+        });
       });
-
-      chai.expect(BLAH.is(BLAH.X)).to.be.true;
+      
+      const OUTS = nrser.t.values.of(['stdout', 'stderr']);
+      
+      expect(OUTS.is('stdout')).to.be.true;
     });
-
-    describe("Value type properties for the values", () => {
-      itMaps2({
-        func: value => BLAH.types.X.is(value),
-
-        map: (f, throws) => [
-          BLAH.X, true,
-          BLAH.Y, false
-        ]
+    
+    describe('values', () => {
+      const BLAH = nrser.t.values({
+        X: 1,
+        Y: 2,
       });
-    });
-
-    itMaps2({
-      func: values => nrser.t.values(values),
-
-      map: (f, throws) => [
-        f(['x', 'y', 'z']), throws(TypeError)
-      ]
+      
+      expect(BLAH.is(1)).to.be.true;
     });
   });
 });

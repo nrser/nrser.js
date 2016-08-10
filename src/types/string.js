@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 export const NonEmptyString = t.refinement(
   t.String,
-  s => _.isEmpty(s),
+  s => !_.isEmpty(s),
   'NonEmptyString'
 );
 

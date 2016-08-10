@@ -41,14 +41,6 @@ export const NonNegativeInteger = t.refinement(
   'NonNegativeInteger'
 );
 
-export function nonEmptyList(type, name) {
-  return t.refinement(
-    t.list(type, name),
-    array => array.length > 0,
-    name || `NonEmptyArray<${ t.getTypeName(type) }>`
-  )
-}
-
 export function instanceOf(klass, name) {
   return t.irreducible(
     name || `InstanceOf<${ klass.name }>`,
@@ -67,3 +59,4 @@ export type KeyPath = string | Array<string|number>;
 
 export * from './string.js';
 export * from './value.js';
+export * from './list.js';

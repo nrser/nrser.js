@@ -36,6 +36,10 @@ var NAME = packageJSON.name;
 var SRC = 'src';
 var DEST = path.dirname(packageJSON.main);
 
+function glob() {
+  return path.join.apply(null, Array.from(arguments).concat('**', '*.{js}'));
+}
+
 /**
 * handle a stream error by notifying and logging and ending the stream
 */
@@ -81,7 +85,7 @@ function build(baseDir, src, dest) {
   
   return gulp
     // get all the .js files in the src dir
-    .src(path.join(baseDir, src, '**', '*.js'))
+    .src(path.join(baseDir, src, '**', '*.{js,jsx}'))
     // build only those that changed
     .pipe(changed(path.join(baseDir, dest)))
     // compile them
@@ -154,8 +158,8 @@ gulp.task('build', ['build:src', 'build:test']);
 * watch the module and tests sources, re-compiling when they change.
 */
 gulp.task('build:watch', ['build'], function() {
-  gulp.watch(path.join(SRC, '**', '*.js'), ['build:src']);
-  gulp.watch(path.join('test', SRC, '**', '*.js'), ['build:test'])
+  gulp.watch(glob(SRC), ['build:src']);
+  gulp.watch(glob('test', SRC), ['build:test'])
 });
 
 /**
@@ -184,8 +188,8 @@ gulp.task('test', ['build'], function() {
 * when they change.
 */
 gulp.task('test:watch', ['test'], function() {
-  gulp.watch(path.join(SRC, '**', '*.js'), ['build:src:thenTest']);
-  gulp.watch(path.join('test', SRC, '**', '*.js'), ['build:test:thenTest'])
+  gulp.watch(glob(SRC), ['build:src:thenTest']);
+  gulp.watch(glob('test', SRC), ['build:test:thenTest'])
 });
 
 /**
