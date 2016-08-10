@@ -37,7 +37,7 @@ var SRC = 'src';
 var DEST = path.dirname(packageJSON.main);
 
 function glob() {
-  return path.join.apply(null, Array.from(arguments).concat('**', '*.{js}'));
+  return path.join.apply(null, Array.from(arguments).concat('**', '*.js'));
 }
 
 /**
