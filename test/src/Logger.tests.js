@@ -1,5 +1,5 @@
 import chai from 'chai';
-import { Logger } from '../../dist/Logger.js';
+import { Logger } from '../../lib/Logger.js';
 
 describe('Logger.js', () => {
   describe('Logger', () => {

@@ -2,7 +2,7 @@ import { IS_NODE, IS_BROWSER } from './env.js';
 
 export * from './env.js';
 
-export const types = require('./types.js');
+export const types = require('./types');
 export const t = types;
 
 export * from './errors';

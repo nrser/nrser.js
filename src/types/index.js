@@ -3,8 +3,12 @@
 import _ from 'lodash';
 import t from 'tcomb';
 import type { $Reify } from 'tcomb';
+import Promise from 'promise';
 
 export const Undefined = t.irreducible('Undefined', (v) => _.isUndefined(v));
+
+export const Null = t.irreducible('Null', v => _.isNull(v));
+
 export const Empty = t.irreducible('Empty', (v) => _.isEmpty(v));
 
 export const Integer = t.refinement(
@@ -37,12 +41,6 @@ export const NonNegativeInteger = t.refinement(
   'NonNegativeInteger'
 );
 
-export const NonEmptyString = t.refinement(
-  t.String,
-  s => !_.isEmpty(s),
-  'NonEmptyString'
-);
-
 export function nonEmptyList(type, name) {
   return t.refinement(
     t.list(type, name),
@@ -51,7 +49,21 @@ export function nonEmptyList(type, name) {
   )
 }
 
+export function instanceOf(klass, name) {
+  return t.irreducible(
+    name || 'InstanceOf<' + klass.name + '>',
+    obj => obj instanceof klass,
+  );
+}
+
+var ErrorType = exports.ErrorType = instanceOf(Error);
+
+var PromiseType = exports.PromiseType = instanceOf(_promise2.default);
+
 /**
 * @typedef {string | Array<string|number>} KeyPath
 */
 export type KeyPath = string | Array<string|number>;
+
+export * from './stirng.js';
+export * from './values.js';

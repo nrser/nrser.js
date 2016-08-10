@@ -19,17 +19,46 @@ var babel = require('gulp-babel');
 var notifier = require('node-notifier');
 var path = require('path');
 var del = require('del');
-var mocha = require('gulp-mocha');
+// TODO remove
+// var mocha = require('gulp-mocha');
+var spawnMocha = require('gulp-spawn-mocha')
 var gutil = require('gulp-util');
-var notifierReporter = require('mocha-notifier-reporter');
+// TODO remove
+// var notifierReporter = require('mocha-notifier-reporter');
 var fs = require('fs');
 var path = require('path');
+var changed = require('gulp-changed');
+var _ = require('lodash');
 
 var packageJSON = JSON.parse(fs.readFileSync('./package.json'));
 
 var NAME = packageJSON.name;
 var SRC = 'src';
 var DEST = path.dirname(packageJSON.main);
+
+/**
+* handle a stream error by notifying and logging and ending the stream
+*/
+function onError(title, state, error) {
+  console.error(error.message);
+  
+  if (error.codeFrame) {
+    console.error(error.codeFrame.toString());
+  } else if (error.stack) {
+    console.error(error.stack.toString());
+  }
+  
+  if (state) {
+    state.error = error;
+  }
+  
+  notifier.notify({
+    title: title,
+    message: "ERROR COMPILING!",
+  });
+  
+  this.emit('end');
+}
 
 /**
 * returns a gulp stream or vinyl files that compiles javascript in 
@@ -44,35 +73,29 @@ var DEST = path.dirname(packageJSON.main);
 function build(baseDir, src, dest) {
   // this is set to a compilation error if there is one, and it's presence
   // is used to determine if the build failed.
-  var compilationError = null;
+  var state = {};
+  var title = path.join(NAME, baseDir, src);
   
   // clear out the `dist` directory
-  del.sync([path.join(__dirname, baseDir, dest, '**', '*')]);
+  // del.sync([path.join(__dirname, baseDir, dest, '**', '*')]);
   
   return gulp
     // get all the .js files in the src dir
     .src(path.join(baseDir, src, '**', '*.js'))
+    // build only those that changed
+    .pipe(changed(path.join(baseDir, dest)))
     // compile them
     .pipe(babel())
     // we need to handle any error that occurred so that we can emit 'end'
     // and continue watching. also dispatch a notif that we failed.
-    .on('error', function(error) {
-      console.error(error.toString());
-      console.error(error.codeFrame.toString());
-      compilationError = error;
-      notifier.notify({
-        title: path.join("nrser.js", baseDir, src),
-        message: "ERROR COMPILING!",
-      });
-      this.emit('end');
-    })
+    .on('error', _.curry(onError)(title, state))
     // write the compiled sources to the dist dir
     .pipe(gulp.dest(path.join(baseDir, dest)))
     // at the end, if we didn't set an error, notify about the success
     .on('end', function() {
-      if (!compilationError) {
+      if (!state.error) {
         notifier.notify({
-          title: path.join("nrser.js", baseDir, src),
+          title: title,
           message: "compiled.",
         });
       }
@@ -88,14 +111,25 @@ function build(baseDir, src, dest) {
 */
 function test(dest) {
   return gulp.src(path.join('test', dest, '**', '*.tests.js'))
-    .pipe(mocha({reporter: notifierReporter.decorate('spec')}))
-    .on('error', function() {
-      this.emit('end')
-    });
+    // .pipe(mocha({reporter: notifierReporter.decorate('spec')}))
+    .pipe(spawnMocha({
+      growl: true,
+    }))
+    .on('error', _.curry(onError)(NAME + 'test', null));
 }
 
 // tasks
 // =====
+
+gulp.task('clean:src', function() {
+  del(path.join(DEST, '**', '*'));
+});
+
+gulp.task('clean:test', function() {
+  del(path.join('test', DEST, '**', '*'));
+});
+
+gulp.task('clean', ['clean:src', 'clean:test']);
 
 /**
 * compile module source in `/src` to `/dist`.
@@ -151,7 +185,7 @@ gulp.task('test', ['build'], function() {
 */
 gulp.task('test:watch', ['test'], function() {
   gulp.watch(path.join(SRC, '**', '*.js'), ['build:src:thenTest']);
-  gulp.watch(path.join('test', SRC, '**', '*.js'), ['build:tests:thenTest'])
+  gulp.watch(path.join('test', SRC, '**', '*.js'), ['build:test:thenTest'])
 });
 
 /**

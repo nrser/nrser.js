@@ -1,5 +1,5 @@
 import chai from 'chai';
-import { j } from '../../dist/string.js';
+import { j } from '../../lib/string.js';
 
 describe('string.js', () => {
   describe('j()', () => {

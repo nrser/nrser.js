@@ -1,7 +1,7 @@
 import chai from 'chai';
-import { itMaps2 } from '../../dist/testing.js';
-import { mergeNoConflicts, need } from '../../dist/object.js';
-import { MergeConflictError, KeyError } from '../../dist/errors/';
+import { itMaps2 } from '../../lib/testing.js';
+import { mergeNoConflicts, need } from '../../lib/object.js';
+import { MergeConflictError, KeyError } from '../../lib/errors/';
 
 describe('object.js', () => {
   describe('mergeNoConflicts()', () => {
