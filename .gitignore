@@ -5,8 +5,8 @@
 /doc/api
 
 # compiled code
-/dist
-/test/dist
+/lib
+/test/lib
 
 ##############################################################################
 # BEGIN Global/OSX.gitignore

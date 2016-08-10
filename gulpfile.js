@@ -22,28 +22,36 @@ var del = require('del');
 var mocha = require('gulp-mocha');
 var gutil = require('gulp-util');
 var notifierReporter = require('mocha-notifier-reporter');
+var fs = require('fs');
+var path = require('path');
+
+var packageJSON = JSON.parse(fs.readFileSync('./package.json'));
+
+var NAME = packageJSON.name;
+var SRC = 'src';
+var DEST = path.dirname(packageJSON.main);
 
 /**
 * returns a gulp stream or vinyl files that compiles javascript in 
-* `<baseDir>/src` to `<baseDir>/dist`.
+* `<baseDir>/src` to `<baseDir>/<DEST>`.
 * 
 * @param {string} baseDir
-*   directory with `src` and `dist`, relative to the project root.
+*   directory with `src` and `dest` folders, relative to the project root.
 * 
 * @return {Stream<VinylFile>}
 *   stream of vinyl files.
 */
-function build(baseDir) {
+function build(baseDir, src, dest) {
   // this is set to a compilation error if there is one, and it's presence
   // is used to determine if the build failed.
   var compilationError = null;
   
   // clear out the `dist` directory
-  del.sync([path.join(__dirname, baseDir, 'dist/**/*')]);
+  del.sync([path.join(__dirname, baseDir, dest, '**', '*')]);
   
   return gulp
     // get all the .js files in the src dir
-    .src(path.join(baseDir, 'src/**/*.js'), {cwd: __dirname})
+    .src(path.join(baseDir, src, '**', '*.js'))
     // compile them
     .pipe(babel())
     // we need to handle any error that occurred so that we can emit 'end'
@@ -53,18 +61,18 @@ function build(baseDir) {
       console.error(error.codeFrame.toString());
       compilationError = error;
       notifier.notify({
-        title: path.join("nrser.js", baseDir, 'src'),
+        title: path.join("nrser.js", baseDir, src),
         message: "ERROR COMPILING!",
       });
       this.emit('end');
     })
     // write the compiled sources to the dist dir
-    .pipe(gulp.dest(path.join(baseDir, 'dist')))
+    .pipe(gulp.dest(path.join(baseDir, dest)))
     // at the end, if we didn't set an error, notify about the success
     .on('end', function() {
       if (!compilationError) {
         notifier.notify({
-          title: path.join("nrser.js", baseDir, 'src'),
+          title: path.join("nrser.js", baseDir, src),
           message: "compiled.",
         });
       }
@@ -78,8 +86,8 @@ function build(baseDir) {
 * @return {Stream<VinylFile>}
 *   stream of vinyl files.
 */
-function test() {
-  return gulp.src('test/dist/**/*.tests.js', {cwd: __dirname})
+function test(dest) {
+  return gulp.src(path.join('test', dest, '**', '*.tests.js'))
     .pipe(mocha({reporter: notifierReporter.decorate('spec')}))
     .on('error', function() {
       this.emit('end')
@@ -93,14 +101,14 @@ function test() {
 * compile module source in `/src` to `/dist`.
 */
 gulp.task('build:src', function() {
-  return build('.');
+  return build('.', SRC, DEST);
 });
 
 /**
 * compile tests source in `/test/src` to `/test/dist`.
 */
 gulp.task('build:test', function() {
-  return build('test');
+  return build('test', SRC, DEST);
 });
 
 /**
@@ -112,32 +120,38 @@ gulp.task('build', ['build:src', 'build:test']);
 * watch the module and tests sources, re-compiling when they change.
 */
 gulp.task('build:watch', ['build'], function() {
-  gulp.watch('src/**/*.js', ['build:src']);
-  gulp.watch('test/src/**/*.js', ['build:test'])
+  gulp.watch(path.join(SRC, '**', '*.js'), ['build:src']);
+  gulp.watch(path.join('test', SRC, '**', '*.js'), ['build:test'])
 });
 
 /**
 * run the tests after compiling the module source.
 */
-gulp.task('build:src:thenTest', ['build:src'], test);
+gulp.task('build:src:thenTest', ['build:src'], function(){ 
+  return test(DEST);
+});
 
 /**
 * run the tests after compiling the tests source.
 */
-gulp.task('build:test:thenTest', ['build:test'], test);
+gulp.task('build:test:thenTest', ['build:test'], function() {
+  return test(DEST);
+});
 
 /**
 * run the tests, compiling everything first.
 */
-gulp.task('test', ['build'], test);
+gulp.task('test', ['build'], function() {
+  return test(DEST);
+});
 
 /**
 * watch the module and tests sources, re-compiling and re-running the tests
 * when they change.
 */
 gulp.task('test:watch', ['test'], function() {
-  gulp.watch('src/**/*.js', ['build:src:thenTest']);
-  gulp.watch('test/src/**/*.js', ['build:tests:thenTest'])
+  gulp.watch(path.join(SRC, '**', '*.js'), ['build:src:thenTest']);
+  gulp.watch(path.join('test', SRC, '**', '*.js'), ['build:tests:thenTest'])
 });
 
 /**
