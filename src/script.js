@@ -2,6 +2,7 @@ import shellescape from 'shell-escape';
 import _ from 'lodash';
 import { execSync as sysExecSync } from 'child_process';
 import util from 'util';
+import Promise from 'promise';
 
 import { squish, tag, deindent } from './string.js';
 
@@ -68,12 +69,6 @@ export function puts(strings, ...values) {
 
 export const p = puts;
 
-// kexec(...args) {
-//   const kexec = require('kexec');
-//   
-//   kexec(sh(...args));
-// }
-
 export class Cmd {
   constructor(options = {}) {
     this.options = {
@@ -94,6 +89,19 @@ export class Cmd {
   p(strings, ...values) {
     console.log(this.out(strings, ...values));
   }
+  
+  spawn(strings, ...values) {
+    const cmd = esc(strings, ...values);
+    if (this.options.sync) {
+      return spawnSync(cmd, this.options);
+    } else {
+      
+    }
+  }
+  
+  kexec(strings, ...values) {
+    require('kexec')(esc(strings, ...values));
+  }
 }
 
 export function cmd(options) {
@@ -106,4 +114,8 @@ cmd.out = function(strings, ...values) {
 
 cmd.p = function(strings, ...values) {
   return new Cmd().p(strings, ...values);
+}
+
+cmd.kexec = function(strings, ...values) {
+  new Cmd().kexec(strings, ...values);
 }
