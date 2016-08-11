@@ -22,7 +22,14 @@ export function match(value, ...clauses) {
   
   let message = j`value ${ value } failed to match `;
   for (let i = 0, len = clauses.length; i < len; i += 2) {
-    message += clauses[i].toString();
+    const type = clauses[i];
+    
+    if (t.isType(type)) {
+      message += t.getTypeName(type);
+    } else {
+      message += type;
+    }
+    
     if (i != len - 1) {
       message += ' | ';
     }
