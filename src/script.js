@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { execSync as sysExecSync } from 'child_process';
 import util from 'util';
 import Promise from 'promise';
+export untildify from 'untildify';
 
 import { squish, tag, deindent } from './string.js';
 
