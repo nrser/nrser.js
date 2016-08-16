@@ -59,28 +59,30 @@ export function itMaps2({
   func,
   map,
   
+  funcName = 'f',
+  
   tester = ({actual, expected}) => {
     chai.expect(actual).to.eql(expected);
   },
   
-  formatArgs = (args) => (
-    `(${ _.map(args, (a) => JSON.stringify(a)).join(", ") })`
+  formatArgs = (args, funcName) => (
+    `${ funcName }(${ _.map(args, (a) => JSON.stringify(a)).join(", ") })`
   ),
   
   formatExpected = (expected) => (
     JSON.stringify(expected)
   ),
   
-  formatter = (args, expected) => {
+  formatter = (args, expected, funcName) => {
     if (expected instanceof Throws) {
       return nrser.squish(`
-        ${ formatArgs(args) } throws ${ expected.error.name }
+        ${ formatArgs(args, funcName) } throws ${ expected.error.name }
       `);
       
     } else {
       return nrser.squish(`
         maps
-        ${ formatArgs(args) }
+        ${ formatArgs(args, funcName) }
         to ${ formatExpected(expected) }
       `);
       
@@ -96,7 +98,7 @@ export function itMaps2({
     const args = mapping[i];
     const expected = mapping[i + 1];
     
-    it(formatter(args, expected), () => {
+    it(formatter(args, expected, funcName), () => {
       if (expected instanceof Throws) {
         chai.expect(() => func(...args)).to.throw(expected.error);
       } else {

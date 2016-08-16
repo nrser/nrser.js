@@ -9,6 +9,10 @@ export const Undefined = t.irreducible('Undefined', (v) => _.isUndefined(v));
 
 export const Null = t.irreducible('Null', v => _.isNull(v));
 
+export function nullable(type) {
+  return t.union(Null, type);
+}
+
 export const Empty = t.irreducible('Empty', (v) => _.isEmpty(v));
 
 export const Integer = t.refinement(
@@ -60,3 +64,4 @@ export type KeyPath = string | Array<string|number>;
 export * from './string.js';
 export * from './value.js';
 export * from './list.js';
+export * from './struct.js';

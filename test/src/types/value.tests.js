@@ -1,6 +1,6 @@
 import chai, {expect} from 'chai';
 import _ from 'lodash';
-import { itMaps, itMaps2 } from '../../../lib/testing.js';
+import { itMaps2 } from '../../../lib/testing.js';
 import * as nrser from '../../../lib/index.js';
 import t from 'tcomb';
 
@@ -24,10 +24,10 @@ describe('types/value.js', () => {
             func: v => BLAH.is(v),
 
             map: (f, throws) => [
-              BLAH.X, true,
-              BLAH.Y, true,
-              'X', true,
-              'A', false
+              f(BLAH.X), true,
+              f(BLAH.Y), true,
+              f('X'), true,
+              f('A'), false
             ]
           });
 
@@ -39,8 +39,8 @@ describe('types/value.js', () => {
             func: value => BLAH.types.X.is(value),
 
             map: (f, throws) => [
-              BLAH.X, true,
-              BLAH.Y, false
+              f(BLAH.X), true,
+              f(BLAH.Y), false
             ]
           });
         });
