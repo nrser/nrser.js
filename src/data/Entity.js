@@ -65,8 +65,6 @@ export class Entity {
     }
     
     this._values = _.mapValues(meta.props, (expected, key) => {
-      console.log({key, expected});
-      
       const actual = do {
         if (_.has(values, key)) {
           values[key]
