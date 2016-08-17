@@ -40,6 +40,11 @@ describe("types/struct.js", () => {
   
   describe("Struct#extend()", () => {
     
+    context("extend via added property", () => {
+      const superStruct = nrser.t.struct({x: t.String});
+      const subStruct = superStruct.extend({y: t.String});
+    }); // added
+    
     context("extend via intersection", () => {
       const superStruct = nrser.t.struct({x: t.Number});
       
@@ -142,6 +147,48 @@ describe("types/struct.js", () => {
         })
       });
     }); // value
+    
+    context("extending a strict struct", () => {
+      const superStruct = nrser.t.struct({
+        x: t.String,
+      }, {strict: true});
+      
+      it("is strict", () => {
+        expect(superStruct.meta.strict).to.be.true;
+      });
+      
+      it("fails to extend with additional props", () => {
+        expect(() => superStruct.extend({y: t.String})).to.throw(TypeError);
+      });
+      
+      it("fails to extend with a non-strict struct", () => {
+        expect(() => superStruct.extend(
+          {x: nrser.t.NonEmptyString},
+          {strict: false},
+        )).to.throw(TypeError);
+      });
+      
+      context("extend with an intersection", () => {
+        const subStruct = superStruct.extend({x: nrser.t.NonEmptyString});
+        
+        it("is strict", () => {
+          expect(subStruct.meta.strict).to.be.true;
+        });
+        
+        it("creates an intersection type", () => {
+          expect(subStruct.meta.props.x.meta.kind).to.equal('intersection');
+        });
+        
+        it("fails when the value doesn't satisfy both types", () => {
+          expect(() => subStruct({x: ''})).to.throw(TypeError);
+        });
+        
+        it("succeeds when the value satisfies both types", () => {
+          expect(subStruct({x: 'hey'})).to.eql({x: 'hey'});
+        });
+      }); // intersection
+      
+    }); // strict 
     
   }); // Struct#extend()
   

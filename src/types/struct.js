@@ -50,10 +50,12 @@ export function struct(props, options = {}) {
     }
     
     const extendedProps = _.mapValues(props, (prop, key) => {
-      const superType = Struct.meta.props[key];
+      
       
       // see if there was a super type
-      if (superType) {
+      if (_.has(Struct.meta.props, key)) {
+        const superType = Struct.meta.props[key];
+        
         // there was.
         // what we do depends on what the refinement 
         return match(prop,
@@ -94,7 +96,7 @@ export function struct(props, options = {}) {
         // mean that there could be instances that satisfy the sub type
         // but not the super
         
-        t.assert(!Struct.strict, () => squish(`
+        t.assert(!Struct.meta.strict, () => squish(`
           can not add prop ${ key } via extension because super struct
           ${ t.getTypeName(Struct) } is strict.
         `));
