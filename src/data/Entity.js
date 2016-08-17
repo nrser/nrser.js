@@ -68,6 +68,9 @@ export class Entity {
     return value instanceof this;
   }
   
+  /**
+  * what the getter for `displayName` calls for the tcomb API.
+  */
   static getDisplayName() {
     return this.name;
   }
