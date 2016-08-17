@@ -4,6 +4,74 @@ import { match } from '../match';
 import { value } from './value';
 import { squish } from '../string.js';
 
+export function extendProps(superProps, subProps, strict) {
+  const extendedProps = _.mapValues(subProps, (subProp, key) => {
+    
+    // see if there was a super type
+    if (_.has(superProps, key)) {
+      const superType = superProps[key];
+      
+      // there was.
+      // what we do depends on what the refinement 
+      return match(subProp,
+        // it's another type
+        t.Type, subType => {
+          if (subType === superType) {
+            // it's identical to the super type, so just use it
+            return subType;
+          } else {
+            // it's a different type
+            // an intersection will make sure it satisfies both
+            // hopefully it's a sub-type of the super type, otherwise
+            // it will never satisfy
+            return t.intersection([superType, subType]);
+          }
+        },
+        
+        // it's a function, which we take as the predicate for a refinement
+        t.Function, predicate => t.refinement(superType, predicate),
+        
+        // it's some sort of value, which should be a member of the super
+        // type for it to make any sense
+        t.Any, v => {
+          // check that it satisfies the super type
+          t.assert(superType.is(v), () => squish(`
+            prop ${ key } given value ${ t.stringify(v) } that is not of
+            super type ${ t.getTypeName(superType) }
+          `));
+          // the new type is that exact value
+          return value(v);
+        },
+      );
+      
+    } else {
+      // there is no super type
+      
+      // if the super struct is strict this is an error since it would 
+      // mean that there could be instances that satisfy the sub type
+      // but not the super
+      
+      t.assert(!strict, () => squish(`
+        can not add prop ${ key } via extension because super type
+        is strict.
+      `));
+      
+      return match(subProp,
+        t.Type, type => type,
+        t.Any, v => value(v),
+      );
+      
+    }
+  });
+  
+  const mergedProps = {
+    ...superProps,
+    ...extendedProps
+  };
+  
+  return mergedProps;
+}
+
 export function struct(props, options = {}) {
   const Struct = t.struct(props, options);
   
@@ -49,72 +117,10 @@ export function struct(props, options = {}) {
       options.strict = Struct.meta.strict;
     }
     
-    const extendedProps = _.mapValues(props, (prop, key) => {
-      
-      
-      // see if there was a super type
-      if (_.has(Struct.meta.props, key)) {
-        const superType = Struct.meta.props[key];
-        
-        // there was.
-        // what we do depends on what the refinement 
-        return match(prop,
-          // it's another type
-          t.Type, type => {
-            if (type === superType) {
-              // it's identical to the super type, so just use it
-              return type;
-            } else {
-              // it's a different type
-              // an intersection will make sure it satisfies both
-              // hopefully it's a sub-type of the super type, otherwise
-              // it will never satisfy
-              return t.intersection([superType, type]);
-            }
-          },
-          
-          // it's a function, which we take as the predicate for a refinement
-          t.Function, predicate => t.refinement(superType, predicate),
-          
-          // it's some sort of value, which should be a member of the super
-          // type for it to make any sense
-          t.Any, v => {
-            // check that it satisfies the super type
-            t.assert(superType.is(v), () => squish(`
-              prop ${ key } given value ${ t.stringify(prop) } that is not of
-              super type ${ t.getTypeName(superType) }
-            `));
-            // the new type is that exact value
-            return value(v);
-          },
-        );
-        
-      } else {
-        // there is no super type
-        
-        // if the super struct is strict this is an error since it would 
-        // mean that there could be instances that satisfy the sub type
-        // but not the super
-        
-        t.assert(!Struct.meta.strict, () => squish(`
-          can not add prop ${ key } via extension because super struct
-          ${ t.getTypeName(Struct) } is strict.
-        `));
-        
-        return match(prop,
-          t.Type, type => type,
-          t.Any, v => value(v),
-        );
-        
-      }
-    });
-    
-    const mergedProps = {
-      ...Struct.meta.props,
-      ...extendedProps
-    };
-    
-    return struct(mergedProps, options);
+    return struct(
+      extendProps(Struct.meta.props, props, Struct.meta.strict),
+      options
+    );
   }
   
   return Struct;

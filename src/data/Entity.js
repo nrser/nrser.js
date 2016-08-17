@@ -3,6 +3,7 @@ import t from 'tcomb';
 import create from 'tcomb/lib/create';
 
 import { squish } from '../string';
+import { match } from '../match';
 import * as types from '../types';
 
 export class Entity {
@@ -24,10 +25,33 @@ export class Entity {
   }
   
   static extendMeta({name, props, defaultProps, strict}) {
+    // handle strictness
+    strict = match(strict,
+      // if strict was not supplied (or was null) then inherit
+      t.Nil, this.meta.strict,
+      
+      // otherwise it must be a boolean
+      t.Boolean, strict => {
+        // if the super Entity is strict then this one must be too
+        if (!strict && this.meta.strict) {
+          throw new TypeError(squish(`
+            can't create a non-strict sub-entity of strict entity
+            ${ this.name }
+          `));
+        }
+        
+        return strict;
+      },
+    );
+    
     return {
       ...this.meta,
       name,
-      props: {...this.meta.props, ...props},
+      props: types.extendProps(
+        this.meta.props,
+        props,
+        this.meta.strict,
+      ),
       defaultProps: {...this.meta.defaultProps, ...defaultProps},
       strict,
     };
