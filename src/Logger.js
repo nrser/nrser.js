@@ -2,6 +2,7 @@ import _ from 'lodash';
 import t from 'tcomb';
 
 import { pad } from './string.js';
+import { match } from './match.js';
 
 // optional requires that may or may not be present
 
@@ -222,7 +223,10 @@ export class Logger {
       } else {
         seen.add(value);
         const copy = {};
-        _.each(value, function(v, k) { copy[k] = Logger.snapshot(v, seen) });
+        // _.each(value, function(v, k) { copy[k] = Logger.snapshot(v, seen) });
+        for (let k in value) {
+          copy[k] = Logger.snapshot(value[k], seen);
+        }
         return copy;
       }
       
@@ -370,6 +374,11 @@ export class Logger {
 } // class Logger
 
 export function logger(name, {level} = {}) {
+  name = match(name,
+    t.String, name,
+    t.Array, array => array.join(':'),
+  );
+  
   if (level) {
     Logger.setLevel({name, level});
   }
