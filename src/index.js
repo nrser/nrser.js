@@ -1,3 +1,7 @@
+import lodash from 'lodash';
+
+export const _ = lodash;
+
 import { IS_NODE, IS_BROWSER } from './env.js';
 
 export * from './env.js';
