@@ -52,6 +52,13 @@ export function instanceOf(klass, name) {
   );
 }
 
+export function subclassOf(klass, name) {
+  return t.irreducible(
+    name || `SubclassOf<${ klass.name }`,
+    obj => obj.prototype instanceof klass
+  );
+}
+
 export const ErrorType = instanceOf(Error);
 
 export const PromiseType = instanceOf(Promise);
