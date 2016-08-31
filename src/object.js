@@ -80,7 +80,18 @@ export function need(
   
   if (_.isUndefined(result)) {
     if (_.isUndefined(defaultValue)) {
-      throw new KeyError(`key not found`, {object, keyPath});
+      const keyStr = do {
+        if (_.isString(keyPath)) {
+          keyPath
+        } else {
+          keyPath.join('.')
+        }
+      }
+      
+      throw new KeyError(
+        `key ${ keyStr } not found`,
+        {object, keyPath}
+      );
     } else {
       return defaultValue;
     }
