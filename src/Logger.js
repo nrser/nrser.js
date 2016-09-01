@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import t from 'tcomb';
 
-import { pad } from './string.js';
-import { match } from './match.js';
+import { pad } from './string';
+import { match } from './match';
+import { IS_NODE } from './env';
 
 // optional requires that may or may not be present
 
@@ -34,7 +35,7 @@ try {
 
 const IDENTITY = function(x) { return x; };
 
-const COLORS = clc ? {
+const COLORS = (IS_NODE && clc) ? {
   error: clc.red.bold,
   warn: clc.yellow,
   info: clc.bold,
