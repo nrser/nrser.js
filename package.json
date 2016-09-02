@@ -21,6 +21,7 @@
     "babel-plugin-transform-class-properties": "^6.10.2",
     "babel-plugin-transform-flow-strip-types": "^6.8.0",
     "babel-preset-meteor": "^6.11.1",
+    "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "del": "^2.2.1",
     "esdoc": "^0.4.7",
