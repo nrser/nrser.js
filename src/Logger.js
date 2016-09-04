@@ -376,7 +376,9 @@ export class Logger {
 
 export function logger(name, {level} = {}) {
   name = match(name,
-    t.String, name,
+    t.String, string => (
+      string.replace(/\//g, ':').replace(/^\:+/, '')
+    ),
     t.Array, array => array.join(':'),
   );
   
