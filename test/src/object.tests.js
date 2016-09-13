@@ -1,6 +1,6 @@
 import chai from 'chai';
 import { itMaps2 } from '../../lib/testing.js';
-import { mergeNoConflicts, need } from '../../lib/object.js';
+import { groupByEach, mergeNoConflicts, need } from '../../lib/object.js';
 import { MergeConflictError, KeyError } from '../../lib/errors/';
 
 describe('object.js', () => {
@@ -26,7 +26,7 @@ describe('object.js', () => {
     });
   });
   
-  describe("need", () => {
+  describe("need()", () => {
     itMaps2({
       func: need,
       
@@ -39,5 +39,48 @@ describe('object.js', () => {
         f({}, 'a', {defaultValue: 'blah'}),       'blah',
       ]),
     })
+  });
+  
+  describe("groupByEach()", () => {
+    itMaps2({
+      func: groupByEach,
+      
+      map: (f, throws) => [
+        f(
+          [
+            {name: 'neil', groups: ['admin', 'dev']},
+            {name: 'angus', groups: ['admin', 'production', 'art']},
+            {name: 'josh', groups: ['production', 'art', 'design']},
+          ],
+          ({name, groups}) => groups,
+        ),
+        // =>
+        {
+          admin: [
+            {name: 'neil', groups: ['admin', 'dev']},
+            {name: 'angus', groups: ['admin', 'production', 'art']},
+          ],
+          
+          dev: [
+            {name: 'neil', groups: ['admin', 'dev']},
+          ],
+          
+          production: [
+            {name: 'angus', groups: ['admin', 'production', 'art']},
+            {name: 'josh', groups: ['production', 'art', 'design']},
+          ],
+          
+          art: [
+            {name: 'angus', groups: ['admin', 'production', 'art']},
+            {name: 'josh', groups: ['production', 'art', 'design']},
+          ],
+          
+          design: [
+            {name: 'josh', groups: ['production', 'art', 'design']},
+          ],
+        },
+        
+      ],
+    });
   });
 });
