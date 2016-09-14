@@ -50,7 +50,7 @@ type MetalogMessage = {
   content: Array<*>,
   line: number,
   parentPath: Array<string>,
-  notif: boolean,
+  // notif: boolean,
 };
 
 /**
@@ -75,7 +75,7 @@ type LogMessage = {
   path: string,
   
   // ms since last message logged
-  delta: number,
+  delta: ?number,
   
   // delta formatted for output
   formattedDelta: string,
@@ -203,6 +203,27 @@ export class Logger {
     return `+${ digits }ms`;
   }
   
+  static formatPath(rawMessage: MetalogMessage): string {
+    const path = [rawMessage.filename];
+    
+    if (!_.isEmpty(rawMessage.parentPath)) {
+      path.push(
+        _.map(rawMessage.parentPath, (segment: string) => {
+          if (segment.match(/\[anonymous\@\d+\]/)) {
+            return "?";
+          }
+          return segment;
+        }).join(':')
+      );
+    }
+    
+    path.push(rawMessage.line);
+    
+    return path.join(':');
+  }
+  
+  // ========
+  
   constructor({
     nodeHeaderFormat = "%date (%delta) %level [%path]",
     browserHeaderFormat = "(%delta) %level [%path]",
@@ -276,10 +297,10 @@ export class Logger {
   }
   
   /**
-  * 
+  * get the level from the spec for a query, if any match.
   */
   levelFor(query: SpecQuery): ?Level {
-    const spec: ?LevelSpec = specFor(query);
+    const spec: ?LevelSpec = this.specFor(query);
     
     if (spec) {
       return spec.level;
@@ -307,7 +328,7 @@ export class Logger {
   * log a message unless filtered by a level spec.
   */
   log(rawMessage: MetalogMessage): boolean {
-    const level: Level = Level.forName(levelName);
+    const level: Level = Level.forName(rawMessage.level);
     const query: SpecQuery = _.pick(
       rawMessage,
       ['filename', 'parentPath', 'content']
@@ -319,7 +340,7 @@ export class Logger {
     }
     
     const now: Date = new Date();
-    const delta: string = this.getDelta(now);
+    const delta: ?NonNegativeInteger = this.getDelta(now);
     // set the last message date so `#getDelta` will work
     // do it here so an error outputting won't break `#getDelta`
     this.lastMessageDate = now;
@@ -330,8 +351,8 @@ export class Logger {
       level,
       formattedLevel: this.constructor.formatLevel(level),
       date: now,
-      formattedDate: this.formatDate(now),
-      path: this.formatPath(rawMessage),
+      formattedDate: this.constructor.formatDate(now, this.dateFormat),
+      path: this.constructor.formatPath(rawMessage),
       delta,
       formattedDelta: this.constructor.formatDelta(delta),
       content: rawMessage.content,
@@ -358,35 +379,6 @@ export class Logger {
     if (this.lastMessageDate) {
       return now - this.lastMessageDate;
     }
-  }
-  
-  /**
-  * header for messages in the node server environment where the timestamps
-  * are useful since the logs persist.
-  * 
-  *     DEBUG 2016-09-13 17:41:01.234 (+8783ms) [/imports/api/blah.js:f:88]
-  */
-  getNodeHeader(message: LogMessage): string {
-    return [
-      this.constructor.formatLevel(message.level),
-      this.formatDate(message.date),
-      `(${ message.delta })`,
-      `[${ message.path }]`,
-    ].join(' ');
-  }
-  
-  /**
-  * header for messages in the browser environment where the timestamps
-  * are pretty pointless since we don't save the logs.
-  * 
-  *     DEBUG (+8783ms) [/imports/api/blah.js:f:88]
-  */
-  getBrowserHeader(message: LogMessage): string {
-    return [
-      this.constructor.formatLevel(message.level),
-      `(${ message.delta })`,
-      `[${ message.path }]`,
-    ].join(' ');
   }
   
   /**
@@ -420,18 +412,6 @@ export class Logger {
     return fn;
   }
   
-  static formatLog(data, formatStr = formatStr) {
-    let str = formatStr;
-    _.each(FORMAT_TOKENS, (valueFn, token) => {
-      const value = valueFn(data);
-      str = str.replace(token, value);
-    });
-    // output = data.messages.slice(1);
-    const output = data.messages;
-    output.unshift(str);
-    return output;
-  } // formatLog()
-  
   /**
   * log the message in the node environment, where we don't need to fuck with
   * values vs. references like we do on the browser since it get spits out
@@ -441,11 +421,24 @@ export class Logger {
   * 
   * https://www.npmjs.com/package/print
   */
-  logInNode(message): void {
-    const header: string = getNodeHeader(message);
-    const dumps: Array<string> = _.map(message.contents, print);
+  logInNode(message: LogMessage): void {
+    const header: string = this.constructor.formatHeader(
+      message,
+      this.nodeHeaderFormat
+    );
     
-    getConsoleFunction(message.level).call(console, header, ...dumps);
+    const dumps: Array<string> = _.map(message.content, print);
+    
+    this.getConsoleFunction(message.level).call(console, header, ...dumps);
+  }
+  
+  logInBrowser(message: LogMessage): void {
+    const header: string = this.constructor.formatHeader(
+      message,
+      this.browserHeaderFormat
+    );
+    
+    this.getConsoleFunction(message.level).call(console, header, ...message.content)
   }
   
 } // class Logger
