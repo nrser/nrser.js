@@ -21,6 +21,8 @@ export const t = types;
 export const data = require('./data');
 export const d = data;
 
+export const metalogger = require('./metalogger');
+
 export let fs;
 
 if (IS_NODE) {

@@ -11,8 +11,9 @@ import _ from 'lodash';
 import t from 'tcomb';
 import minimatch from 'minimatch';
 
-import { IS_NODE } from '../env';
+import { IS_NODE, IS_BROWSER } from '../env';
 import print from '../print';
+import type { NonNegativeInteger } from '../types/number';
 
 import { Level, LEVEL_NAME_PAD_LENGTH } from './Level';
 import type { LevelName } from './Level';
@@ -31,14 +32,16 @@ try {
   notifier = require('node-notifier');
 } catch (e) {}
 
-let inspect;
-try {
-  inspect = require('util').inspect;
-} catch (e) {} 
-
 // types
 // =====
 
+/**
+* raw message that the METALOG plugin generates as the argument to `METALOG()`
+* (or whatever global function call is configured).
+* 
+* this is basically just what i found in babel-plugin-trace with a few
+* small changes.
+*/
 type MetalogMessage = {
   values: boolean,
   level: LevelName,
@@ -49,6 +52,37 @@ type MetalogMessage = {
   parentPath: Array<string>,
   notif: boolean,
 };
+
+/**
+* message we craft in the runtime out of the MetalogMessage with properties
+* we need to actually output.
+*/
+type LogMessage = {
+  // level of the message
+  level: Level,
+  
+  // level formatted for output
+  formattedLevel: string,
+  
+  // datetime of the log call
+  date: Date,
+  
+  // date formatted for output
+  formattedDate: string,
+  
+  // the path to the log site that we output,
+  // which is <filename>:<parentPath>:<line>
+  path: string,
+  
+  // ms since last message logged
+  delta: number,
+  
+  // delta formatted for output
+  formattedDelta: string,
+  
+  // the content from the MetalogMessage
+  content: Array<*>,
+}
 
 // constants
 // =========
@@ -69,74 +103,123 @@ const COLORS = (IS_NODE && clc) ? {
   trace: IDENTITY,
 };
 
-const DATE_FORMAT_TOKENS = {
-  'YYYY': (d) => { return pad(d.getFullYear(), 4) },
-  'MM': (d) => { return pad(d.getMonth(), 2) },
-  'DD': (d) => { return pad(d.getDate(), 2) },
-  'HH': (d) => { return pad(d.getHours(), 2) },
-  'mm': (d) => { return pad(d.getMinutes(), 2) },
-  'ss': (d) => { return pad(d.getSeconds(), 2) },
-  'SSS': (d) => { return pad(d.getMilliseconds(), 3) },
-};
-
-const FORMAT_TOKENS = {
-  '%T': (data) => { return data.formattedTimestamp },
-  '%L': (data) => { return COLORS[data.level](data.level) },
-  '%N': (data) => { return data.name },
-  '%M': (data) => { return data.messages[0] },
-  '%D': (data) => {
-    let delta = 0;
-    if (Logger.lastOutputTimestamp) {
-      delta = data.timestamp - Logger.lastOutputTimestamp;
-      if (delta > 10000) {
-        delta = 9999;
-      }
-    }
-    return pad(delta, 4) + "ms";
-  },
-};
-
 export class Logger {
   lastMessageDate: ?Date;
   specs: Array<LevelSpec>;
-  format: string;
+  nodeHeaderFormat: string;
+  browserHeaderFormat: string;
   dateFormat: string;
+  
+  // constants
+  // =========
+  
+  static HEADER_FORMAT_TOKENS = {
+    '%date':  (message: LogMessage): string => message.formattedDate,
+    // '%level': (message: LogMessage) => COLORS[message.level](data.level),
+    '%level': (message: LogMessage): string => message.formattedLevel,
+    '%delta': (message: LogMessage): string => message.formattedDelta,
+    '%path':  (message: LogMessage): string => message.path,
+  };
+  
+  /**
+  * tokens in date format string are replaced with result of calling
+  * the function with the date.
+  */
+  static DATE_FORMAT_TOKENS = {
+    'YYYY': (d: Date): string => _.padStart(d.getFullYear(), 4, "0"),
+    'MM':   (d: Date): string => _.padStart(d.getMonth() + 1, 2, "0"),
+    'DD':   (d: Date): string => _.padStart(d.getDate(), 2, "0"),
+    'HH':   (d: Date): string => _.padStart(d.getHours(), 2, "0"),
+    'mm':   (d: Date): string => _.padStart(d.getMinutes(), 2, "0"),
+    'ss':   (d: Date): string => _.padStart(d.getSeconds(), 2, "0"),
+    'SSS':  (d: Date): string => _.padStart(d.getMilliseconds(), 3, "0"),
+  };
   
   // static methods
   // ==============
   
-  static formatDate(date, formatStr = dateFormatStr) {
-    let str = formatStr;
-    _.each(DATE_FORMAT_TOKENS, (valueFn, token) => {
-      const value = valueFn(date);
-      str = str.replace(token, value);
+  static format(
+    data: *,
+    formatStr: string,
+    tokens: {[token: string]: Function},
+  ): string {
+    let result: string = formatStr;
+    _.each(tokens, (formatter, token) => {
+      if (_.includes(formatStr, token)) {
+        result = result.replace(new RegExp(token, 'g'), formatter(data));
+      }
     });
-    return str;
+    return result;
   }
   
-  static formatLog(data, formatStr = formatStr) {
-    let str = formatStr;
-    _.each(FORMAT_TOKENS, (valueFn, token) => {
-      const value = valueFn(data);
-      str = str.replace(token, value);
-    });
-    // output = data.messages.slice(1);
-    const output = data.messages;
-    output.unshift(str);
-    return output;
-  } // formatLog()
+  /**
+  * format a date according to a format string, see `.DATE_FORMAT_TOKENS` for
+  * the available tokens.
+  */
+  static formatDate(date: Date, formatStr: string): string {
+    return this.format(date, formatStr, this.DATE_FORMAT_TOKENS);
+  }
   
-  // instance methods
-  // ================
+  /**
+  * format a header according to a format string, see `.HEADER_FORMAT_TOKENS`
+  * for the available tokens.
+  */
+  static formatHeader(message: LogMessage, formatStr: string): string {
+    return this.format(message, formatStr, this.HEADER_FORMAT_TOKENS);
+  }
+  
+  /**
+  * the string output of the level.
+  */
+  static formatLevel(level: Level): string {
+    return _.padEnd(
+      level.name.toUpperCase(),
+      LEVEL_NAME_PAD_LENGTH
+    );
+  }
+  
+  /**
+  * formats a delta in ms for output.
+  * 
+  * when:
+  * 
+  * -   delta is undefined (first message), returns "+----ms"
+  * -   the delta is 9999 or less, returns something like "+0888ms"
+  * -   the delta is over 9999, returns "+++++ms"
+  */
+  static formatDelta(delta: ?NonNegativeInteger): string {
+    let digits = '----';
+    
+    if (typeof delta !== 'undefined') {
+      if (delta > 9999) {
+        digits = '++++';
+        
+      } else {
+        digits = _.padStart(delta, 4, '0');
+        
+      }
+    }
+    
+    return `+${ digits }ms`;
+  }
   
   constructor({
-    format = "(%D) %L:  [%N]",
+    nodeHeaderFormat = "%date (%delta) %level [%path]",
+    browserHeaderFormat = "(%delta) %level [%path]",
     dateFormat = "YYYY-MM-DD HH:mm:ss.SSS",
+  }: {
+    nodeHeaderFormat: string,
+    browserHeaderFormat: string,
+    dateFormat: string,
   } = {}) {
-    this.format = format;
+    this.nodeHeaderFormat = nodeHeaderFormat;
+    this.browserHeaderFormat = browserHeaderFormat;
     this.dateFormat = dateFormat;
     this.specs = [];
   } // constructor
+  
+  // instance methods
+  // ================
   
   /**
   * adds a spec to the end of the specs array (least priority).
@@ -223,10 +306,10 @@ export class Logger {
   /**
   * log a message unless filtered by a level spec.
   */
-  log(message: MetalogMessage): boolean {
+  log(rawMessage: MetalogMessage): boolean {
     const level: Level = Level.forName(levelName);
     const query: SpecQuery = _.pick(
-      message,
+      rawMessage,
       ['filename', 'parentPath', 'content']
     );
     
@@ -235,54 +318,46 @@ export class Logger {
       return false;
     }
     
-    const date: Date = new Date();
+    const now: Date = new Date();
+    const delta: string = this.getDelta(now);
+    // set the last message date so `#getDelta` will work
+    // do it here so an error outputting won't break `#getDelta`
+    this.lastMessageDate = now;
     
     // now we know we're going to output
+    // form the log message
     const logMessage: LogMessage = {
-      ...message,
-      date,
+      level,
+      formattedLevel: this.constructor.formatLevel(level),
+      date: now,
+      formattedDate: this.formatDate(now),
+      path: this.formatPath(rawMessage),
+      delta,
+      formattedDelta: this.constructor.formatDelta(delta),
+      content: rawMessage.content,
+    };
+    
+    // do environment-dependent output
+    if (IS_NODE) {
+      this.logInNode(logMessage);
+    } else if (IS_BROWSER) {
+      this.logInBrowser(logMessage);
+    } else {
+      throw new Error("don't seem to be in node or the browser, can't log");
     }
     
-    this.lastMessageDate = date;
-    
+    // signal that we output the log
+    return true;
   } // log
   
   /**
-  * gets a string displaying the delta in milliseconds since the last
-  * message.
-  * 
-  * when:
-  * 
-  * -   there is no last message, returns "+----ms"
-  * -   the delta is 9999 or less, returns something like "+0888ms"
-  * -   the delta is over 9999, returns "+++++ms"
+  * gets the ms since the last message was logged, or undefined if it's the
+  * first.
   */
-  getDeltaString(messageDate: Date): string {
-    let deltaStr = '----';
-    
+  getDelta(now: Date): ?NonNegativeInteger {
     if (this.lastMessageDate) {
-      const delta = messageDate - this.lastMessageDate;
-      
-      if (delta > 9999) {
-        deltaStr = '++++';
-        
-      } else {
-        deltaStr = _.padStart(delta, 4, '0');
-        
-      }
+      return now - this.lastMessageDate;
     }
-    
-    return `+${ deltaStr }ms`;
-  }
-  
-  /**
-  * the string output of the level.
-  */
-  getLevelString(level: Level): string {
-    return _.padEnd(
-      level.name.toUpperCase(),
-      LEVEL_NAME_PAD_LENGTH
-    );
   }
   
   /**
@@ -291,13 +366,12 @@ export class Logger {
   * 
   *     DEBUG 2016-09-13 17:41:01.234 (+8783ms) [/imports/api/blah.js:f:88]
   */
-  getNodeHeader(message): string {
+  getNodeHeader(message: LogMessage): string {
     return [
-      this.getLevelString(message.level),
+      this.constructor.formatLevel(message.level),
       this.formatDate(message.date),
-      `(${ this.getDeltaString(message.date) })`,
-      `[${ this.getPath(_.pick( message,
-                                ['filename', 'parentPath', 'line'])) }]`,
+      `(${ message.delta })`,
+      `[${ message.path }]`,
     ].join(' ');
   }
   
@@ -307,11 +381,11 @@ export class Logger {
   * 
   *     DEBUG (+8783ms) [/imports/api/blah.js:f:88]
   */
-  getBrowserHeader() {
+  getBrowserHeader(message: LogMessage): string {
     return [
-      this.getLevelString(level),
-      `(${ this.getDeltaString(date) })`,
-      `[${ this.getPath({filename, parentPath, line}) }]`,
+      this.constructor.formatLevel(message.level),
+      `(${ message.delta })`,
+      `[${ message.path }]`,
     ].join(' ');
   }
   
@@ -345,6 +419,18 @@ export class Logger {
     
     return fn;
   }
+  
+  static formatLog(data, formatStr = formatStr) {
+    let str = formatStr;
+    _.each(FORMAT_TOKENS, (valueFn, token) => {
+      const value = valueFn(data);
+      str = str.replace(token, value);
+    });
+    // output = data.messages.slice(1);
+    const output = data.messages;
+    output.unshift(str);
+    return output;
+  } // formatLog()
   
   /**
   * log the message in the node environment, where we don't need to fuck with

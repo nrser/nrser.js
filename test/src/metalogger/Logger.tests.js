@@ -21,27 +21,72 @@ describe('metalogger/Logger.js', () => {
       })
     }); // #getConsoleFunction
     
-    describe("#getDeltaString", () => {      
-      it("starts at (+----ms)", () => {
+    describe("#getDelta", () => {      
+      it("starts at undefined", () => {
         const logger = new Logger();
-        expect(logger.getDeltaString(new Date())).to.equal('+----ms');
+        expect(logger.getDelta(new Date())).to.be.undefined;
       });
       
-      it("builds a short delta string", () => {
+      it("gets the difference in ms", () => {
         const logger = new Logger();
         logger.lastMessageDate = new Date();
-        const current = new Date(logger.lastMessageDate.getTime() + 888);
-        expect(logger.getDeltaString(current)).to.equal('+0888ms');
+        const now = new Date(logger.lastMessageDate.getTime() + 888);
+        expect(logger.getDelta(now)).to.equal(888);
       });
+    }); // #getDelta
+    
+    describe(".formatDelta", () => {
+      itMaps2({
+        func: Logger.formatDelta.bind(Logger),
+        map: (f, throws) => [
+          f(), '+----ms',
+          f(0), '+0000ms',
+          f(888), '+0888ms',
+          f(9999), '+9999ms',
+          f(10000), '+++++ms',
+        ]
+      });
+    }); // .formatDelta
+    
+    describe(".formatDate", () => {
+      const date = new Date(2016, 9-1, 14, 17, 33, 44, 888);
       
-      it("overflows to +++++ms when delta is over 9999", () => {
-        const logger = new Logger();
-        logger.lastMessageDate = new Date();
-        const builds = new Date(logger.lastMessageDate.getTime() + 9999);
-        expect(logger.getDeltaString(builds)).to.equal('+9999ms');
-        const overflows = new Date(logger.lastMessageDate.getTime() + 10001);
-        expect(logger.getDeltaString(overflows)).to.equal('+++++ms');
+      itMaps2({
+        func: (format) => Logger.formatDate(date, format),
+        
+        map: (f, throws) => [
+          f('YYYY'), '2016',
+          f('YYYY-MM-DD HH:mm:ss.SSS'), '2016-09-14 17:33:44.888',
+          f('MM MM'), '09 09',
+        ]
       });
-    }); // #getDeltaString
+    }); // .formatDate
+    
+    describe(".formatHeader", () => {
+      const level = Level.DEBUG;
+      const date = new Date(2016, 9-1, 14, 17, 33, 44, 888);
+      const delta = 888;
+      
+      const message = {
+        level,
+        formattedLevel: Logger.formatLevel(level),
+        date: date,
+        formattedDate: Logger.formatDate(date, 'YYYY-MM-DD HH:mm:ss.SSS'),
+        path: '/imports/api/blah.js:x:y:8',
+        delta,
+        formattedDelta: Logger.formatDelta(delta),
+        content: [],
+      };
+      
+      itMaps2({
+        func: (format) => Logger.formatHeader(message, format),
+        
+        map: (f, throws) => [
+          f("%date (%delta) %level [%path]"),
+          "2016-09-14 17:33:44.888 (+0888ms) DEBUG [/imports/api/blah.js:x:y:8]",
+        ]
+      });
+    }); // .formatDate
+    
   }); // Logger
 }); // metalogger/Logger.js
