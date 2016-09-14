@@ -10,9 +10,9 @@
 import _ from 'lodash';
 import t from 'tcomb';
 import minimatch from 'minimatch';
-import print from 'print';
 
-import { IS_NODE } from './env';
+import { IS_NODE } from '../env';
+import print from '../print';
 
 import { Level, LEVEL_NAME_PAD_LENGTH } from './Level';
 import type { LevelName } from './Level';
@@ -96,8 +96,8 @@ const FORMAT_TOKENS = {
   },
 };
 
-export class MetaLogger {
-  lastOutputTimestamp: ?Date;
+export class Logger {
+  lastMessageDate: ?Date;
   specs: Array<LevelSpec>;
   format: string;
   dateFormat: string;
@@ -126,52 +126,16 @@ export class MetaLogger {
     return output;
   } // formatLog()
   
-  static output(data) {
-    data.formattedTimestamp = Logger.formatDate(data.timestamp, dateFormatStr);
-    
-    // snapshot the messages
-    //
-    // we're sure we're going to log at this point, so do that work
-    // 
-    data.messages = Logger.snapshot(data.messages);
-    
-    const output = Logger.formatLog(data, formatStr);
-    
-    Logger.lastOutputTimestamp = data.timestamp;
-    
-    let fn;
-    switch (data.level) {
-      case 'trace':
-      case 'debug':
-        fn = console.log;
-        break;
-        
-      case 'info': 
-        fn = console.info || console.log;
-        break;
-      
-      case 'warn':
-        fn = console.warn || console.log;
-        break;
-        
-      case 'error':
-        fn = console.error || console.log;
-        break;
-    }
-    
-    fn.apply(console, output);
-  } // output
-  
   // instance methods
   // ================
   
   constructor({
-    
     format = "(%D) %L:  [%N]",
     dateFormat = "YYYY-MM-DD HH:mm:ss.SSS",
-  }) {
+  } = {}) {
     this.format = format;
     this.dateFormat = dateFormat;
+    this.specs = [];
   } // constructor
   
   /**
@@ -271,19 +235,49 @@ export class MetaLogger {
       return false;
     }
     
-    const timestamp: Date = new Date();
+    const date: Date = new Date();
     
     // now we know we're going to output
     const logMessage: LogMessage = {
       ...message,
-      timestamp,
-      formattedTimestamp: this.formatDate(timestamp),
-      delta: this.getDelta(timestamp),
-      
+      date,
     }
+    
+    this.lastMessageDate = date;
     
   } // log
   
+  /**
+  * gets a string displaying the delta in milliseconds since the last
+  * message.
+  * 
+  * when:
+  * 
+  * -   there is no last message, returns "+----ms"
+  * -   the delta is 9999 or less, returns something like "+0888ms"
+  * -   the delta is over 9999, returns "+++++ms"
+  */
+  getDeltaString(messageDate: Date): string {
+    let deltaStr = '----';
+    
+    if (this.lastMessageDate) {
+      const delta = messageDate - this.lastMessageDate;
+      
+      if (delta > 9999) {
+        deltaStr = '++++';
+        
+      } else {
+        deltaStr = _.padStart(delta, 4, '0');
+        
+      }
+    }
+    
+    return `+${ deltaStr }ms`;
+  }
+  
+  /**
+  * the string output of the level.
+  */
   getLevelString(level: Level): string {
     return _.padEnd(
       level.name.toUpperCase(),
@@ -297,12 +291,13 @@ export class MetaLogger {
   * 
   *     DEBUG 2016-09-13 17:41:01.234 (+8783ms) [/imports/api/blah.js:f:88]
   */
-  getNodeHeader() {
+  getNodeHeader(message): string {
     return [
-      this.getLevelString(level),
-      this.formatDate(date),
-      `(${ this.getDelta(date) })`,
-      `[${ this.getPath({filename, parentPath, line}) }]`,
+      this.getLevelString(message.level),
+      this.formatDate(message.date),
+      `(${ this.getDeltaString(message.date) })`,
+      `[${ this.getPath(_.pick( message,
+                                ['filename', 'parentPath', 'line'])) }]`,
     ].join(' ');
   }
   
@@ -315,9 +310,40 @@ export class MetaLogger {
   getBrowserHeader() {
     return [
       this.getLevelString(level),
-      `(${ this.getDelta(date) })`,
+      `(${ this.getDeltaString(date) })`,
       `[${ this.getPath({filename, parentPath, line}) }]`,
     ].join(' ');
+  }
+  
+  /**
+  * get the proper `console.*` function for the log level.
+  */
+  getConsoleFunction(level: Level): Function {
+    let fn: Function;
+    
+    switch (level.name) {
+      case 'trace':
+      case 'debug':
+        fn = console.log;
+        break;
+        
+      case 'info': 
+        fn = console.info || console.log;
+        break;
+      
+      case 'warn':
+        fn = console.warn || console.log;
+        break;
+        
+      case 'error':
+        fn = console.error || console.log;
+        break;
+      
+      default:
+        throw new TypeError(`bad level name?! ${ level.name }`);
+    }
+    
+    return fn;
   }
   
   /**
@@ -329,8 +355,11 @@ export class MetaLogger {
   * 
   * https://www.npmjs.com/package/print
   */
-  logInNode(): void {
+  logInNode(message): void {
+    const header: string = getNodeHeader(message);
+    const dumps: Array<string> = _.map(message.contents, print);
     
+    getConsoleFunction(message.level).call(console, header, ...dumps);
   }
   
 } // class Logger

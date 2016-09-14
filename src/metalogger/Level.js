@@ -43,6 +43,15 @@ export class Level {
   static DEBUG: Level = new Level({name: 'debug', rank: LEVELS.debug});
   static TRACE: Level = new Level({name: 'trace', rank: LEVELS.trace});
   
+  static LEVELS: Array<Level> = [
+    Level.FATAL,
+    Level.ERROR,
+    Level.WARN,
+    Level.INFO,
+    Level.DEBUG,
+    Level.TRACE,
+  ];
+  
   static forName(name: LevelName): Level {
     return this[name.toUpperCase()];
   }

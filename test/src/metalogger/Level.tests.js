@@ -1,6 +1,6 @@
 import chai, {expect} from 'chai';
 import _ from 'lodash';
-import { itMaps, itMaps2 } from '../../../lib/testing.js';
+import { itMaps2 } from '../../../lib/testing.js';
 import { Level, LEVEL_NAME_PAD_LENGTH } from '../../../lib/metalogger/Level';
 import type { LevelName, LevelRank } from '../../../lib/metalogger/Level';
 
