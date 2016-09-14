@@ -19,6 +19,7 @@ import { Level, LEVEL_NAME_PAD_LENGTH } from './Level';
 import type { LevelName } from './Level';
 import { LevelSpec } from './LevelSpec';
 import type { SpecQuery, SpecProps } from './LevelSpec';
+import { snapshot } from './snapshot';
 
 // optional requires that may or may not be present
 
