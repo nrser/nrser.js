@@ -36,6 +36,14 @@ try {
 // types
 // =====
 
+type RefsLabel =  "errorRefs" |
+                  "warnRefs" | 
+                  "infoRefs" | 
+                  "debugRefs" | 
+                  "traceRefs";
+
+// type NotifLabel = 
+
 /**
 * raw message that the METALOG plugin generates as the argument to `METALOG()`
 * (or whatever global function call is configured).
@@ -44,14 +52,12 @@ try {
 * small changes.
 */
 type MetalogMessage = {
-  values: boolean,
-  level: LevelName,
+  label: string, // LevelName,
   filename: string,
   filepath: string,
   content: Array<*>,
   line: number,
   parentPath: Array<string>,
-  // notif: boolean,
 };
 
 /**
@@ -61,6 +67,14 @@ type MetalogMessage = {
 type LogMessage = {
   // level of the message
   level: Level,
+  
+  // if we should log refs (as `console.log` and friends normally do) instead
+  // of trying to snapshot the values
+  refs: boolean,
+  
+  // if we should try to generate a system notification in addition to logging
+  // the message
+  notif: boolean,
   
   // level formatted for output
   formattedLevel: string,
@@ -110,6 +124,7 @@ export class Logger {
   nodeHeaderFormat: string;
   browserHeaderFormat: string;
   dateFormat: string;
+  notifTitle: string;
   
   // constants
   // =========
@@ -204,6 +219,9 @@ export class Logger {
     return `+${ digits }ms`;
   }
   
+  /**
+  * formats the path consisting of filename, parentPath and line for output.
+  */
   static formatPath(rawMessage: MetalogMessage): string {
     const path = [rawMessage.filename];
     
@@ -229,14 +247,17 @@ export class Logger {
     nodeHeaderFormat = "%date (%delta) %level [%path]",
     browserHeaderFormat = "(%delta) %level [%path]",
     dateFormat = "YYYY-MM-DD HH:mm:ss.SSS",
+    notifTitle = 'METALOGGER',
   }: {
     nodeHeaderFormat: string,
     browserHeaderFormat: string,
     dateFormat: string,
+    notifTitle: string,
   } = {}) {
     this.nodeHeaderFormat = nodeHeaderFormat;
     this.browserHeaderFormat = browserHeaderFormat;
     this.dateFormat = dateFormat;
+    this.notifTitle = notifTitle;
     this.specs = [];
   } // constructor
   
@@ -272,16 +293,24 @@ export class Logger {
   }
   
   /**
-  * 
+  * sends a system notification if the node-notifier package is available.
   */
-  notify(...messages) {
-    if (notifier) {
+  notify(message: LogMessage) {
+    if (notifier) {      
       notifier.notify({
-        title: this.name,
-        message: _.map(messages, inspect),
+        title: this.notifTitle,
+        message: (
+          message.formattedLevel + "\n" + 
+          _.map(message.content, (obj) => {
+            if (typeof obj === 'string') {
+              return obj;
+            } else {
+              return print(obj);
+            }
+          }).join("\n")
+        ),
       });
     }
-    this.info(...messages);
   }
   
   /**
@@ -329,7 +358,27 @@ export class Logger {
   * log a message unless filtered by a level spec.
   */
   log(rawMessage: MetalogMessage): boolean {
-    const level: Level = Level.forName(rawMessage.level);
+    let refs: boolean = false;
+    let notif: boolean = false;
+    let levelName: string = rawMessage.label;
+    
+    // plain 'notif' label is logged as 'info' level
+    if (levelName === 'notif') {
+      notif = true;
+      levelName = 'info';
+    }
+    
+    if (_.includes(levelName, 'Refs')) {
+      refs = true;
+      levelName = levelName.replace('Refs', '');
+    }
+    
+    if (_.includes(levelName, 'Notif')) {
+      notif = true;
+      levelName = levelName.replace('Notif', '');
+    }
+    
+    const level: Level = Level.forName(levelName);
     const query: SpecQuery = _.pick(
       rawMessage,
       ['filename', 'parentPath', 'content']
@@ -350,6 +399,8 @@ export class Logger {
     // form the log message
     const logMessage: LogMessage = {
       level,
+      refs,
+      notif,
       formattedLevel: this.constructor.formatLevel(level),
       date: now,
       formattedDate: this.constructor.formatDate(now, this.dateFormat),
@@ -414,9 +465,9 @@ export class Logger {
   }
   
   /**
-  * log the message in the node environment, where we don't need to fuck with
+  * log the message in node, where we don't need to fuck with
   * values vs. references like we do on the browser since it get spits out
-  * text. we also have colors there.
+  * text at that time. we also have colors there (easily).
   * 
   * gonna try out the `print` npm package for display.
   * 
@@ -431,15 +482,29 @@ export class Logger {
     const dumps: Array<string> = _.map(message.content, print);
     
     this.getConsoleFunction(message.level).call(console, header, ...dumps);
+    
+    // send a notif if needed
+    if (message.notif) {
+      this.notify(message);
+    }
   }
   
+  /**
+  * log the message in the browser, where we want to log the actual
+  * objects so we can explore them in the console, but usually want to log
+  * snapshots of the values as they were at the times they were logged.
+  */
   logInBrowser(message: LogMessage): void {
     const header: string = this.constructor.formatHeader(
       message,
       this.browserHeaderFormat
     );
     
-    this.getConsoleFunction(message.level).call(console, header, ...message.content)
+    this.getConsoleFunction(message.level).call(
+      console,
+      header,
+      ...(message.refs ? message.content : snapshot(message.content))
+    );
   }
   
 } // class Logger

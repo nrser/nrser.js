@@ -69,6 +69,8 @@ describe('metalogger/Logger.js', () => {
       
       const message = {
         level,
+        refs: false,
+        notif: false,
         formattedLevel: Logger.formatLevel(level),
         date: date,
         formattedDate: Logger.formatDate(date, 'YYYY-MM-DD HH:mm:ss.SSS'),
