@@ -133,7 +133,7 @@ export class Logger {
     warn: '#d39100',
     info: '#337ab7',
     debug: '#5c6370',
-    trace: '#7b98ac',
+    trace: '#5b6770',
   };
   
   static NODE_COLORS = {
