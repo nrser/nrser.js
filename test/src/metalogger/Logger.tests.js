@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { itMaps2 } from '../../../lib/testing.js';
 import { Logger } from '../../../lib/metalogger/Logger';
 import { Level, LEVEL_NAME_PAD_LENGTH } from '../../../lib/metalogger/Level';
+import { LevelSpec } from '../../../lib/metalogger/LevelSpec';
 import type { LevelName, LevelRank } from '../../../lib/metalogger/Level';
 
 describe('metalogger/Logger.js', () => {
@@ -15,8 +16,8 @@ describe('metalogger/Logger.js', () => {
           f(Level.ERROR), (console.error || console.log),
           f(Level.WARN), (console.warn || console.log),
           f(Level.INFO), (console.info || console.log),
-          f(Level.DEBUG), console.log,
-          f(Level.TRACE), console.log,
+          f(Level.DEBUG), (console.debug || console.log),
+          f(Level.TRACE), (console.debug || console.log),
         ],
       })
     }); // #getConsoleFunction
@@ -89,6 +90,41 @@ describe('metalogger/Logger.js', () => {
         ]
       });
     }); // .formatDate
+    
+    describe("#pushSpec", () => {
+      const logger = new Logger();
+      const spec = logger.pushSpec({
+        file: '/a/b/c.js',
+        level: 'info',
+      });
+      expect(spec).to.be.instanceof(LevelSpec);
+      expect(logger.specs.length).to.eql(1);
+      expect(logger.specs[0]).to.eql(spec);
+      
+      const spec2 = logger.pushSpec({
+        file: "/x/y/z.js",
+        level: "debug",
+      });
+      expect(logger.specs.length).to.eql(2);
+      expect(logger.specs[0]).to.eql(spec);
+      expect(logger.specs[1]).to.eql(spec2);
+    }); // #pushSpec
+    
+    describe("#shouldLog", () => {
+      const logger = new Logger();
+      const spec = logger.pushSpec({
+        file: '/a/b/c.js',
+        level: 'info',
+      });
+      const query = {
+        filename: '/a/b/c.js',
+        parentPath: [],
+        content: [],
+      };
+      
+      expect(logger.shouldLog(Level.DEBUG, query)).to.be.false;
+      expect(logger.shouldLog(Level.INFO, query)).to.be.true;
+    });
     
   }); // Logger
 }); // metalogger/Logger.js

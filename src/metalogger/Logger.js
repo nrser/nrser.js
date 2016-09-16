@@ -10,6 +10,7 @@
 import _ from 'lodash';
 import t from 'tcomb';
 import minimatch from 'minimatch';
+import chalk from 'chalk';
 
 import { IS_NODE, IS_BROWSER } from '../env';
 import print from '../print';
@@ -22,11 +23,6 @@ import type { SpecQuery, SpecProps } from './LevelSpec';
 import { snapshot } from './snapshot';
 
 // optional requires that may or may not be present
-
-let clc;
-try {
-  clc = require('cli-color');
-} catch (e) {}
 
 let notifier;
 try {
@@ -99,25 +95,6 @@ type LogMessage = {
   content: Array<*>,
 }
 
-// constants
-// =========
-
-const IDENTITY = function(x) { return x; };
-
-const COLORS = (IS_NODE && clc) ? {
-  error: clc.red.bold,
-  warn: clc.yellow,
-  info: clc.bold,
-  debug: clc.blueBright,
-  trace: clc.blackBright,
-} : {
-  error: IDENTITY,
-  warn: IDENTITY,
-  info: IDENTITY,
-  debug: IDENTITY,
-  trace: IDENTITY,
-};
-
 export class Logger {
   lastMessageDate: ?Date;
   specs: Array<LevelSpec>;
@@ -149,6 +126,22 @@ export class Logger {
     'mm':   (d: Date): string => _.padStart(d.getMinutes(), 2, "0"),
     'ss':   (d: Date): string => _.padStart(d.getSeconds(), 2, "0"),
     'SSS':  (d: Date): string => _.padStart(d.getMilliseconds(), 3, "0"),
+  };
+  
+  static BROWSER_COLORS = {
+    error: '#d8292f',
+    warn: '#d39100',
+    info: '#337ab7',
+    debug: '#5c6370',
+    trace: '#7b98ac',
+  };
+  
+  static NODE_COLORS = {
+    error: chalk.red,
+    warn: chalk.yellow,
+    info: chalk.blue,
+    debug: chalk.cyan,
+    trace: chalk.gray,
   };
   
   // static methods
@@ -269,7 +262,7 @@ export class Logger {
   * returns the spec.
   */
   pushSpec(spec: LevelSpec | SpecProps): LevelSpec {
-    if (!spec instanceof LevelSpec) {
+    if (!(spec instanceof LevelSpec)) {
       spec = new LevelSpec(spec);
     }
     
@@ -283,7 +276,7 @@ export class Logger {
   * returns the spec.
   */
   unshiftSpec(spec: LevelSpec | SpecProps): LevelSpec {
-    if (!spec instanceof LevelSpec) {
+    if (!(spec instanceof LevelSpec)) {
       spec = new LevelSpec(spec);
     }
     
@@ -437,13 +430,18 @@ export class Logger {
   * get the proper `console.*` function for the log level.
   */
   getConsoleFunction(level: Level): Function {
+    if (IS_BROWSER) {
+      return console.trace || console.log;
+    }
+    
     let fn: Function;
     
     switch (level.name) {
       case 'trace':
+        return console.debug || console.log;
+        
       case 'debug':
-        fn = console.log;
-        break;
+        return console.debug || console.log;
         
       case 'info': 
         fn = console.info || console.log;
@@ -474,9 +472,11 @@ export class Logger {
   * https://www.npmjs.com/package/print
   */
   logInNode(message: LogMessage): void {
-    const header: string = this.constructor.formatHeader(
-      message,
-      this.nodeHeaderFormat
+    const header: string = this.constructor.NODE_COLORS[message.level.name](
+      this.constructor.formatHeader(
+        message,
+        this.nodeHeaderFormat
+      )
     );
     
     const dumps: Array<string> = _.map(message.content, print);
@@ -502,7 +502,8 @@ export class Logger {
     
     this.getConsoleFunction(message.level).call(
       console,
-      header,
+      `%c ${ header }`,
+      `color: ${ this.constructor.BROWSER_COLORS[message.level.name] };`,
       ...(message.refs ? message.content : snapshot(message.content))
     );
   }
