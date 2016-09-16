@@ -52,5 +52,17 @@ describe('metalogger/LevelSpec.js', () => {
         expect(spec.matchPath(['a', 'b', 'c'])).to.be.true;
       });
     }); // path spec
+    
+    describe("content spec", () => {
+      const spec = new LevelSpec({
+        level: "info",
+        content: "^/imports/ui/posts/All.jsx:All",
+      });
+      
+      expect(
+        spec.matchContent(["/imports/ui/posts/All.jsx:All", "mounted."])
+      ).to.be.true;
+      
+    }); // content spec
   }); // LevelSpec
 });

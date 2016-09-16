@@ -21,13 +21,16 @@ export class LevelSpec {
   level: Level;
   file: ?string;
   path: ?string;
-  content: ?string;
+  content: ?RegExp;
   
   constructor(props: SpecProps) {
     this.level = Level.forName(props.level);
     this.file = props.file;
     this.path = props.path;
-    this.content = props.content;
+    
+    if (props.content) {
+      this.content = new RegExp(props.content);
+    }
   }
   
   match(query: SpecQuery): boolean {
@@ -69,6 +72,9 @@ export class LevelSpec {
       return true;
     }
     
-    return false;
+    // otherwise join all the strings in the message content array and
+    // see if the content RegExp matches
+    
+    return !!_.filter(content, _.isString).join(' ').match(this.content);
   }
 }

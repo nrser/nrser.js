@@ -129,10 +129,10 @@ export class Logger {
   };
   
   static BROWSER_COLORS = {
-    error: '#d8292f',
-    warn: '#d39100',
-    info: '#337ab7',
-    debug: '#323e48',
+    error: '#CC0C39', //'#d8292f',
+    warn: '#E6781E', // '#d39100',
+    info: '#1693A7', // '#337ab7',
+    debug: '#AB3E5B',
     trace: '#7c868d',
   };
   
