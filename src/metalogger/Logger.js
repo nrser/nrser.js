@@ -132,8 +132,8 @@ export class Logger {
     error: '#CC0C39', //'#d8292f',
     warn: '#E6781E', // '#d39100',
     info: '#1693A7', // '#337ab7',
-    debug: '#AB3E5B',
-    trace: '#7c868d',
+    debug: '#00548b',
+    trace: '#a3aaae',
   };
   
   static NODE_COLORS = {
