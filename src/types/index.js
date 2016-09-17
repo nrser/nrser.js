@@ -23,8 +23,8 @@ export function instanceOf(klass, name) {
 
 export function subclassOf(klass, name) {
   return t.irreducible(
-    name || `SubclassOf<${ klass.name }`,
-    obj => obj.prototype instanceof klass
+    name || `SubclassOf<${ klass.name }>`,
+    obj => obj && obj.prototype && (obj.prototype instanceof klass)
   );
 }
 
