@@ -11,7 +11,11 @@ export function match(value, ...clauses) {
     
     // console.log({pattern, output});
 
-    if ((t.isType(pattern) && pattern.is(value)) || value === pattern) {
+    if (
+      (t.isType(pattern) && pattern.is(value)) ||
+      (typeof pattern === 'function' && value instanceof pattern) ||
+      value === pattern
+    ) {
       if (_.isFunction(output)) {
         return output(value);
       } else {
