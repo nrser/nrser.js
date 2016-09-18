@@ -22,6 +22,7 @@ export class LevelSpec {
   file: ?string;
   path: ?string;
   content: ?RegExp;
+  _cache: Object;
   
   constructor(props: SpecProps) {
     this.level = Level.forName(props.level);
@@ -31,6 +32,15 @@ export class LevelSpec {
     if (props.content) {
       this.content = new RegExp(props.content);
     }
+    
+    this._cache = {};
+  }
+  
+  cache(key, getter) {
+    if (!_.has(this._cache, key)) {
+      this._cache[key] = getter();
+    }
+    return this._cache[key];
   }
   
   match(query: SpecQuery): boolean {
@@ -46,8 +56,9 @@ export class LevelSpec {
     if (!this.file) {
       return true;
     }
-    
-    return minimatch(filename, this.file);
+    return this.cache(`file:${ filename }`, () => {
+      return minimatch(filename, this.file);
+    });
   }
   
   matchPath(parentPath: Array<string>): boolean {
