@@ -5,29 +5,34 @@ import { Level } from './Level';
 import type { LevelName } from './Level';
 
 export type SpecQuery = {
-  filename: string,
-  parentPath: Array<string>,
+  path: string,
   content: Array<*>,
 };
 
 export type SpecProps = {
   level: LevelName,
-  file?: string,
   path?: string,
   content?: string,
 };
 
 export class LevelSpec {
   level: Level;
-  file: ?string;
   path: ?string;
+  pathPattern: ?string;
   content: ?RegExp;
   _cache: Object;
   
+  static minimatchize(s: string): string {
+    return s.replace(/\:/g, '/');
+  }
+  
   constructor(props: SpecProps) {
     this.level = Level.forName(props.level);
-    this.file = props.file;
-    this.path = props.path;
+    
+    if (props.path) {
+      this.path = props.path;
+      this.pathPattern = this.constructor.minimatchize(props.path)
+    }
     
     if (props.content) {
       this.content = new RegExp(props.content);
@@ -45,36 +50,20 @@ export class LevelSpec {
   
   match(query: SpecQuery): boolean {
     return _.every([
-      this.matchFile(query.filename),
-      this.matchPath(query.parentPath),
+      this.matchPath(query.path),
       this.matchContent(query.content),
     ]);
   }
   
-  matchFile(filename: string): boolean {
-    // there is no file info so it always matches
-    if (!this.file) {
-      return true;
-    }
-    return this.cache(`file:${ filename }`, () => {
-      return minimatch(filename, this.file);
-    });
-  }
-  
-  matchPath(parentPath: Array<string>): boolean {
+  matchPath(path: string): boolean {
     // there is no path info so it always matches
-    if (!this.path) {
+    if (!this.pathPattern) {
       return true;
     }
     
-    // check exact match
-    if (parentPath.join(':') === this.path) {
-      return true;
-    }
-    
-    // check 
-    
-    return false;
+    return this.cache(`path=${ path }`, () => {
+      return minimatch(this.constructor.minimatchize(path), this.pathPattern);
+    });
   }
   
   matchContent(content: Array<*>): boolean {

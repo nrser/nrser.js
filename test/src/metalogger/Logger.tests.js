@@ -113,12 +113,11 @@ describe('metalogger/Logger.js', () => {
     describe("#shouldLog", () => {
       const logger = new Logger();
       const spec = logger.pushSpec({
-        file: '/a/b/c.js',
+        path: '/a/b/c.js:8',
         level: 'info',
       });
       const query = {
-        filename: '/a/b/c.js',
-        parentPath: [],
+        path: '/a/b/c.js:8',
         content: [],
       };
       

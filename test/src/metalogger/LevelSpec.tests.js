@@ -7,51 +7,37 @@ import { Level } from '../../../lib/metalogger/Level';
 describe('metalogger/LevelSpec.js', () => {
   describe('LevelSpec', () => {
     
-    describe("file spec", () => {      
-      it("matches extact filename", () => {
+    describe("path spec", () => {      
+      it("matches exact filename", () => {
         const spec = new LevelSpec({
-          file: "/imports/api/index.js",
+          path: "/imports/api/index.js:**",
           level: "error"
         });
         
         expect(spec.level).to.be.equal(Level.ERROR);
         
-        expect(spec.matchFile("/imports/api/index.js")).to.be.true;
-        expect(spec.matchFile("/imports/blah/blow.me")).to.be.false;
+        expect(spec.matchPath("/imports/api/index.js:8")).to.be.true;
+        expect(spec.matchPath("/imports/blah/blow.me:69")).to.be.false;
         
         expect(spec.match({
-          filename: "/imports/api/index.js",
-          parentPath: [],
+          path: "/imports/api/index.js:f:8",
           content: [],
         })).to.be.true;
       });
       
       it("matches with globs", () => {
         const spec = new LevelSpec({
-          file: "/imports/api/**/*",
+          path: "/imports/api/**/*",
           level: "warn"
         });
         
         expect(spec.level).to.be.equal(Level.WARN);
         
-        expect(spec.matchFile("/imports/api/index.js")).to.be.true;
-        expect(spec.matchFile("/imports/api/x/y/z.ee")).to.be.true;
-        expect(spec.matchFile("/imports/ui/whatever.js")).to.be.false;
+        expect(spec.matchPath("/imports/api/index.js")).to.be.true;
+        expect(spec.matchPath("/imports/api/x/y/z.ee")).to.be.true;
+        expect(spec.matchPath("/imports/ui/whatever.js")).to.be.false;
       });
     }); // file spec
-    
-    describe("path spec", () => {
-      it("matches exactly", () => {
-        const spec = new LevelSpec({
-          level: "info",
-          path: "a:b:c",
-        });
-        
-        expect(spec.level).to.be.equal(Level.INFO);
-        
-        expect(spec.matchPath(['a', 'b', 'c'])).to.be.true;
-      });
-    }); // path spec
     
     describe("content spec", () => {
       const spec = new LevelSpec({

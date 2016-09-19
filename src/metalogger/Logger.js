@@ -371,11 +371,13 @@ export class Logger {
       levelName = levelName.replace('Notif', '');
     }
     
+    const path: string = this.constructor.formatPath(rawMessage);
+    
     const level: Level = Level.forName(levelName);
-    const query: SpecQuery = _.pick(
-      rawMessage,
-      ['filename', 'parentPath', 'content']
-    );
+    const query: SpecQuery = {
+      content: rawMessage.content,
+      path,
+    };
     
     // bail now if there is a spec filtering out this message
     if (!this.shouldLog(level, query)) {
@@ -397,7 +399,7 @@ export class Logger {
       formattedLevel: this.constructor.formatLevel(level),
       date: now,
       formattedDate: this.constructor.formatDate(now, this.dateFormat),
-      path: this.constructor.formatPath(rawMessage),
+      path,
       delta,
       formattedDelta: this.constructor.formatDelta(delta),
       content: rawMessage.content,
