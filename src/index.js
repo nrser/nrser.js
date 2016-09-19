@@ -21,6 +21,7 @@ export const t = types;
 export const data = require('./data');
 export const d = data;
 
+export const print = require('./print');
 export const metalogger = require('./metalogger');
 
 export let fs;
