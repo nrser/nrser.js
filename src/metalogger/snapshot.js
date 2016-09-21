@@ -20,7 +20,6 @@ var Stack = require('lodash/_Stack'),
     initCloneObject = require('lodash/_initCloneObject'),
     isArray = require('lodash/isArray'),
     isBuffer = require('lodash/isBuffer'),
-    isHostObject = require('lodash/_isHostObject'),
     isObject = require('lodash/isObject'),
     keys = require('lodash/keys');
 
@@ -117,9 +116,6 @@ function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
       return cloneBuffer(value, isDeep);
     }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-      if (isHostObject(value)) {
-        return new SNAPSHOT_REF(value);
-      }
       result = initCloneObject(isFunc ? {} : value);
       if (!isDeep) {
         return copySymbols(value, baseAssign(result, value));
