@@ -27,7 +27,7 @@ export function groupByEach<V>(
   context?: Object
 ): {[group: string]: Array<V>} {
   // 
-  const result: {[group: string]: Array<V>} = {};
+  let result: {[group: string]: Array<V>} = {};
   
   _.each(collection, (value: V, index: string | number): void => {
     const groups: Array<string> = getGroups.call(
