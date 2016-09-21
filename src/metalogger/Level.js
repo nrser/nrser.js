@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import type { $Refinement } from 'tcomb';
+import * as errors from '../errors';
 
 const LEVELS = {
   fatal: 0,
@@ -24,7 +25,7 @@ function isLevelName(string: string) {
   return _.has(LEVELS, string);
 }
 
-export type LevelName = string & $Refinement<typeof isLevelName>;
+export type LevelName = "fatal" | "error" | "warn" | "info" | "debug" | "trace";
 
 function isLevelRank(number: number) {
   return _.includes(LEVEL_RANKS, number);
@@ -53,7 +54,23 @@ export class Level {
   ];
   
   static forName(name: LevelName): Level {
-    return this[name.toUpperCase()];
+    // flow doesn't like dynamic prop access...
+    switch (name) {
+      case 'fatal':
+        return this.FATAL;
+      case 'error':
+        return this.ERROR;
+      case 'warn':
+        return this.WARN;
+      case 'info':
+        return this.INFO;
+      case 'debug':
+        return this.DEBUG;
+      case 'trace':
+        return this.TRACE;
+      default:
+        throw new errors.ValueError(`bad level name: ${ name }`, {name});
+    }
   }
   
   constructor({name, rank}: {name: LevelName, rank: LevelRank}) {
