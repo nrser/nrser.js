@@ -57,5 +57,10 @@
   "bugs": {
     "url": "https://github.com/nrser/nrser.js/issues"
   },
-  "homepage": "https://github.com/nrser/nrser.js#readme"
+  "homepage": "https://github.com/nrser/nrser.js#readme",
+  "browser": {
+    "fs-extra": false,
+    "node-notifier": false,
+    "cli-color": false
+  }
 }
