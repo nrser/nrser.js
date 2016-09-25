@@ -3,9 +3,12 @@ import _ from 'lodash';
 import { execSync as sysExecSync } from 'child_process';
 import util from 'util';
 import Promise from 'promise';
-export untildify from 'untildify';
 
 import { squish, tag, deindent } from './string.js';
+import print from './print';
+
+export untildify from 'untildify';
+
 
 export function chdir(dest, block) {
   if (block) {
@@ -62,7 +65,7 @@ export function esc(strings, ...values) {
 // old name
 export const sh = esc;
 
-const putsTag = tag(s => _.isString(s) ? s : util.inspect(s));
+const putsTag = tag(s => _.isString(s) ? s : print(s));
 
 export function puts(strings, ...values) {
   console.log(deindent(putsTag(strings, ...values)));

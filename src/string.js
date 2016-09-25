@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
 * replace consecutive whitespace with a single space and removes leading
 * and trailing whitespace.
@@ -66,42 +68,57 @@ export function indent(str, {amount = 2, indent = null}) {
   indent + str.split("\n").join(`\n${ indent }`);
 } // indent()
 
-// from https://github.com/deanlandolt/deindent/blob/9e18a472aace3abe652ea4a73e1b9d6ebe84584c/index.js
-export function deindent(callSite) {
-  let args = [].slice.call(arguments, 1);
+/**
+* split a string into lines.
+*/
+export function lines(input: string): Array<string> {
+  var re=/\r\n|\n\r|\n|\r/g;
 
-  function format(str) {
+  return input.replace(re,"\n").split("\n");
+}
 
-    let size = -1;
+/**
+* gets the common prefix for an array of strings, which will be '' if they
+* don't have any.
+*/
+export function commonPrefix(strings: Array<string>): string {
+  var A= strings.concat().sort(), 
+  a1= A[0], a2= A[A.length-1], L= a1.length, i= 0;
+  while(i<L && a1.charAt(i)=== a2.charAt(i)) i++;
+  return a1.substring(0, i);
+}
 
-    return str.replace(/\n([ \f\r\t\v]*)/g, function (m, m1) {
+export function isWhitespace(input: string): boolean {
+  return !!input.match(/^\s+$/m);
+}
 
-      if (size < 0) {
-        size = m1.replace(/\t/g, '    ').length;
-      }
+export function nonWhitespaceLines(input: string): Array<string> {
+  return _.reject(lines(input), line => line.match(/^\s*$/));
+}
 
-      return '\n' + m1.slice(Math.min(m1.length, size));
-    });
+export function leadingWhitespace(input: string): string {
+  const match = input.match(/^\s+/);
+  if (match) {
+    return match[0];
   }
+  
+  return '';
+}
 
-  if (typeof callSite === 'string') {
-    return format(callSite);
-  }
+export function findCommonIndent(input: string): string {
+  return commonPrefix(
+    _.map(nonWhitespaceLines(input), line => leadingWhitespace(line))
+  );
+}
 
-  if (typeof callSite === 'function') {
-    return function () {
-      return format(callSite.apply(null, arguments));
-    };
-  }
-
-  let output = callSite
-    .slice(0, args.length + 1)
-    .map(function (text, i) {
-      return (i === 0 ? '' : args[i - 1]) + text
-    })
-    .join('');
-
-  return format(output);
+export function deindent(input: string): string {
+  const indent = findCommonIndent(input);
+  
+  const regexp = new RegExp(`^${ indent }`, 'g');
+  
+  return _.map(lines(input), line => {
+    return line.replace(regexp, '');
+  }).join("\n");
 }
 
 export function pad(d, n, p = '0') {
