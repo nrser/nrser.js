@@ -52,7 +52,7 @@ const name = 'BaseError';
 */
 function constructor(message, details) {
   this.error = this.constructor.name;
-  this.reason = message;
+  this.reason = message || this.constructor.defaultMessage;
   this.message = `${ message } [${ this.error }]`;
   this.details = details;  
 }

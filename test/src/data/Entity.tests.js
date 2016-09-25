@@ -327,5 +327,25 @@ describe("data/Entity.js", () => {
       
     }); // strict 
     
+    context("nested entities", () => {
+      class Model extends Entity {
+        static meta = Entity.extendMeta({
+          props: {
+            _id: t.String,
+          }
+        });
+      }
+      
+      class Post extends Model {
+        static meta = Model.extendMeta({
+          props: {
+            body: t.String,
+          }
+        })
+      }
+      
+      
+    }); // nested entities
+    
   }); // Entity
 }); // data/Entity.js
