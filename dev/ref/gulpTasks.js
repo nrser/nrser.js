@@ -224,24 +224,24 @@ module.exports = function(gulp, options) {
       .on('error', _.curry(onError)('test ' + name, null));
   }
   
-  /**
-  * clean:* tasks
-  * 
-  * clean individual dest directories.
-  */
-  _.each(buildDirs, (bd) => {
-    gulp.task('clean:' + bd.name, () => {
-      return gulp.src(bd.src, {read: false})
-        .pipe(cleanDest(bd.dest));
-    });
-  });
+  // /**
+  // * clean:* tasks
+  // * 
+  // * clean individual dest directories.
+  // */
+  // _.each(buildDirs, (bd) => {
+  //   gulp.task('clean:' + bd.name, () => {
+  //     return gulp.src(bd.src, {read: false})
+  //       .pipe(cleanDest(bd.dest));
+  //   });
+  // });
   
-  /**
-  * clean task
-  * 
-  * clean all dest directories.
-  */
-  gulp.task('clean', _.map(buildDirs, bd => 'clean:' + bd.name));
+  // /**
+  // * clean task
+  // * 
+  // * clean all dest directories.
+  // */
+  // gulp.task('clean', _.map(buildDirs, bd => 'clean:' + bd.name));
   
   /**
   * build:* tasks
@@ -330,28 +330,28 @@ module.exports = function(gulp, options) {
   * 
   * this can be overridden in the packages themselves to add more stuff.
   */
-  gulp.task('watch', ['test:watch']);
+  // gulp.task('watch', ['test:watch']);
   
-  const tempGlob = 'tmp/gulpTest/**/*';
-  
-  gulp.task('temp:T1', () => {
-    gulp.src(tempGlob)
-      .pipe(debug({title: 'T1'}))
-      .pipe(babel())
-      .on('error', function(error) {
-        gutil.log("[temp:T1]", "error: " + error.message);
-        this.emit('end');
-      });
-  });
-  
-  gulp.task('temp:T2', ['temp:T1'], () => {
-    gulp.src(tempGlob)
-      .pipe(debug({title: 'T2'}));
-  });
-  
-  gulp.task('temp:watch', ['temp:T2'], () => {
-    gulp.watch(tempGlob, ['temp:T2']);
-  });
+  // const tempGlob = 'tmp/gulpTest/**/*';
+  // 
+  // gulp.task('temp:T1', () => {
+  //   gulp.src(tempGlob)
+  //     .pipe(debug({title: 'T1'}))
+  //     .pipe(babel())
+  //     .on('error', function(error) {
+  //       gutil.log("[temp:T1]", "error: " + error.message);
+  //       this.emit('end');
+  //     });
+  // });
+  // 
+  // gulp.task('temp:T2', ['temp:T1'], () => {
+  //   gulp.src(tempGlob)
+  //     .pipe(debug({title: 'T2'}));
+  // });
+  // 
+  // gulp.task('temp:watch', ['temp:T2'], () => {
+  //   gulp.watch(tempGlob, ['temp:T2']);
+  // });
   
   return {
     name: name,
