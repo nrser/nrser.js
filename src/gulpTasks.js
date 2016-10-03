@@ -14,6 +14,8 @@ import util from 'util';
 import gaze from 'gaze';
 import { exec } from 'child_process';
 
+type TaskName = string;
+
 export const BuildDir = t.struct({
   name: t.String,
   src: t.String,
@@ -32,6 +34,21 @@ export const BuildDir = t.struct({
 // }
 
 /**
+* dumps a value to a string in a way that shouldn't ever fail
+*/
+export function dump(value: *): string {
+  try {
+    const print = require('./print');
+    return print(value);
+    
+  } catch (error) {
+    const inspect = require('util').inspect;
+    return inspect(value);
+    
+  }
+}
+
+/**
 * reads the `package.json` file in the current directory to get the
 * package name, falling back to the directory name.
 */
@@ -45,6 +62,11 @@ function getName() {
 
 export class GulpTasks {
   constructor(gulp, {
+    // when true calls {#createTasks} at end of constructor
+    createTasks = true,
+    
+    cwd = process.cwd(),
+    
     // name of the package
     name = getName(),
     
@@ -77,6 +99,8 @@ export class GulpTasks {
   } = {}) {
     this.gulp = gulp;
     
+    this.cwd = cwd;
+    
     this.name = name;
     
     this.babelExtsStr = `{${ babelExts.join(',') }}`;
@@ -95,29 +119,87 @@ export class GulpTasks {
       }),
     ];
     
-    this.createCleanTasks();
-    this.createBabelTasks();
-    this.createMochaTask();
-    
-    this.createBabelWatchTasks();
+    if (createTasks) {
+      this.createTasks();
+    }
   }
   
   // util
   // ====
   
-  notify(taskName, status, message) {
+  createTasks() {
+    this.createCleanTasks();
+    this.createBabelTasks();
+    this.createMochaTask();
+    
+    this.createBabelWatchTasks();
+    
+    this.gulp.task('watch', ['watch:babel']);
+    this.gulp.task('test', ['mocha']);
+  }
+  
+  /**
+  * dispatches a notification.
+  */
+  notify(taskName: TaskName, status: string, message: string): void {
     notifier.notify({
       title: `${ this.name } [${ taskName }] ${ status }`,
       message,
     });
   }
   
-  onError(taskName, error, log = true) {
+  /**
+  * dispatches a notification of the error.
+  */
+  notifyOfError(taskName: TaskName, error: Error): void {
+    let message = error.message;
+    
+    gutil.log(message);
+    
+    this.notify(taskName, 'ERROR', message);
+  }
+  
+  /**
+  * logs an error, including a notification by default.
+  */
+  logError(
+    taskName: TaskName,
+    error: Error,
+    {
+      details,
+      notify = true,
+    } = {}
+  ) /* tcomb plugin bug #129 : void */ {
+    gutil.log(`[${ taskName }] ERROR`);
+    
+    if (error.stack) {
+      gutil.log(error.stack.toString());
+    } else {
+      gutil.log(error.toString());
+    }
+    
+    if (details) {
+      let detailsMessage = `\ndetails:\n`;
+      if (typeof details === 'string') {
+        detailsMessage += details;
+      } else {
+        detailsMessage += dump(details);
+      }
+      
+      gutil.log(detailsMessage);
+    }
+    
+    if (notify) {
+      this.notifyOfError(taskName, error);
+    }
+  }
+  
+  onError(taskName, error) {
     this.notify(taskName, 'ERROR', error.message);
     
     // in some situations gulp will log the error on it's own, so
     // allow this to be skipped
-    if (log) {      
+    if (log) {
       gutil.log(`[${ taskName }] ERROR`);
       
       if (error.stack) {
@@ -128,34 +210,65 @@ export class GulpTasks {
     }
   }
   
-  clean(taskName, dest, callback) {
+  clean(taskName: TaskName, dest, callback) {
     exec(`git clean -fdX ${ dest }`, (error, stdout, stderr) => {
       if (error) {
-        // let gulp know we fucked up
-        callback(error);
+        this.logError(taskName, error);
+        
+        // let caller know there was a problem if needed
+        if (callback) {
+          callback(error);
+        }
         
       } else {
         // log any outputs
         _.each({stdout, stderr}, (output, name) => {
           if (output) {
             gutil.log(`[${ taskName }]`, `${ name }: \n${ output }`);
-          }  
-        })
+          }
+        });
         
-        // let gulp know we're done here
-        callback();
+        // notify the user
+        this.notify(taskName, 'CLEANED', dest);
+        
+        // let caller know we're done here if needed
+        if (callback) {
+          callback();
+        }
       }
     });
   }
   
-  babel(taskName, src, dest) {
+  /**
+  * runs the babel transform stream from a source to a destination.
+  * 
+  * if `callback` is provided, calls with an error if one occurs or
+  * with no arguments when done.
+  */
+  babel(taskName, src, dest, callback) {
+    const onError = (error: Error) => {
+      this.logError(taskName, error, {src, dest});
+      
+      if (callback) {
+        callback(error);
+      }
+    };
+    
     return this.gulp
       .src(src)
+      
       .pipe(babel())
-      .on('error', this.onError.bind(this, taskName))
+      .on('error', onError)
+      
       .pipe(this.gulp.dest(dest))
+      .on('error', onError)
+      
       .on('end', () => {
         this.notify(taskName, 'COMPILED', `${ src } => ${ dest }`);
+        
+        if (callback) {
+          callback();
+        }
       });
   }
   
@@ -189,10 +302,10 @@ export class GulpTasks {
   */
   createBabelTasks() {
     this.babelTaskNames = _.map(this.buildDirs, (bd) => {
-      const taskName = `babel:${ bd.name }`;
+      const taskName: TaskName = `babel:${ bd.name }`;
       
-      this.gulp.task(taskName, () => {
-        return this.babel(taskName, bd.src, bd.dest);
+      this.gulp.task(taskName, (callback) => {
+        this.babel(taskName, bd.src, bd.dest, callback);
       });
       
       return taskName;
@@ -224,53 +337,59 @@ export class GulpTasks {
     this.babelWatchTaskNames = _.map(this.buildDirs, (bd) => {
       const taskName = `watch:babel:${ bd.name }`;
       
+      const srcDir = bd.src.split('*')[0];
+      
       const log = function(...messages) {
         gutil.log(`[${ taskName }]`, ...messages);
       }
       
-      const relPath = function(toPath) {
-        return path.relative(process.cwd(), toPath);
+      const getSourceAndDest = (filepath) => {
+        const srcBase = path.resolve(this.cwd, bd.src.split('*')[0]);
+        const relative = path.relative(srcBase, filepath);
+        const src = path.relative(this.cwd, filepath);
+        const dest = path.relative(
+          this.cwd,
+          path.resolve(this.cwd, bd.dest, relative)
+        );
+        
+        return {src, dest};
       }
       
       this.gulp.task(taskName, (callback) => {
         gaze(bd.src, (initError, watcher) => {
           if (initError) {
+            // there was an error initializing the watcher
+            // this is the only time we callback and end the task
+            this.logError(taskName, error);
             callback(initError);
             return;
           }
           
           watcher.on('added', (filepath) => {
-            const rel = relPath(filepath);
+            const {src, dest} = getSourceAndDest(filepath);
             
-            log(`added ${ rel }`);
+            log(`ADDED   ${ src }.`);
             
-            this.babel(taskName, rel, bd.dest);
+            this.babel(taskName, src, bd.dest);
           });
           
           watcher.on('changed', (filepath) => {
-            const rel = relPath(filepath);
+            const {src, dest} = getSourceAndDest(filepath);
             
-            log(`changed ${ rel }`);
+            log(`CHANGED ${ src}.`);
             
-            this.babel(taskName, rel, bd.dest);
+            this.babel(taskName, src, bd.dest);            
           });
           
           watcher.on('deleted', (filepath) => {
-            const rel = relPath(filepath);
+            const {src, dest} = getSourceAndDest(filepath);
             
-            log(`deleted ${ rel }`);
+            log(`DELETED ${ src }.`);
             
-            throw "THIS DOESN'T WORK";
-            
-            this.clean(taskName, rel, (error) => {
-              if (error) {
-                this.onError(taskName, error);
-              } else {
-                this.notify(taskName, 'REMOVED', `${ rel } from ${ bd.dest }`);
-              }
-            });
+            this.clean(taskName, dest);
           });
-        });
+          
+        }); // gaze
       }); // task
       
       return taskName;
