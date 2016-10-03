@@ -15,17 +15,18 @@ export * from './object.js';
 export * from './string.js';
 export * from './match.js';
 
-export const types = require('./types');
-export const t = types;
+export * as types from './types';
+export * as t from './types';
 
-export const data = require('./data');
-export const d = data;
+export * as data from './data';
+export * as d  from './data';
 
-export const print = require('./print');
-export const metalogger = require('./metalogger');
+export {default as print} from './print';
+export * as metalogger from './metalogger';
 
 export let fs;
 
 if (IS_NODE) {
   fs = require('fs-extra');
 }
+
