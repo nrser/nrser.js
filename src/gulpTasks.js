@@ -194,22 +194,6 @@ export class GulpTasks {
     }
   }
   
-  onError(taskName, error) {
-    this.notify(taskName, 'ERROR', error.message);
-    
-    // in some situations gulp will log the error on it's own, so
-    // allow this to be skipped
-    if (log) {
-      gutil.log(`[${ taskName }] ERROR`);
-      
-      if (error.stack) {
-        gutil.log(error.stack.toString());
-      } else {
-        gutil.log(error.toString());
-      }
-    }
-  }
-  
   clean(taskName: TaskName, dest, callback) {
     exec(`git clean -fdX ${ dest }`, (error, stdout, stderr) => {
       if (error) {
