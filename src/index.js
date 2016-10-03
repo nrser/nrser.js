@@ -29,4 +29,3 @@ export let fs;
 if (IS_NODE) {
   fs = require('fs-extra');
 }
-

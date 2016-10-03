@@ -14,6 +14,8 @@ import util from 'util';
 import gaze from 'gaze';
 import { exec } from 'child_process';
 
+import { Scheduler } from './Scheduler';
+
 type TaskName = string;
 
 export const BuildDir = t.struct({
@@ -52,11 +54,11 @@ export function dump(value: *): string {
 * reads the `package.json` file in the current directory to get the
 * package name, falling back to the directory name.
 */
-function getName() {
+function getName(cwd = process.cwd()) {
   try {
     return JSON.parse(fs.readFileSync('./package.json')).name;
   } catch (error) {
-    return path.basename(process.cwd());
+    return path.basename(cwd);
   }
 }
 
@@ -68,7 +70,7 @@ export class GulpTasks {
     cwd = process.cwd(),
     
     // name of the package
-    name = getName(),
+    name = getName(cwd),
     
     // // directories that 
     // babelDirs = ['src', 'test/src'],
@@ -105,7 +107,7 @@ export class GulpTasks {
     
     this.babelExtsStr = `{${ babelExts.join(',') }}`;
     
-    this.buildDirs = [
+    this.babelDirs = [
       new BuildDir({
         name: 'src',
         src: `src/**/*.${ this.babelExtsStr }`,
@@ -117,6 +119,17 @@ export class GulpTasks {
         src: `test/src/**/*.${ this.babelExtsStr }`,
         dest: 'test/lib',
       }),
+    ];
+    
+    this.mochaDirs = [
+      {
+        name: 'test',
+        src: `test/lib/**/*.tests.${ this.babelExtsStr }`,
+        watch: [
+          `lib/**/*.${ this.babelExtsStr }`,
+          `test/lib/**/*.${ this.babelExtsStr }`,
+        ],
+      },
     ];
     
     if (createTasks) {
@@ -133,8 +146,9 @@ export class GulpTasks {
     this.createMochaTask();
     
     this.createBabelWatchTasks();
+    this.createMochaWatchTasks();
     
-    this.gulp.task('watch', ['watch:babel']);
+    this.gulp.task('watch', ['watch:babel', 'watch:mocha']);
     this.gulp.task('test', ['mocha']);
   }
   
@@ -257,16 +271,25 @@ export class GulpTasks {
   }
   
   mocha(taskName, src, callback) {
+    // fucking 'end' gets emitted after error?!
+    const onceCallback = _.once(callback);
+    
     this.gulp
-      .src(this.mochaFiles, {read: false})
+      .src(src, {read: false})
       .pipe(spawnMocha({growl: true}))
       .on('error', (error) => {
         // mocha takes care of it's own logging and notifs
         if (callback) {
-          callback(error);
+          onceCallback(error);
+        }
+      })
+      .on('end', () => {
+        if (callback) {
+          onceCallback();
         }
       });
   }
+  
   
   // low-level tasks
   // ===============
@@ -279,7 +302,7 @@ export class GulpTasks {
   * `clean` task that runs all of them in parallel.
   */
   createCleanTasks() {
-    this.cleanTaskNames = _.map(this.buildDirs, (bd) => {
+    this.cleanTaskNames = _.map(this.babelDirs, (bd) => {
       const taskName = `clean:${ bd.name }`;
       
       this.gulp.task(taskName, (callback) => {
@@ -297,7 +320,7 @@ export class GulpTasks {
   * task that runs all of them in parallel.
   */
   createBabelTasks() {
-    this.babelTaskNames = _.map(this.buildDirs, (bd) => {
+    this.babelTaskNames = _.map(this.babelDirs, (bd) => {
       const taskName: TaskName = `babel:${ bd.name }`;
       
       this.gulp.task(taskName, (callback) => {
@@ -310,14 +333,18 @@ export class GulpTasks {
     this.gulp.task('babel', this.babelTaskNames);
   }
   
-  
   createMochaTask() {
-    const taskName = 'mocha';
-    this.mochaFiles = `test/lib/**/*.${ this.babelExtsStr }`;
-    
-    this.gulp.task(taskName, (callback) => {
-      this.mocha(taskName, this.mochaFiles, callback);
+    this.mochaTaskNames = _.map(this.mochaDirs, (md) => {      
+      const taskName = `mocha:${ md.name }`;
+      
+      this.gulp.task(taskName, (callback) => {
+        this.mocha(taskName, md.src, callback);
+      });
+      
+      return taskName;
     });
+    
+    this.gulp.task('mocha', this.mochaTaskNames);
   }
   
   // high level tasks
@@ -327,7 +354,7 @@ export class GulpTasks {
   // 
   
   createBabelWatchTasks() {
-    this.babelWatchTaskNames = _.map(this.buildDirs, (bd) => {
+    this.babelWatchTaskNames = _.map(this.babelDirs, (bd) => {
       const taskName = `watch:babel:${ bd.name }`;
       
       const srcDir = bd.src.split('*')[0];
@@ -361,23 +388,23 @@ export class GulpTasks {
           watcher.on('added', (filepath) => {
             const {src, dest} = getSourceAndDest(filepath);
             
-            log(`ADDED   ${ src }.`);
+            log(`ADDED ${ src }.`);
             
-            this.babel(taskName, src, bd.dest);
+            this.babel(taskName, src, path.dirname(dest));
           });
           
           watcher.on('changed', (filepath) => {
             const {src, dest} = getSourceAndDest(filepath);
             
-            log(`CHANGED ${ src}.`);
+            log(`MODIFIED ${ src}.`);
             
-            this.babel(taskName, src, bd.dest);            
+            this.babel(taskName, src, path.dirname(dest));            
           });
           
           watcher.on('deleted', (filepath) => {
             const {src, dest} = getSourceAndDest(filepath);
             
-            log(`DELETED ${ src }.`);
+            log(`REMOVED ${ src }.`);
             
             this.clean(taskName, dest);
           });
@@ -389,6 +416,47 @@ export class GulpTasks {
     });
     
     this.gulp.task('watch:babel', this.babelWatchTaskNames);
+  }
+  
+  createMochaWatchTasks() {
+    this.mochaWatchTaskNames = _.map(this.mochaDirs, (md) => {
+      const taskName = `watch:mocha:${ md.name }`;
+      
+      const log = function(...messages) {
+        gutil.log(`[${ taskName }]`, ...messages);
+      }
+      
+      const scheduler = new Scheduler(
+        taskName,
+        (onDone) => {
+          this.mocha(taskName, md.src, onDone);
+        },
+        {log},
+      );
+      
+      this.gulp.task(taskName, (callback) => {
+        gaze(md.watch, (initError, watcher) => {
+          if (initError) {
+            // there was an error initializing the watcher
+            // this is the only time we callback and end the task
+            this.logError(taskName, error);
+            callback(initError);
+            return;
+          }
+          
+          watcher.on('all', (event, filepath) => {
+            log(`CHANGED ${ filepath }.`);
+            
+            scheduler.schedule();
+          });
+          
+        }); // gaze
+      }); // task
+      
+      return taskName;
+    });
+
+    this.gulp.task('watch:mocha', this.mochaWatchTaskNames);
   }
   
 }
