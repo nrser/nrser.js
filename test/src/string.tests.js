@@ -114,10 +114,10 @@ describe('string.js', () => {
     };
     
     const str = print(obj);
+    // 
+    // console.log(str);
+    // console.log(deindent(str));
     
-    console.log(str);
-    console.log(deindent(str));
-    
-    // expect(deindent(str)).to.equal(str);
+    expect(deindent(str)).to.equal(str);
   });
 });
