@@ -92,13 +92,11 @@ export class Entity {
     }
     
     this._values = _.mapValues(meta.props, (expected, key) => {
-      const actual = do {
-        if (_.has(values, key)) {
-          values[key]
-        } else {
-          meta.defaultProps[key]
-        }
-      }
+      const actual = _.has(values, key) ? (
+        values[key]
+      ) : (
+        meta.defaultProps[key]
+      )
       
       if (!_.has(this, key)) {
         Object.defineProperty(this, key, {
