@@ -21,7 +21,7 @@ export * as t from './types';
 export * as data from './data';
 export * as d  from './data';
 
-export {default as print} from './print';
+export { default as print } from './print';
 export * as metalogger from './metalogger';
 
 export let fs;
