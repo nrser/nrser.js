@@ -254,7 +254,7 @@ export class GulpTasks {
       }
     };
     
-    return this.gulp
+    this.gulp
       .src(src)
       
       .pipe(babel())
@@ -268,6 +268,18 @@ export class GulpTasks {
         
         if (callback) {
           callback();
+        }
+      });
+  }
+  
+  mocha(taskName, src, callback) {
+    this.gulp
+      .src(this.mochaFiles, {read: false})
+      .pipe(spawnMocha({growl: true}))
+      .on('error', (error) => {
+        // mocha takes care of it's own logging and notifs
+        if (callback) {
+          callback(error);
         }
       });
   }
@@ -319,11 +331,8 @@ export class GulpTasks {
     const taskName = 'mocha';
     this.mochaFiles = `test/lib/**/*.${ this.babelExtsStr }`;
     
-    this.gulp.task(taskName, () => {
-      return this.gulp
-        .src(this.mochaFiles, {read: false})
-        .pipe(spawnMocha({growl: true}))
-        .on('error', this.onError.bind(this, taskName));
+    this.gulp.task(taskName, (callback) => {
+      this.mocha(taskName, this.mochaFiles, callback);
     });
   }
   
