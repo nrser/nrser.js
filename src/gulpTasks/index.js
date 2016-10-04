@@ -14,6 +14,7 @@ import util from 'util';
 import gaze from 'gaze';
 import { exec } from 'child_process';
 
+import { Src } from './util';
 import { Scheduler } from './Scheduler';
 
 type TaskName = string;
@@ -279,6 +280,8 @@ export class GulpTasks {
       .pipe(spawnMocha({growl: true}))
       .on('error', (error) => {
         // mocha takes care of it's own logging and notifs
+        this.logError(taskName, error);
+        
         if (callback) {
           onceCallback(error);
         }
@@ -386,6 +389,8 @@ export class GulpTasks {
           }
           
           watcher.on('added', (filepath) => {
+            const src = new Src(filepath, bd.src);
+            
             const {src, dest} = getSourceAndDest(filepath);
             
             log(`ADDED ${ src }.`);
