@@ -143,7 +143,7 @@ export class GulpTasks {
   createTasks() {
     this.createCleanTasks();
     this.createBabelTasks();
-    this.createMochaTask();
+    this.createMochaTasks();
     
     this.createBabelWatchTasks();
     this.createMochaWatchTasks();
@@ -183,7 +183,7 @@ export class GulpTasks {
       details,
       notify = true,
     } = {}
-  ) /* tcomb plugin bug #129 : void */ {
+  ): void {
     gutil.log(`[${ taskName }] ERROR`);
     
     if (error.stack) {
@@ -333,7 +333,7 @@ export class GulpTasks {
     this.gulp.task('babel', this.babelTaskNames);
   }
   
-  createMochaTask() {
+  createMochaTasks() {
     this.mochaTaskNames = _.map(this.mochaDirs, (md) => {      
       const taskName = `mocha:${ md.name }`;
       
