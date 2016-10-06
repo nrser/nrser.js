@@ -1,14 +1,14 @@
 import chai, { expect } from 'chai';
 import { itMaps2 } from '../../lib/testing.js';
 import { GulpTasks } from '../../lib/gulpTasks';
-import { Src } from '../../lib/gulpTasks/util';
+import { hasGlobPatterns, Src } from '../../lib/gulpTasks/util';
 import gulp from 'gulp';
 
-function descMap(name, func, map) {
-  describe(name, () => {
-    itMaps2({func, map});
-  });
-}
+// function descMap(name, func, map) {
+//   describe(name, () => {
+//     itMaps2({func, map});
+//   });
+// }
 
 describe('gulpTasks', () => {
   describe('GulpTasks', () => {
@@ -24,5 +24,18 @@ describe('gulpTasks', () => {
       const src = new Src('src/**/*.js');
       expect(src.base).to.equal('src/');
     });
+  });
+  
+  describe('hasGlobPatterns()', () => {
+    itMaps2({
+      func: hasGlobPatterns,
+      map: (f, throws) => [
+        f(''), false,
+        f('src'), false,
+        f('src/index.js'), false,
+        f('src/**/*.js'), true,
+        f(), throws(TypeError),
+      ]
+    })
   });
 });

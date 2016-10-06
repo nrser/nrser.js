@@ -106,6 +106,12 @@ export class GulpTasks {
     
     this.name = name;
     
+    this.taskNames = {
+      babel: new Set(),
+      mocha: new Set(),
+      less: new Set(),
+    };
+    
     this.babelExtsStr = `{${ babelExts.join(',') }}`;
     
     this.babelDirs = [
@@ -244,7 +250,7 @@ export class GulpTasks {
   * if `callback` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  babel(taskName, src, dest, callback) {
+  babel(taskName: TaskName, src: Src, dest: string, callback) {
     const onError = (error: Error) => {
       this.logError(taskName, error, {src, dest});
       
@@ -254,7 +260,7 @@ export class GulpTasks {
     };
     
     this.gulp
-      .src(src)
+      .src(src.pattern, {base: src.base})
       
       .pipe(babel())
       .on('error', onError)
@@ -263,7 +269,7 @@ export class GulpTasks {
       .on('error', onError)
       
       .on('end', () => {
-        this.notify(taskName, 'COMPILED', `${ src } => ${ dest }`);
+        this.notify(taskName, 'COMPILED', `${ src.pattern } => ${ dest }`);
         
         if (callback) {
           callback();
@@ -324,17 +330,36 @@ export class GulpTasks {
   */
   createBabelTasks() {
     this.babelTaskNames = _.map(this.babelDirs, (bd) => {
-      const taskName: TaskName = `babel:${ bd.name }`;
-      
-      this.gulp.task(taskName, (callback) => {
-        this.babel(taskName, bd.src, bd.dest, callback);
-      });
-      
-      return taskName;
+      this.babelTask(bd.name, bd.src, bd.dest);
+    });
+  }
+  
+  babelTask(
+    name: string,
+    src: string,
+    dest: ?string = path.relative(
+      this.cwd,
+      path.join(src, this.conf.babel.dest)),
+  ): TaskName {
+    const taskName: TaskName = `babel:${ name }`;
+    
+    if (!hasGlobPatterns(src)) {
+      src += `**/*.${ this.conf.babel.exts.join(',') }`;
+    }
+    
+    this.gulp.task(taskName, (onDone) => {
+      this.babel(taskName, new Src(src), dest)
     });
     
-    this.gulp.task('babel', this.babelTaskNames);
+    this.taskNames.babel.add(taskName);
+    
+    this.gulp.task('babel', Array.from(this.taskNames.babel));
+    
+    const watchTaskName = this.babelWatchTask(name, src, dest);
+    
+    return taskName;
   }
+  
   
   createMochaTasks() {
     this.mochaTaskNames = _.map(this.mochaDirs, (md) => {      
@@ -389,21 +414,21 @@ export class GulpTasks {
           }
           
           watcher.on('added', (filepath) => {
-            const src = new Src(filepath, bd.src);
+            const rel = path.relative(this.cwd, filepath);
+            const src = new Src(rel, bd.src);
             
-            const {src, dest} = getSourceAndDest(filepath);
+            log(`ADDED ${ rel }.`);
             
-            log(`ADDED ${ src }.`);
-            
-            this.babel(taskName, src, path.dirname(dest));
+            this.babel(taskName, src, bd.dest);
           });
           
           watcher.on('changed', (filepath) => {
-            const {src, dest} = getSourceAndDest(filepath);
+            const rel = path.relative(this.cwd, filepath);
+            const src = new Src(rel, bd.src);
             
-            log(`MODIFIED ${ src}.`);
+            log(`MODIFIED ${ rel }.`);
             
-            this.babel(taskName, src, path.dirname(dest));            
+            this.babel(taskName, src, bd.dest);        
           });
           
           watcher.on('deleted', (filepath) => {
@@ -450,7 +475,9 @@ export class GulpTasks {
           }
           
           watcher.on('all', (event, filepath) => {
-            log(`CHANGED ${ filepath }.`);
+            const rel = path.relative(this.cwd, filepath);
+            
+            log(`CHANGED ${ rel }.`);
             
             scheduler.schedule();
           });
