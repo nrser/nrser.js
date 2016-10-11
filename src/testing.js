@@ -35,16 +35,16 @@ export function itMaps({
   
   formatter = (args, expected) => {
     if (expected.prototype instanceof Error) {
-      return nrser.squish(`
+      return nrser.squish`
         ${ formatArgs(args) } throws ${ expected.name }
-      `);
+      `;
       
     } else {
-      return nrser.squish(`
+      return nrser.squish`
         maps
         ${ formatArgs(args) }
         to ${ formatExpected(expected) }
-      `);
+      `;
       
     }
   },
@@ -83,7 +83,7 @@ export function itMaps2({
   func,
   map,
   
-  funcName = 'f',
+  funcName = func.name ? func.name.replace('bound ', '') : 'f',
   
   tester = ({actual, expected}) => {
     chai.expect(actual).to.eql(expected);
@@ -99,16 +99,16 @@ export function itMaps2({
   
   formatter = (args, expected, funcName) => {
     if (expected instanceof Throws) {
-      return nrser.squish(`
+      return nrser.squish`
         ${ formatArgs(args, funcName) } throws ${ expected.errorClass.name }
-      `);
+      `;
       
     } else {
-      return nrser.squish(`
+      return nrser.squish`
         maps
         ${ formatArgs(args, funcName) }
         to ${ formatExpected(expected) }
-      `);
+      `;
       
     }
   },

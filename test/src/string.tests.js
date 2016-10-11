@@ -11,6 +11,7 @@ import {
   nonWhitespaceLines,
   findCommonIndent,
   leadingWhitespace,
+  squish,
 } from '../../lib/string.js';
 
 describe('string.js', () => {
@@ -31,6 +32,24 @@ describe('string.js', () => {
     });
     
   }); // describe j()
+  
+  describe('.squish', () => {
+    it("can be called as a function", () => {
+      expect(squish(`
+        a
+        b
+        c
+      `)).to.equal('a b c');
+    });
+    
+    it("can be called as a template literal", () => {
+      expect(squish`
+        a
+        b
+        c
+      `).to.equal('a b c');
+    });
+  });
   
   describe(".lines", () => {
     itMaps2({
@@ -87,8 +106,6 @@ describe('string.js', () => {
       ]
     });
   });
-  
-  
   
   describe('.deindent', () => {
     const obj = {

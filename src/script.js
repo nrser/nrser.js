@@ -9,7 +9,6 @@ import print from './print';
 
 export untildify from 'untildify';
 
-
 export function chdir(dest, block) {
   if (block) {
     const cwd = process.cwd();

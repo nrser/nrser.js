@@ -1,25 +1,10 @@
+// @flow
+
 import _ from 'lodash';
 
 /**
-* replace consecutive whitespace with a single space and removes leading
-* and trailing whitespace.
-* 
-* @param {string} input
-*  string to squish
-* 
-* @return {string} squished output.
-*/
-export function squish(input) {
-  return input
-    .replace(/\s+/g, " ")
-    .replace(/^\s+/, '')
-    .replace(/\s+$/, '');
-}
-
-/**
 * make a tag function for string template literals that applies a function to
-* each interpolation value.
-* 
+* each interpolation value when called as a string template
 * 
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 * 
@@ -35,12 +20,43 @@ export function squish(input) {
 */
 export function tag(func) {
   return (strings, ...values) => {
-    let result = strings[0];
-    for (let i = 0; i < values.length; i++) {
-      result += func(values[i]) + strings[i + 1];
+    if (_.isArray(strings)) {
+      let result = strings[0];
+      for (let i = 0; i < values.length; i++) {
+        result += func(values[i]) + strings[i + 1];
+      }
+      return result;
+    } else {
+      return func(strings);
     }
-    return result;
   }
+}
+
+/**
+* replace consecutive whitespace with a single space and removes leading
+* and trailing whitespace. can be used as a template literal.
+* 
+* @param {string} input
+*  string to squish
+* 
+* @return {string} squished output.
+*/
+export function squish(strings, ...values) {
+  let input: string;
+  
+  if (Array.isArray(strings)) {
+    input = strings[0];
+    for (let i = 0; i < values.length; i++) {
+      input += values[i] + strings[i + 1];
+    }
+  } else {
+    input = strings;
+  }
+  
+  return input
+    .replace(/\s+/g, " ")
+    .replace(/^\s+/, '')
+    .replace(/\s+$/, '');
 }
 
 /**
