@@ -1,0 +1,14 @@
+{
+  "presets": [
+    "stage-2",
+    "react",
+    "es2015"
+  ],
+  "passPerPreset": true,
+  "plugins": [
+    "syntax-flow",
+    "transform-export-extensions",
+    "tcomb",
+    "transform-flow-strip-types"
+  ]
+}
