@@ -11,8 +11,8 @@ import fs from '../../fs';
 import type { AbsPath } from '../types';
 
 // re-export
-export * from './Scheduler';
-export * from './Src';
+export { Scheduler } from './Scheduler';
+export { Src } from './Src';
 
 /**
 * dumps a value to a string in a way that shouldn't ever fail. uses
@@ -20,7 +20,7 @@ export * from './Src';
 */
 export function dump(value: *): string {
   try {
-    const print = require('./print');
+    const print = require('../../print');
     return print(value);
     
   } catch (error) {
@@ -34,11 +34,10 @@ export function dump(value: *): string {
 * reads the `package.json` file in the current directory to get the
 * package name, falling back to the directory name.
 */
-export function getPackageName(packageDir: ?AbsPath = process.cwd()) {
+export function getPackageName(packageDir: AbsPath = process.cwd()) {
   try {
     return fs.readJsonSync('./package.json').name;
   } catch (error) {
-    throw error;
     return path.basename(packageDir);
   }
 }

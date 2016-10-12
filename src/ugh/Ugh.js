@@ -21,6 +21,7 @@ import fs from '../fs';
 import * as errors from '../errors';
 import { squish } from '../string';
 import { dump, getPackageName, Src, hasGlobPatterns } from './util';
+// import { Src } from './util/Src';
 import {
   Task,
   BabelTask,
@@ -30,11 +31,16 @@ import {
 } from './tasks';
 
 // types
-import type { TaskId, TaskName, AbsPath, DoneCallback } from './types';
-
+import type {
+  TaskId,
+  TaskName,
+  AbsPath,
+  DoneCallback,
+  GulpType,
+} from './types';
 
 export class Ugh {
-  gulp: gulp.Gulp;
+  gulp: GulpType;
   
   packageDir: string;
   packageName: string;
@@ -46,24 +52,34 @@ export class Ugh {
   */
   tasksByName: {[name: TaskName]: Task};
   
-  constructor(gulp, {
-    // the current working directory to base off
-    // this defaults to the cwd that the script is invoked from, though 
-    // you might want to change it for testing at least and maybe for 
-    // including tasks from submodules.
-    packageDir = process.cwd(),
-    
-    // name of the package, used in notifs so you can tell where they're
-    // coming from
-    packageName = getPackageName(packageDir),
-    
-    // javascript extensions to build / watch
-    jsExts = ['js', 'jsx', 'es', 'es6'],
-    
-    // default destination for babel builds relative to the source dir
-    babelRelativeDest = '../lib',
-    
-  } = {}) {
+  constructor(
+    gulp: *,
+    {
+      // the current working directory to base off
+      // this defaults to the cwd that the script is invoked from, though 
+      // you might want to change it for testing at least and maybe for 
+      // including tasks from submodules.
+      packageDir = process.cwd(),
+      
+      // name of the package, used in notifs so you can tell where they're
+      // coming from
+      packageName = getPackageName(packageDir),
+      
+      // javascript extensions to build / watch
+      jsExts = ['js', 'jsx', 'es', 'es6'],
+      
+      // default destination for babel builds relative to the source dir
+      babelRelativeDest = '../lib',
+    }: {
+      packageDir?: string,
+      
+      packageName?: string,
+      
+      jsExts?: Array<string>,
+      
+      babelRelativeDest?: string,
+    } = {}
+  ) {
     this.gulp = gulp;
     
     this.packageDir = packageDir;
@@ -107,6 +123,18 @@ export class Ugh {
   
   get cleanTaskNames(): Array<TaskName> {
     return _.map(this.cleanTasks, (task: CleanTask): TaskName => {
+      return task.name;
+    });
+  }
+  
+  get watchTasks(): Array<WatchTask> {
+    return _.filter(this.tasks, (task: Task): boolean => {
+      return task instanceof WatchTask;
+    });
+  }
+  
+  get watchTaskNames(): Array<TaskName> {
+    return _.map(this.watchTasks, (task: WatchTask): TaskName => {
       return task.name;
     });
   }
@@ -155,7 +183,7 @@ export class Ugh {
   babel({
     id,
     src,
-    dest = this.relative(src, this.babelRelativeDest),
+    dest, // flow doesn't like = this.relative(src, this.babelRelativeDest),
     clean = true,
     watch = true,
   }: {
@@ -165,6 +193,10 @@ export class Ugh {
     clean?: boolean,
     watch?: boolean,
   }): void {
+    if (typeof dest === 'undefined') {
+      dest = this.relative(src, this.babelRelativeDest);
+    }
+    
     const task = new BabelTask({
       id,
       src: this.toBabelSrc(src),
@@ -195,12 +227,16 @@ export class Ugh {
   watchBabel({
     id,
     src,
-    dest = this.relative(src, this.babelRelativeDest),
+    dest, // flow doesn't like = this.relative(src, this.babelRelativeDest),
   } : {
     id: TaskId,
     src: string | Src,
     dest?: string,
   }): void {
+    if (typeof dest === 'undefined') {
+      dest = this.relative(src, this.babelRelativeDest);
+    }
+    
     const task = new WatchBabelTask({
       id,
       src: this.toBabelSrc(src),
@@ -210,7 +246,7 @@ export class Ugh {
     /**
     * log some shit under the package and task name
     */
-    const log = function(...messages) {
+    const log = (...messages) => {
       gutil.log(`${ this.packageName } [${ task.name }]`, ...messages);
     }
     
@@ -218,31 +254,34 @@ export class Ugh {
     * returns the `[eventName, handler]` values to handle events that should
     * trigger a build (added and changed).
     */
-    const buildHandler = function(eventName: string) {
-      return [eventName, function(filepath: string): void {        
-        // the src should be the filepath but with the same base the `src`
-        // that got passed in so that gulp gets the file to the right
-        // destination
-        const src = new Src(filepath, task.src.base);
-        
-        log(`${ eventName.toUppserCase() } ${ filepath }.`);
-        
-        this.doBabel(task.name, src, task.dest);
-      }];
+    const buildHandler = (eventName: string) => {
+      return [
+        eventName,
+        (filepath: string): void => {
+          // the src should be the filepath but with the same base the `src`
+          // that got passed in so that gulp gets the file to the right
+          // destination
+          const src = new Src(filepath, task.src.base);
+          
+          log(`${ eventName.toUpperCase() } ${ filepath }.`);
+          
+          this.doBabel(task.name, src, task.dest);
+        }
+      ];
     }
     
     this.gulp.task(task.name, (callback) => {
       task.watcher = gaze(
-        src.pattern,
+        task.src.pattern,
         (initError: Error, watcher: gaze.Gaze) => {
           if (initError) {
             // there was an error initializing the gazeInstance
             // this is the only time we callback and end the task
-            this.logError(taskName, initError);
+            this.logError(task.name, initError);
             callback(initError);
             return;
           } else {
-            log(`initialized, watching ${ src.pattern }...`);
+            log(`initialized, watching ${ task.src.pattern }...`);
           }
           
           watcher.on(...buildHandler('added'));
@@ -250,7 +289,10 @@ export class Ugh {
           
           watcher.on('deleted', (filepath) => {
             // we need to find the relative path from the base of the task's src
-            const relToSrcBase: string = path.relative(src.base, filepath);
+            const relToSrcBase: string = path.relative(
+              task.src.base,
+              filepath
+            );
             
             // then we can construct the destination path
             const dest = path.join(task.dest, relToSrcBase);
@@ -272,21 +314,21 @@ export class Ugh {
   /**
   * create a mocha task.
   */
-  mocha({
-    id,
-    src,
-  }: {
-    id: TaskId,
-    src: string | Src,
-  }): void {
-    const taskName: TaskName = `mocha:${ id }`;
-    
-    this.gulp.task(taskName, (callback) => {
-      this.doMocha(taskName, src, callback);
-    });
-    
-    this.gulp.task('mocha', Array.from(this.taskNames.mocha));
-  }
+  // mocha({
+  //   id,
+  //   src,
+  // }: {
+  //   id: TaskId,
+  //   src: string | Src,
+  // }): void {
+  //   const taskName: TaskName = `mocha:${ id }`;
+  //   
+  //   this.gulp.task(taskName, (callback) => {
+  //     this.doMocha(taskName, src, callback);
+  //   });
+  //   
+  //   this.gulp.task('mocha', Array.from(this.taskNames.mocha));
+  // }
   
   /**
   * create a task to watch compiled code for changes and run tests.
@@ -302,50 +344,50 @@ export class Ugh {
   * to avoid over-running of mocha. also avoids running mocha over it's self
   * if another change event comes in during the run.
   */
-  watchMocha({id, tests, watch}: {  
-    id: TaskId,
-    tests: Src,
-    watch: string | Src | Array<string> | Array<Src>,
-  }) {
-    const taskName = watchMochaTaskName(id);
-      
-    const log = function(...messages) {
-      gutil.log(`[${ taskName }]`, ...messages);
-    }
-      
-    const scheduler = new Scheduler(
-      taskName,
-      (onDone) => {
-        this.doMocha(taskName, tests, onDone);
-      },
-      {log},
-    );
-    
-    this.gulp.task(taskName, (callback) => {
-      gaze(md.watch, (initError, gazeInstance) => {
-        if (initError) {
-          // there was an error initializing the gazeInstance
-          // this is the only time we callback and end the task
-          this.logError(taskName, error);
-          callback(initError);
-          return;
-        }
-        
-        gazeInstance.on('all', (event, filepath) => {
-          const rel = this.relative(filepath);
-          
-          log(`CHANGED ${ rel }.`);
-          
-          scheduler.schedule();
-        });
-        
-      }); // gaze
-    }); // task
-    
-    this.taskNames.watch.mocha.add(taskName);
-
-    this.gulp.task('watch:mocha', Array.from(this.taskNames.watch.mocha));
-  }
+  // watchMocha({id, tests, watch}: {  
+  //   id: TaskId,
+  //   tests: Src,
+  //   watch: string | Src | Array<string> | Array<Src>,
+  // }) {
+  //   const taskName = watchMochaTaskName(id);
+  //     
+  //   const log = function(...messages) {
+  //     gutil.log(`[${ taskName }]`, ...messages);
+  //   }
+  //     
+  //   const scheduler = new Scheduler(
+  //     taskName,
+  //     (onDone) => {
+  //       this.doMocha(taskName, tests, onDone);
+  //     },
+  //     {log},
+  //   );
+  //   
+  //   this.gulp.task(taskName, (callback) => {
+  //     gaze(md.watch, (initError, gazeInstance) => {
+  //       if (initError) {
+  //         // there was an error initializing the gazeInstance
+  //         // this is the only time we callback and end the task
+  //         this.logError(taskName, error);
+  //         callback(initError);
+  //         return;
+  //       }
+  //       
+  //       gazeInstance.on('all', (event, filepath) => {
+  //         const rel = this.relative(filepath);
+  //         
+  //         log(`CHANGED ${ rel }.`);
+  //         
+  //         scheduler.schedule();
+  //       });
+  //       
+  //     }); // gaze
+  //   }); // task
+  //   
+  //   this.taskNames.watch.mocha.add(taskName);
+  // 
+  //   this.gulp.task('watch:mocha', Array.from(this.taskNames.watch.mocha));
+  // }
   
   /**
   * auto-create tasks depending on what's present
@@ -396,7 +438,7 @@ export class Ugh {
   * the glob pattern for `this.jsExts`, like "{js,jsx,es,es6}".
   * implemented as a getter so that it always reflects the property value.
   */
-  get jsExtsPattern() {
+  get jsExtsPattern(): string {
     return `{${ this.jsExts.join(',') }}`;
   }
   
@@ -431,8 +473,8 @@ export class Ugh {
       details,
       notify = true,
     }: {
-      details: *,
-      notify: boolean,
+      details?: *,
+      notify?: boolean,
     } = {}
   ): void {
     gutil.log(`[${ taskName }] ERROR`);
@@ -542,7 +584,12 @@ export class Ugh {
   * if `callback` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  doBabel(taskName: TaskName, src: Src, dest: string, callback) {
+  doBabel(
+    taskName: TaskName,
+    src: Src,
+    dest: string,
+    callback: ?DoneCallback,
+  ) {
     const onError = (error: Error) => {
       this.logError(taskName, error, {src, dest});
       
@@ -572,30 +619,30 @@ export class Ugh {
   // mocha
   // -----
   
-  doMocha(
-    taskName: string,
-    src: Src,
-    callback: (error?: Error) => void
-  ) {
-    // fucking 'end' gets emitted after error?!
-    const onceCallback = _.once(callback);
-    
-    this.gulp
-      .src(src, {read: false})
-      .pipe(spawnMocha({growl: true}))
-      .on('error', (error) => {
-        // mocha takes care of it's own logging and notifs
-        this.logError(taskName, error);
-        
-        if (callback) {
-          onceCallback(error);
-        }
-      })
-      .on('end', () => {
-        if (callback) {
-          onceCallback();
-        }
-      });
-  }
+  // doMocha(
+  //   taskName: string,
+  //   src: Src,
+  //   callback: (error?: Error) => void
+  // ) {
+  //   // fucking 'end' gets emitted after error?!
+  //   const onceCallback = _.once(callback);
+  //   
+  //   this.gulp
+  //     .src(src, {read: false})
+  //     .pipe(spawnMocha({growl: true}))
+  //     .on('error', (error) => {
+  //       // mocha takes care of it's own logging and notifs
+  //       this.logError(taskName, error);
+  //       
+  //       if (callback) {
+  //         onceCallback(error);
+  //       }
+  //     })
+  //     .on('end', () => {
+  //       if (callback) {
+  //         onceCallback();
+  //       }
+  //     });
+  // }
   
 }
