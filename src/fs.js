@@ -39,7 +39,6 @@ export function isDirSync(path: string): boolean {
     const stats: Stats = fs.statSync(path);
     return stats.isDirectory();
   } catch(error) {
-    throw error;
     return false;
   }
 }
