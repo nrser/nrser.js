@@ -273,7 +273,7 @@ export class Ugh {
     this.gulp.task(task.name, (callback) => {
       task.watcher = gaze(
         task.src.pattern,
-        (initError: Error, watcher: gaze.Gaze) => {
+        (initError: ?Error, watcher: gaze.Gaze) => {
           if (initError) {
             // there was an error initializing the gazeInstance
             // this is the only time we callback and end the task
