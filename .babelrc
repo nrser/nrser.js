@@ -7,10 +7,13 @@
   "passPerPreset": true,
   "plugins": [
     "syntax-flow",
-    "transform-export-extensions",
     ["tcomb", {
-      "skipAsserts": true
+      "skipAsserts": true,
+      "globals": [
+        {"Class": true}
+      ]
     }],
+    "transform-export-extensions",
     "transform-flow-strip-types"
   ]
 }
