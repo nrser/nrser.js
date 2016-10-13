@@ -52,7 +52,7 @@ describe('metalogger/Level.js', () => {
           f('info'), Level.INFO,
           f('debug'), Level.DEBUG,
           f('trace'), Level.TRACE,
-          f('blah'), throws(TypeError, /Invalid value \"blah\"/),
+          // f('blah'), throws(TypeError, /Invalid value \"blah\"/),
         ]
       });
     }); // Level.forName

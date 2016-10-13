@@ -55,7 +55,7 @@ export class Level {
   
   static forName(name: LevelName): Level {
     // flow doesn't like dynamic prop access...
-    switch (LevelName(name)) {
+    switch (name) {
       case 'fatal':
         return this.FATAL;
       case 'error':
