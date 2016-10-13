@@ -27,7 +27,7 @@ import {
   hasGlobPattern,
   Scheduler,
 } from './util';
-// import { Pattern } from './util/Pattern';
+
 import {
   Task,
   BabelTask,
@@ -64,7 +64,7 @@ export class Ugh {
   tasksByName: {[name: TaskName]: Task};
   
   constructor(
-    gulp: *,
+    gulp: GulpType,
     {
       // the current working directory to base off
       // this defaults to the cwd that the script is invoked from, though 
@@ -246,6 +246,7 @@ export class Ugh {
     });
     
     this.tasksByName[task.name] = task;
+    this.gulp.task('babel', this.babelTaskNames);
     
     if (clean) {
       this.clean(task);
@@ -254,8 +255,6 @@ export class Ugh {
     if (watch) {
       this.watchBabel(task);
     }
-    
-    this.gulp.task('babel', this.babelTaskNames);
   }
   
   /**
@@ -276,7 +275,7 @@ export class Ugh {
     dest?: string,
   }): void {
     // if we didn't get a dest, resolve to relative of the src
-    if (typeof dest === 'undefined') {
+    if (dest === undefined) {
       dest = this.relative(src, this.babelRelativeDest);
     }
     
@@ -451,6 +450,7 @@ export class Ugh {
     this.gulp.task(task.name, (callback) => {
       task.watcher = gaze(
         _.map(task.watch, pattern => pattern.path),
+        
         (initError: ?Error, watcher: gaze.Gaze) => {
           if (initError) {
             // there was an error initializing the gazeInstance
@@ -472,10 +472,14 @@ export class Ugh {
       ); // gaze
     }); // task
     
+    // add the task to the instance
     this.tasksByName[task.name] = task;
     
     // re-define the watch:mocha task to invoke 'watch:mocha:*'
     this.gulp.task('watch:mocha', this.watchMochaTaskNames);
+    
+    // re-define watch to run all the Watch tasks
+    this.gulp.task('watch', this.watchTaskNames);
   }
   
   /**
@@ -511,18 +515,6 @@ export class Ugh {
   
   // util
   // ----
-  
-  // createTasks() {
-  //   this.createCleanTasks();
-  //   this.createBabelTasks();
-  //   this.createMochaTasks();
-  //   
-  //   this.createBabelWatchTasks();
-  //   this.createMochaWatchTasks();
-  //   
-  //   this.gulp.task('watch', ['watch:babel', 'watch:mocha']);
-  //   this.gulp.task('test', ['mocha']);
-  // }
   
   /**
   * the glob pattern for `this.jsExts`, like "{js,jsx,es,es6}".
@@ -653,8 +645,8 @@ export class Ugh {
     return this.toPattern(input, `**/*.test?(s).${ this.jsExtsPattern }`);
   }
   
-  // clean
-  // -----
+  // do stuff
+  // --------
   
   doClean(taskName: TaskName, dest: string, callback: ?DoneCallback) {
     exec(`git clean -fdX ${ dest }`, (error, stdout, stderr) => {
@@ -684,11 +676,6 @@ export class Ugh {
       }
     });
   }
-  
-  // babel
-  // -----
-  
-
   
   /**
   * runs the babel transform stream from a source to a destination.
@@ -760,4 +747,4 @@ export class Ugh {
       });
   }
   
-}
+} // Ugh
