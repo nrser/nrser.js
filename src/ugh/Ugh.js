@@ -15,6 +15,7 @@ import glob from 'glob';
 import debug from 'gulp-debug';
 import t from 'tcomb';
 import gaze from 'gaze';
+import { Gulp } from 'gulp';
 
 // package
 import fs from '../fs';
@@ -47,11 +48,10 @@ import type {
   AbsPath,
   AbsDir,
   DoneCallback,
-  GulpType,
 } from './types';
 
 export class Ugh {
-  gulp: GulpType;
+  gulp: Gulp;
   
   packageDir: string;
   packageName: string;
@@ -64,7 +64,7 @@ export class Ugh {
   tasksByName: {[name: TaskName]: Task};
   
   constructor(
-    gulp: GulpType,
+    gulp: Gulp,
     {
       // the current working directory to base off
       // this defaults to the cwd that the script is invoked from, though 

@@ -36,10 +36,10 @@ export type GulpTask = {
   fn: Function,
 };
 
-export type GulpType = {
-  task: Function,
-  src: Function,
-  tasks: {[name: TaskName]: GulpTask},
-};
+// export type GulpType = {
+//   task: Function,
+//   src: Function,
+//   tasks: {[name: TaskName]: GulpTask},
+// };
 
 export type DoneCallback = (error?: Error) => void;

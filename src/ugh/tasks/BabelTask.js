@@ -19,7 +19,7 @@ export class BabelTask extends Task {
   constructor({id, src, dest}: {
     id: TaskId,
     src: Pattern,
-    dest: AbsPath,
+    dest: AbsDir,
   }) {
     super(id, `babel:${ id }`);
     
