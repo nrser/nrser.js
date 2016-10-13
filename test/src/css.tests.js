@@ -1,5 +1,5 @@
 import chai from 'chai';
-import { itMaps2 } from '../../lib/testing';
+import { itMaps } from '../../lib/testing';
 import { cssNamespace, cssNamespacer } from '../../lib/css';
 
 describe('css.js', () => {

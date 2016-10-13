@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai';
-import { itMaps2 } from '../../../../lib/testing.js';
+import { itMaps } from '../../../../lib/testing.js';
 import { hasGlobPattern } from '../../../../lib/ugh/util';
 
 describe('ugh/util/index.js', () => {

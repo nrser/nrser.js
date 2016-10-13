@@ -34,8 +34,6 @@ class Throws {
   }
 }
 
-const Mapping = t.refinement(t.Array, (a) => a.length % 2 === 0, 'Mapping');
-
 export function itMaps({
   func,
   map,
@@ -46,13 +44,17 @@ export function itMaps({
     chai.expect(actual).to.eql(expected);
   },
   
-  formatArgs = (args, funcName) => (
+  formatArgs = (args: Array<*>, funcName: string): string => (
     `${ funcName }(${ _.map(args, (a) => JSON.stringify(a)).join(", ") })`
   ),
   
-  formatExpected = (expected) => (
-    JSON.stringify(expected)
-  ),
+  formatExpected = (expected: *): string => {
+    const json = JSON.stringify(expected);
+    if (typeof json === 'string') {
+      return json;
+    }
+    return '???';
+  },
   
   formatter = (args, expected, funcName) => {
     if (expected instanceof Throws) {
@@ -69,6 +71,32 @@ export function itMaps({
       
     }
   },
+}: {
+  func: Function,
+  
+  funcName?: string,
+  
+  // the map is function that accepts two arguments:
+  map: (
+    // 1. a wrapper that converts it's arguments to an array to be fed into
+    // the test function
+    f: (...args: Array<*>) => Array<*>,
+    // 2. a function that creates a {Throws} to indicate the call should
+    // throw an error of a certain type with an optional pattern for the
+    // message
+    throws: (errorClass: ErrorClass, pattern?: RegExp) => Throws,
+  // and returns a array of even length that represents actual, expected pairs
+  ) => Pairable<*>,
+  
+  // the function the performs the assertions, the default implementation of
+  // which checks that the actual is deeply equal to the expected.
+  tester?: (pair: {actual: *, expected: *}) => void,
+  
+  // a function to format the calling args for display
+  formatArgs?: (args: Array<*>, funcName: string) => string,
+  
+  // a function to format 
+  formatExpected?: (expected: *) => string,
 }) {  
   const mapping: Pairable<*> = map(
     (...args) => args,

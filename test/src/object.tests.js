@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai';
-import { itMaps2 } from '../../lib/testing.js';
+import { itMaps } from '../../lib/testing.js';
 import { groupByEach, mergeNoConflicts, need } from '../../lib/object.js';
 import { MergeConflictError, KeyError } from '../../lib/errors/';
 

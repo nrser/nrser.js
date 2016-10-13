@@ -46,9 +46,9 @@
     "node-notifier": "^4.6.1"
   },
   "scripts": {
-    "test": "gulp clean && gulp babel && gulp test",
     "build": "gulp clean && gulp babel",
-    "watch": "gulp clean && gulp babel && gulp watch",
+    "test": "npm run build && gulp mocha",
+    "watch": "npm run build && gulp watch",
     "docs": "esdoc -c ./esdoc.json"
   },
   "repository": {

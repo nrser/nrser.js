@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai';
-import { itMaps2 } from '../../../lib/testing.js';
+import { itMaps } from '../../../lib/testing.js';
 import * as nrser from '../../../lib';
 import t from 'tcomb';
 import _ from 'lodash';
