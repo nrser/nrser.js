@@ -6,14 +6,23 @@ import t from 'tcomb';
 
 describe('types/number.js', () => {
   describe('type Integer', () => {
-    expect( nrser.t.Integer.is(1) ).to.be.true;
-    expect( nrser.t.Integer.is(3.14) ).to.be.false;
+    itMaps2({
+      func: v => nrser.t.Integer.is(v),
+      funcName: 'Integer.is',
+      map: (f, throws) => [
+        f(1), true,
+        f(3.14), false,
+      ]
+    });
     
-    expect(() => { 
-      const i: nrser.t.Integer = 3.14;
-      return i;
-    }).to.throw(TypeError, /Invalid value 3\.14 supplied/);
-    
+    itMaps2({
+      func: v => nrser.t.Integer(v),
+      funcName: 'Integer',
+      map: (f, throws) => [
+        f(1), 1,
+        f(3.14), throws(TypeError, /Invalid value 3\.14 supplied/),  
+      ]
+    });
   }); // Integer
   
   describe("type ZERO", () => {
@@ -28,9 +37,9 @@ describe('types/number.js', () => {
       ],
     });
     
-    expect(() => {
-      const z: nrser.t.ZERO = 1;
-    }).to.throw(TypeError, /Invalid value 1 supplied/);
+    // expect(() => {
+    //   const z: nrser.t.ZERO = 1;
+    // }).to.throw(TypeError, /Invalid value 1 supplied/);
   });
   
   describe("type Positive", () => {
@@ -44,9 +53,9 @@ describe('types/number.js', () => {
       ],
     });
     
-    expect(() => {
-      const z: nrser.t.Positive = -1;
-    }).to.throw(TypeError, /Invalid value -1 supplied/);
+    // expect(() => {
+    //   const z: nrser.t.Positive = -1;
+    // }).to.throw(TypeError, /Invalid value -1 supplied/);
   });
   
   describe("type PositiveInteger", () => {
@@ -60,9 +69,9 @@ describe('types/number.js', () => {
       ],
     });
     
-    expect(() => {
-      const z: nrser.t.PositiveInteger = 1.1;
-    }).to.throw(TypeError, /Invalid value 1\.1 supplied/);
+    // expect(() => {
+    //   const z: nrser.t.PositiveInteger = 1.1;
+    // }).to.throw(TypeError, /Invalid value 1\.1 supplied/);
   });
   
   describe("type Negative", () => {
@@ -76,9 +85,9 @@ describe('types/number.js', () => {
       ],
     });
     
-    expect(() => {
-      const z: nrser.t.Negative = 0;
-    }).to.throw(TypeError, /Invalid value 0 supplied/);
+    // expect(() => {
+    //   const z: nrser.t.Negative = 0;
+    // }).to.throw(TypeError, /Invalid value 0 supplied/);
   });
   
   describe("type NegativeInteger", () => {
@@ -92,9 +101,9 @@ describe('types/number.js', () => {
       ],
     });
     
-    expect(() => {
-      const z: nrser.t.NegativeInteger = -1.1;
-    }).to.throw(TypeError, /Invalid value -1\.1 supplied/);
+    // expect(() => {
+    //   const z: nrser.t.NegativeInteger = -1.1;
+    // }).to.throw(TypeError, /Invalid value -1\.1 supplied/);
   });
   
   describe("type NonPositiveInteger", () => {
