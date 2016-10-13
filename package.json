@@ -49,7 +49,9 @@
     "gulp-debug",
     "gulp-spawn-mocha",
     "gulp-util",
-    "node-notifier"
+    "istanbul",
+    "node-notifier",
+    "shell-escape"
   ],
   "scripts": {
     "test": "gulp test",
