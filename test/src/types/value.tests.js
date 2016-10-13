@@ -20,7 +20,7 @@ describe('types/value.js', () => {
         });
 
         describe("type checking value properties", () => {
-          itMaps2({
+          itMaps({
             func: v => BLAH.is(v),
 
             map: (f, throws) => [
@@ -35,7 +35,7 @@ describe('types/value.js', () => {
         });
 
         describe("Value type properties for the values", () => {
-          itMaps2({
+          itMaps({
             func: value => BLAH.types.X.is(value),
 
             map: (f, throws) => [

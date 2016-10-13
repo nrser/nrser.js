@@ -41,7 +41,7 @@ describe('ugh/Ugh.js', () => {
     describe('#resolve', () => {
       const ugh = createUgh();
       
-      itMaps2({
+      itMaps({
         func: ugh.resolve.bind(ugh),
         map: (f, throws) => [
           f('src', '../lib'), path.join(ugh.packageDir, 'lib'),
@@ -52,7 +52,7 @@ describe('ugh/Ugh.js', () => {
     describe('#relative', () => {
       const ugh = createUgh();
       
-      itMaps2({
+      itMaps({
         func: ugh.relative.bind(ugh),
         map: (f, throws) => [
           f(path.join(ugh.packageDir, 'lib')), 'lib',

@@ -10,7 +10,7 @@ describe('metalogger/Level.js', () => {
   });
   
   describe('type LevelName', () => {
-    itMaps2({
+    itMaps({
       func: v => LevelName.is(v),
       map: f => [
         f('fatal'), true,
@@ -25,7 +25,7 @@ describe('metalogger/Level.js', () => {
   }); // type LevelName
   
   describe("type LevelRank", () => {
-    itMaps2({
+    itMaps({
       func: v => LevelRank.is(v),
       map: f => [
         f(0), true,
@@ -43,7 +43,7 @@ describe('metalogger/Level.js', () => {
   
   describe("Level", () => {
     describe("Level.forName", () => {
-      itMaps2({
+      itMaps({
         func: v => Level.forName(v),
         map: (f, throws) => [
           f('fatal'), Level.FATAL,

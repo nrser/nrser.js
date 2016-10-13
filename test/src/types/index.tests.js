@@ -7,7 +7,7 @@ import Promise from 'promise';
 
 describe('types/index.js', () => {
   describe('nonEmptyList()', () => {
-    itMaps2({
+    itMaps({
       func: (type, value) => nrser.t.nonEmptyList(type)(value),
       
       formatArgs: ([itemType, value]) => (

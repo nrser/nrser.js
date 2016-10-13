@@ -6,7 +6,7 @@ import t from 'tcomb';
 
 describe('types/number.js', () => {
   describe('type Integer', () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.Integer.is(v),
       funcName: 'Integer.is',
       map: (f, throws) => [
@@ -15,7 +15,7 @@ describe('types/number.js', () => {
       ]
     });
     
-    itMaps2({
+    itMaps({
       func: v => nrser.t.Integer(v),
       funcName: 'Integer',
       map: (f, throws) => [
@@ -26,7 +26,7 @@ describe('types/number.js', () => {
   }); // Integer
   
   describe("type ZERO", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.ZERO.is(v),
       map: (f, throws) => [
         f(0), true,
@@ -43,7 +43,7 @@ describe('types/number.js', () => {
   });
   
   describe("type Positive", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.Positive.is(v),
       map: (f, throws) => [
         f(0), false,
@@ -59,7 +59,7 @@ describe('types/number.js', () => {
   });
   
   describe("type PositiveInteger", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.PositiveInteger.is(v),
       map: (f, throws) => [
         f(0), false,
@@ -75,7 +75,7 @@ describe('types/number.js', () => {
   });
   
   describe("type Negative", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.Negative.is(v),
       map: (f, throws) => [
         f(0), false,
@@ -91,7 +91,7 @@ describe('types/number.js', () => {
   });
   
   describe("type NegativeInteger", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.NegativeInteger.is(v),
       map: (f, throws) => [
         f(0), false,
@@ -107,7 +107,7 @@ describe('types/number.js', () => {
   });
   
   describe("type NonPositiveInteger", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.NonPositiveInteger.is(v),
       map: (f, throws) => [
         f(0), true,
@@ -119,7 +119,7 @@ describe('types/number.js', () => {
   });
   
   describe("type NonNegativeInteger", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.NonNegativeInteger.is(v),
       map: (f, throws) => [
         f(0), true,

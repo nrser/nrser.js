@@ -6,7 +6,7 @@ import t from 'tcomb';
 
 describe('types/string.js', () => {
   describe("type Char", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.Char.is(v),
       map: (f, throws) => [
         f(''), false,
@@ -21,7 +21,7 @@ describe('types/string.js', () => {
   }); // Char
   
   describe("type NonEmptyString", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.NonEmptyString.is(v),
       map: (f, throws) => [
         f(''), false,
@@ -36,7 +36,7 @@ describe('types/string.js', () => {
   }); // NonEmptyString
   
   describe("type UpperCaseString", () => {
-    itMaps2({
+    itMaps({
       func: v => nrser.t.UpperCaseString.is(v),
       map: (f, throws) => [
         f(''), true,

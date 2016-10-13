@@ -27,7 +27,7 @@ describe('object.js', () => {
   });
   
   describe("need()", () => {
-    itMaps2({
+    itMaps({
       func: need,
       
       map: (f, throws) => ([
@@ -42,7 +42,7 @@ describe('object.js', () => {
   });
   
   describe("groupByEach()", () => {
-    itMaps2({
+    itMaps({
       func: groupByEach,
       
       map: (f, throws) => [

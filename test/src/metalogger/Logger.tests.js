@@ -10,7 +10,7 @@ describe('metalogger/Logger.js', () => {
   
   describe("Logger", () => {
     describe("#getConsoleFunction", () => {
-      itMaps2({
+      itMaps({
         func: level => (new Logger()).getConsoleFunction(level),
         map: (f, throws) => [
           f(Level.ERROR), (console.error || console.log),
@@ -37,7 +37,7 @@ describe('metalogger/Logger.js', () => {
     }); // #getDelta
     
     describe(".formatDelta", () => {
-      itMaps2({
+      itMaps({
         func: Logger.formatDelta.bind(Logger),
         map: (f, throws) => [
           f(), '+----ms',
@@ -52,7 +52,7 @@ describe('metalogger/Logger.js', () => {
     describe(".formatDate", () => {
       const date = new Date(2016, 9-1, 14, 17, 33, 44, 888);
       
-      itMaps2({
+      itMaps({
         func: (format) => Logger.formatDate(date, format),
         
         map: (f, throws) => [
@@ -81,7 +81,7 @@ describe('metalogger/Logger.js', () => {
         content: [],
       };
       
-      itMaps2({
+      itMaps({
         func: (format) => Logger.formatHeader(message, format),
         
         map: (f, throws) => [

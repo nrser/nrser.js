@@ -52,7 +52,7 @@ describe('string.js', () => {
   });
   
   describe(".lines", () => {
-    itMaps2({
+    itMaps({
       func: lines,
       
       map: (f, throws) => [
@@ -67,7 +67,7 @@ describe('string.js', () => {
   });
   
   describe(".leadingWhitespace", () => {
-    itMaps2({
+    itMaps({
       func: leadingWhitespace,
       
       map: (f, throws) => [
@@ -79,7 +79,7 @@ describe('string.js', () => {
   });
   
   describe(".findCommonIndent", () => {
-    itMaps2({
+    itMaps({
       func: findCommonIndent,
       
       map: (f, throws) => [
@@ -93,7 +93,7 @@ describe('string.js', () => {
   });
 
   describe(".nonWhitespaceLines", () => {
-    itMaps2({
+    itMaps({
       func: nonWhitespaceLines,
       
       map: (f, throws) => [

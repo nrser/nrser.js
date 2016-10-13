@@ -4,7 +4,7 @@ import { cssNamespace, cssNamespacer } from '../../lib/css';
 
 describe('css.js', () => {
   describe('.cssNamespace', () => {
-    itMaps2({
+    itMaps({
       func: cssNamespace,
       map: (f, throws) => [
         f('Page', '&'), 'Page',
@@ -20,7 +20,7 @@ describe('css.js', () => {
   describe('.cssNamespacer', () => {
     const cns = cssNamespacer('Page');
     
-    itMaps2({
+    itMaps({
       func: cns,
       map: (f, throws) => [
         f('&'), 'Page',

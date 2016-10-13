@@ -9,7 +9,7 @@ describe("types/struct.js", () => {
     describe("strict empty struct", () => {
       const empty = nrser.t.struct({}, {strict: true});
       
-      itMaps2({
+      itMaps({
         funcName: 'empty',
         
         func: (obj) => empty(obj),
@@ -24,7 +24,7 @@ describe("types/struct.js", () => {
     describe("strict simple struct", () => {
       const simple = nrser.t.struct({x: t.String}, {strict: true});
       
-      itMaps2({
+      itMaps({
         funcName: 'simple',
         
         func: obj => simple(obj),

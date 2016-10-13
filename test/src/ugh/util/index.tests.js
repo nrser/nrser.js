@@ -4,7 +4,7 @@ import { hasGlobPattern } from '../../../../lib/ugh/util';
 
 describe('ugh/util/index.js', () => {
   describe('hasGlobPattern()', () => {
-    itMaps2({
+    itMaps({
       func: hasGlobPattern,
       map: (f, throws) => [
         f(''), false,

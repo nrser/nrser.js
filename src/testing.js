@@ -1,3 +1,5 @@
+// @flow
+
 import chai from 'chai';
 import _ from 'lodash';
 import t from 'tcomb';
@@ -17,49 +19,6 @@ function hasEvenLength(array: Array<*>): boolean {
 
 type Pairable<V> = Array<V> & $Refinement<typeof hasEvenLength>;
 
-export function itMaps({
-  func,
-  map,
-  
-  tester = ({actual, expected}) => {
-    chai.expect(actual).to.eql(expected);
-  },
-  
-  formatArgs = (args) => (
-    `(${ _.map(args, (a) => JSON.stringify(a)).join(", ") })`
-  ),
-  
-  formatExpected = (expected) => (
-    JSON.stringify(expected)
-  ),
-  
-  formatter = (args, expected) => {
-    if (expected.prototype instanceof Error) {
-      return nrser.squish`
-        ${ formatArgs(args) } throws ${ expected.name }
-      `;
-      
-    } else {
-      return nrser.squish`
-        maps
-        ${ formatArgs(args) }
-        to ${ formatExpected(expected) }
-      `;
-      
-    }
-  },
-}) {
-  _.each(map, ([args, expected]) => {
-    it(formatter(args, expected), () => {
-      if (expected.prototype instanceof Error) {
-        chai.expect(() => func(...args)).to.throw(expected);
-      } else {
-        tester({actual: func(...args), expected});
-      }
-    });
-  });
-} // itMaps()
-
 class Throws {
   constructor(errorClass: ErrorClass, pattern?: RegExp) {
     this.errorClass = errorClass;
@@ -75,11 +34,9 @@ class Throws {
   }
 }
 
-
-
 const Mapping = t.refinement(t.Array, (a) => a.length % 2 === 0, 'Mapping');
 
-export function itMaps2({
+export function itMaps({
   func,
   map,
   
@@ -112,9 +69,6 @@ export function itMaps2({
       
     }
   },
-} : {
-  func: Function,
-  map: (f: Function, throws: Function) => Pairable<*>,
 }) {  
   const mapping: Pairable<*> = map(
     (...args) => args,
