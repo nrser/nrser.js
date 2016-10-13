@@ -1,24 +1,25 @@
 // package
-import { Src } from '../util';
-
+import { Pattern } from '../util';
 import { Task } from './Task';
 
 // types
-import type { TaskId, TaskName } from '../types';
+import type { TaskId, TaskName, AbsDir } from '../types';
 
-/**
-* little struct that hold info about a babel task that's been created.
-* 
-* needed because other tasks may need access to info about where babel
-* sources and destinations are.
-*/
 export class BabelTask extends Task {
-  src: Src;
+  /**
+  * pattern to find source files.
+  */
+  src: Pattern;
+  
+  /**
+  * directory to output them to.
+  */
+  dest: AbsDir;
   
   constructor({id, src, dest}: {
     id: TaskId,
-    src: Src,
-    dest: string,
+    src: Pattern,
+    dest: AbsPath,
   }) {
     super(id, `babel:${ id }`);
     

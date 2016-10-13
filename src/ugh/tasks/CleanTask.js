@@ -1,5 +1,5 @@
 // package
-import { Src } from '../util';
+import { Pattern } from '../util';
 
 import { Task } from './Task';
 

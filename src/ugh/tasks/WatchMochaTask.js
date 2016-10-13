@@ -7,11 +7,18 @@ import { WatchTask } from './WatchTask';
 import type { TaskId, TaskName, AbsPath } from '../types';
 
 /**
-* little struct that hold info about a watch babel task that's been created.
+* little struct that hold info about a watch mocha task that's been created.
 */
-export class WatchBabelTask extends WatchTask {
-  src: Pattern;
-  dest: AbsPath;
+export class WatchMochaTask extends WatchTask {
+  /**
+  * Pattern for the tests to run.
+  */
+  tests: Pattern;
+  
+  /**
+  * pattern for files to watch.
+  */
+  watch: Array<Pattern>;
   
   constructor({id, src, dest}: {
     id: TaskId,

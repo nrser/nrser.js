@@ -12,7 +12,7 @@ import type { AbsPath } from '../types';
 
 // re-export
 export { Scheduler } from './Scheduler';
-export { Src } from './Src';
+export { Pattern } from './Pattern';
 
 /**
 * dumps a value to a string in a way that shouldn't ever fail. uses
@@ -45,7 +45,7 @@ export function getPackageName(packageDir: AbsPath = process.cwd()) {
 /**
 * returns true if the string contains glob expansion patterns.
 */
-export function hasGlobPatterns(s: string): boolean {
+export function hasGlobPattern(s: string): boolean {
   // the empty string does not
   if (s === '') {
     return false;

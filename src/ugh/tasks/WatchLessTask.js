@@ -6,10 +6,7 @@ import { WatchTask } from './WatchTask';
 // types
 import type { TaskId, TaskName, AbsPath } from '../types';
 
-/**
-* little struct that hold info about a watch babel task that's been created.
-*/
-export class WatchBabelTask extends WatchTask {
+export class WatchLessTask extends WatchTask {
   src: Pattern;
   dest: AbsPath;
   
@@ -18,7 +15,7 @@ export class WatchBabelTask extends WatchTask {
     src: Pattern,
     dest: AbsPath,
   }) {
-    super(id, `watch:babel:${ id }`);
+    super(id, `watch:less:${ id }`);
     
     this.src = src;
     this.dest = dest;

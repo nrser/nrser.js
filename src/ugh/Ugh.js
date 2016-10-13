@@ -20,14 +20,24 @@ import gaze from 'gaze';
 import fs from '../fs';
 import * as errors from '../errors';
 import { squish } from '../string';
-import { dump, getPackageName, Src, hasGlobPatterns } from './util';
-// import { Src } from './util/Src';
+import {
+  dump,
+  getPackageName,
+  Pattern,
+  hasGlobPattern,
+  Scheduler,
+} from './util';
+// import { Pattern } from './util/Pattern';
 import {
   Task,
   BabelTask,
   CleanTask,
+  MochaTask,
+  LessTask,
   WatchTask,
   WatchBabelTask,
+  WatchMochaTask,
+  WatchLessTask,
 } from './tasks';
 
 // types
@@ -35,6 +45,7 @@ import type {
   TaskId,
   TaskName,
   AbsPath,
+  AbsDir,
   DoneCallback,
   GulpType,
 } from './types';
@@ -103,52 +114,75 @@ export class Ugh {
     return _.values(this.tasksByName);
   }
   
-  get babelTasks(): Array<BabelTask> {
+  getTasksForType<T>(taskClass: Class<T>): Array<T> {
     return _.filter(this.tasks, (task: Task): boolean => {
-      return task instanceof BabelTask;
-    });
-  }
-  
-  get babelTaskNames(): Array<TaskName> {
-    return _.map(this.babelTasks, (task: BabelTask): TaskName => {
-      return task.name;
+      return task instanceof taskClass;
     });
   }
   
   get cleanTasks(): Array<CleanTask> {
-    return _.filter(this.tasks, (task: Task): boolean => {
-      return task instanceof CleanTask;
-    });
+    return this.getTasksForType(CleanTask);
   }
   
-  get cleanTaskNames(): Array<TaskName> {
-    return _.map(this.cleanTasks, (task: CleanTask): TaskName => {
-      return task.name;
-    });
+  get babelTasks(): Array<BabelTask> {
+    return this.getTasksForType(BabelTask);
+  }
+  
+  get mochaTasks(): Array<MochaTask> {
+    return this.getTasksForType(MochaTask);
+  }
+  
+  get lessTasks(): Array<LessTask> {
+    return this.getTasksForType(LessTask);
   }
   
   get watchTasks(): Array<WatchTask> {
-    return _.filter(this.tasks, (task: Task): boolean => {
-      return task instanceof WatchTask;
-    });
-  }
-  
-  get watchTaskNames(): Array<TaskName> {
-    return _.map(this.watchTasks, (task: WatchTask): TaskName => {
-      return task.name;
-    });
+    return this.getTasksForType(WatchTask);
   }
   
   get watchBabelTasks(): Array<WatchBabelTask> {
-    return _.filter(this.tasks, (task: Task): boolean => {
-      return task instanceof WatchBabelTask;
-    });
+    return this.getTasksForType(WatchBabelTask);
+  }
+  
+  getTaskNamesForType<T>(taskClass: Class<T>): Array<TaskName> {
+    return _.map(
+      this.getTasksForType(taskClass),
+      (task: Task): TaskName => {
+        return task.name;
+      }
+    );
+  }
+  
+  get cleanTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(CleanTask);
+  }
+  
+  get babelTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(BabelTask);
+  }
+  
+  get mochaTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(MochaTask);
+  }
+  
+  get babelTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(BabelTask);
+  }
+  
+  get watchTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(WatchTask);
   }
   
   get watchBabelTaskNames(): Array<TaskName> {
-    return _.map(this.watchBabelTasks, (task: WatchBabelTask): TaskName => {
-      return task.name;
-    });
+    return this.getTaskNamesForType(WatchBabelTask);
+  }
+  
+  get watchMochaTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(WatchMochaTask);
+  }
+  
+  get watchLessTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(WatchLessTask);
   }
   
   /**
@@ -188,7 +222,7 @@ export class Ugh {
     watch = true,
   }: {
     id: string,
-    src: string | Src,
+    src: string | Pattern,
     dest?: string,
     clean?: boolean,
     watch?: boolean,
@@ -199,8 +233,8 @@ export class Ugh {
     
     const task = new BabelTask({
       id,
-      src: this.toBabelSrc(src),
-      dest: dest,
+      src: this.toJSPattern(src),
+      dest: this.resolveDir(dest),
     });
     
     this.gulp.task(task.name, (onDone) => {
@@ -234,17 +268,18 @@ export class Ugh {
     dest, // flow doesn't like = this.relative(src, this.babelRelativeDest),
   } : {
     id: TaskId,
-    src: string | Src,
+    src: string | Pattern,
     dest?: string,
   }): void {
+    // if we didn't get a dest, resolve to relative of the src
     if (typeof dest === 'undefined') {
       dest = this.relative(src, this.babelRelativeDest);
     }
     
     const task = new WatchBabelTask({
       id,
-      src: this.toBabelSrc(src),
-      dest: this.resolve(dest),
+      src: this.toJSPattern(src),
+      dest: this.resolveDir(dest),
     });
     
     /**
@@ -273,7 +308,10 @@ export class Ugh {
               // the src should be the filepath but with the same base the `src`
               // that got passed in so that gulp gets the file to the right
               // destination
-              const src = new Src(filepath, task.src.base);
+              const src = new Pattern({
+                pattern: path.relative(task.src.base, filepath),
+                base: task.src.base,
+              });
               
               log(`${ eventName.toUpperCase() } ${ filepath }.`);
               
@@ -283,13 +321,13 @@ export class Ugh {
           
           watcher.on('deleted', (filepath) => {
             // we need to find the relative path from the base of the task's src
-            const relToSrcBase: string = path.relative(
+            const relToPatternBase: string = path.relative(
               task.src.base,
               filepath
             );
             
             // then we can construct the destination path
-            const dest = path.join(task.dest, relToSrcBase);
+            const dest = path.join(task.dest, relToPatternBase);
             
             log(`DELETED ${ filepath }.`);
             
@@ -310,23 +348,37 @@ export class Ugh {
   }
   
   /**
-  * create a mocha task.
+  * creates a mocha task to run mocha and a watch task that watches
+  * all the babel destinations and runs when they change.
   */
-  // mocha({
-  //   id,
-  //   src,
-  // }: {
-  //   id: TaskId,
-  //   src: string | Src,
-  // }): void {
-  //   const taskName: TaskName = `mocha:${ id }`;
-  //   
-  //   this.gulp.task(taskName, (callback) => {
-  //     this.doMocha(taskName, src, callback);
-  //   });
-  //   
-  //   this.gulp.task('mocha', Array.from(this.taskNames.mocha));
-  // }
+  mocha({
+    id,
+    tests,
+    watch,
+  }: {
+    id: TaskId,
+    tests: string | Pattern,
+    watch?: false | string | Pattern | Array<string|Pattern>,
+  }): void {
+    const task = new MochaTask(id, this.toTestsPattern(tests));
+    
+    this.gulp.task(task.name, (callback: DoneCallback) => {
+      this.doMocha(task.name, task.tests, callback);
+    });
+    
+    this.tasksByName[task.name] = task;
+    
+    this.gulp.task('mocha', this.mochaTaskNames);
+    
+    // create a watch task unless `watch` is false
+    if (watch !== false) {      
+      this.watchMocha({
+        id,
+        tests,
+        watch,
+      });
+    }
+  }
   
   /**
   * create a task to watch compiled code for changes and run tests.
@@ -342,50 +394,82 @@ export class Ugh {
   * to avoid over-running of mocha. also avoids running mocha over it's self
   * if another change event comes in during the run.
   */
-  // watchMocha({id, tests, watch}: {  
-  //   id: TaskId,
-  //   tests: Src,
-  //   watch: string | Src | Array<string> | Array<Src>,
-  // }) {
-  //   const taskName = watchMochaTaskName(id);
-  //     
-  //   const log = function(...messages) {
-  //     gutil.log(`[${ taskName }]`, ...messages);
-  //   }
-  //     
-  //   const scheduler = new Scheduler(
-  //     taskName,
-  //     (onDone) => {
-  //       this.doMocha(taskName, tests, onDone);
-  //     },
-  //     {log},
-  //   );
-  //   
-  //   this.gulp.task(taskName, (callback) => {
-  //     gaze(md.watch, (initError, gazeInstance) => {
-  //       if (initError) {
-  //         // there was an error initializing the gazeInstance
-  //         // this is the only time we callback and end the task
-  //         this.logError(taskName, error);
-  //         callback(initError);
-  //         return;
-  //       }
-  //       
-  //       gazeInstance.on('all', (event, filepath) => {
-  //         const rel = this.relative(filepath);
-  //         
-  //         log(`CHANGED ${ rel }.`);
-  //         
-  //         scheduler.schedule();
-  //       });
-  //       
-  //     }); // gaze
-  //   }); // task
-  //   
-  //   this.taskNames.watch.mocha.add(taskName);
-  // 
-  //   this.gulp.task('watch:mocha', Array.from(this.taskNames.watch.mocha));
-  // }
+  watchMocha({
+    id,
+    tests,
+    watch,
+  }: {  
+    id: TaskId,
+    tests: string | Pattern,
+    watch?: string | Pattern | Array<string|Pattern>,
+  }) {
+    // resolve / default watch patterns
+    let watchPatterns: Array<Pattern>;
+    
+    if (watch === undefined) {
+      // default to all the babel destinations
+      watchPatterns = _.map(
+        this.babelTasks,
+        (babelTask: BabelTask): Pattern => {
+          return this.toJSPattern(babelTask.dest);
+        });
+        
+    } else {
+      if (!Array.isArray(watch)) {
+        watch = [watch];
+      }
+      
+      // map those into JS patterns
+      watchPatterns = _.map(watch, this.toJSPattern.bind(this));
+    }
+    
+    const task = new WatchMochaTask({
+      id,
+      tests: this.toTestsPattern(tests),
+      watch: watchPatterns,
+    });
+      
+    const log = function(...messages) {
+      gutil.log(`[${ task.name }]`, ...messages);
+    }
+      
+    const scheduler = new Scheduler(
+      task.name,
+      (onDone: DoneCallback) => {
+        this.doMocha(task.name, task.tests, onDone);
+      },
+      {log},
+    );
+    
+    this.gulp.task(task.name, (callback) => {
+      task.watcher = gaze(
+        task.watch,
+        (initError: ?Error, watcher: gaze.Gaze) => {
+          if (initError) {
+            // there was an error initializing the gazeInstance
+            // this is the only time we callback and end the task
+            this.logError(task.name, initError);
+            callback(initError);
+            return;
+          }
+          
+          watcher.on('all', (event, filepath) => {
+            const rel = this.relative(filepath);
+            
+            log(`${ event } ${ rel }.`);
+            
+            scheduler.schedule();
+          });
+          
+        }
+      ); // gaze
+    }); // task
+    
+    this.tasksByName[task.name] = task;
+    
+    // re-define the watch:mocha task to invoke 'watch:mocha:*'
+    this.gulp.task('watch:mocha', this.watchMochaTaskNames);
+  }
   
   /**
   * auto-create tasks depending on what's present
@@ -408,7 +492,10 @@ export class Ugh {
     }
     
     if (fs.isDirSync(this.resolve('test'))) {
-      // this.mocha();
+      this.mocha({
+        id: 'test',
+        tests: this.relative('test', 'src', this.babelRelativeDest),
+      });
     }
   }
   
@@ -500,21 +587,63 @@ export class Ugh {
   /**
   * resolve path against the package dir.
   */
-  resolve(...segments: Array<string|Src>): AbsPath { 
+  resolve(...segments: Array<string|Pattern>): AbsPath { 
     return path.resolve(
       this.packageDir,
       ..._.map(segments, segment => (
-        segment instanceof Src ? segment.base : segment
+        segment instanceof Pattern ? segment.base : segment
       ))
     );
+  }
+  
+  resolveDir(...segments: Array<string|Pattern>): AbsDir {
+    const resolved = this.resolve(...segments);
+    
+    fs.ensureDirSync(resolved);
+    
+    return resolved;
   }
   
   /**
   * resolve a path against the package dir and return it's representation
   * relative to there.
   */
-  relative(...segments: Array<string|Src>): string {
+  relative(...segments: Array<string|Pattern>): string {
     return path.relative(this.packageDir, this.resolve(...segments));
+  }
+  
+  /**
+  * takes a sources argument, which may be a string path, 
+  */
+  toPattern(input: string | Pattern, defaultPattern: string): Pattern {
+    if (input instanceof Pattern) {
+      return input;
+    }
+    
+    if (hasGlobPattern(input)) {
+      return new Pattern.fromPath(input);
+      
+    } else {
+      return new Pattern({
+        pattern: defaultPattern,
+        base: this.resolveDir(input),
+      });
+      
+    }
+  }
+  
+  /**
+  * gets a Pattern instance to find js files.
+  */
+  toJSPattern(input: string | Pattern): Pattern {
+    return this.toPattern(input, `**/*.${ this.jsExtsPattern }`);
+  }
+  
+  /**
+  * get a Pattern instance to find test files.
+  */
+  toTestsPattern(input: string | Pattern): Pattern {
+    return this.toPattern(input, `**/*.test?(s).${ this.jsExtsPattern }`);
   }
   
   // clean
@@ -552,27 +681,7 @@ export class Ugh {
   // babel
   // -----
   
-  /**
-  * gets a Src suitable for babel tasks.
-  * 
-  * input can be:
-  * 
-  * 1.  just a directory to use as the base. the glob pattern will be
-  *     added.
-  * 2.  a glob string to match files.
-  * 3.  already be a Src, in which case it's just returned.
-  */
-  toBabelSrc(input: string | Src): Src {
-    if (input instanceof Src) {
-      return input;
-    }
-    
-    if (!hasGlobPatterns(input)) {
-      input = path.join(input, `**/*.${ this.jsExtsPattern }`);
-    }
-    
-    return new Src(this.resolve(input));
-  }
+
   
   /**
   * runs the babel transform stream from a source to a destination.
@@ -582,9 +691,9 @@ export class Ugh {
   */
   doBabel(
     taskName: TaskName,
-    src: Src,
-    dest: string,
-    callback: ?DoneCallback,
+    src: Pattern,
+    dest: AbsDir,
+    callback?: DoneCallback,
   ) {
     const onError = (error: Error) => {
       this.logError(taskName, error, {src, dest});
@@ -615,34 +724,31 @@ export class Ugh {
         }
       });
   }
-  
-  // mocha
-  // -----
-  
-  // doMocha(
-  //   taskName: string,
-  //   src: Src,
-  //   callback: (error?: Error) => void
-  // ) {
-  //   // fucking 'end' gets emitted after error?!
-  //   const onceCallback = _.once(callback);
-  //   
-  //   this.gulp
-  //     .src(src, {read: false})
-  //     .pipe(spawnMocha({growl: true}))
-  //     .on('error', (error) => {
-  //       // mocha takes care of it's own logging and notifs
-  //       this.logError(taskName, error);
-  //       
-  //       if (callback) {
-  //         onceCallback(error);
-  //       }
-  //     })
-  //     .on('end', () => {
-  //       if (callback) {
-  //         onceCallback();
-  //       }
-  //     });
-  // }
+    
+  doMocha(
+    taskName: TaskName,
+    tests: Pattern,
+    callback?: DoneCallback,
+  ) {
+    // fucking 'end' gets emitted after error?!
+    const onceCallback = _.once(callback);
+    
+    this.gulp
+      .src(_.map(tests, p => p.path), {read: false})
+      .pipe(spawnMocha({growl: true}))
+      .on('error', (error) => {
+        // mocha takes care of it's own logging and notifs
+        this.logError(taskName, error);
+        
+        if (callback) {
+          onceCallback(error);
+        }
+      })
+      .on('end', () => {
+        if (callback) {
+          onceCallback();
+        }
+      });
+  }
   
 }

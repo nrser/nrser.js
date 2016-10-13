@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import { itMaps2 } from '../../../lib/testing.js';
 import {
   Ugh,
-  Src,
+  Pattern,
   BabelTask,
   CleanTask,
   WatchBabelTask,
@@ -25,18 +25,18 @@ describe('ugh/Ugh.js', () => {
       expect(ugh.packageName).to.equal('nrser');
     });
     
-    describe('#toBabelSrc', () => {
+    describe('#toBabelPattern', () => {
       const ugh = createUgh();
       
       it("adds the js pattern", () => {
-        const src = ugh.toBabelSrc('src');
-        expect(src).to.be.an.instanceOf(Src);
+        const src = ugh.toBabelPattern('src');
+        expect(src).to.be.an.instanceOf(Pattern);
         expect(src.base)
           .to.equal(ugh.resolve('src'));
         expect(src.pattern)
           .to.equal(ugh.resolve('src/**/*.{js,jsx,es,es6}'));
       });
-    }); // #toBabelSrc
+    }); // #toBabelPattern
     
     describe('#resolve', () => {
       const ugh = createUgh();
@@ -56,7 +56,7 @@ describe('ugh/Ugh.js', () => {
         func: ugh.relative.bind(ugh),
         map: (f, throws) => [
           f(path.join(ugh.packageDir, 'lib')), 'lib',
-          f(new Src(ugh.resolve('src/**/**.js')), '../lib'), 'lib',
+          f(new Pattern(ugh.resolve('src/**/**.js')), '../lib'), 'lib',
         ]
       })
     }); // #relative

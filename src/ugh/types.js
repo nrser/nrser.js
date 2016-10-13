@@ -8,6 +8,8 @@ import type { $Refinement } from 'tcomb';
 
 export type AbsPath = string & $Refinement<typeof path.isAbsolute>;
 
+export type AbsDir = AbsPath;
+
 /**
 * a task 'id' is the part that identifies *which* thing the task is operating on.
 * 
@@ -36,6 +38,7 @@ export type GulpTask = {
 
 export type GulpType = {
   task: Function,
+  src: Function,
   tasks: {[name: TaskName]: GulpTask},
 };
 

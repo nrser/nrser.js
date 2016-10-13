@@ -8,7 +8,7 @@ import { Undefined, Empty } from './types';
 import type { KeyPath } from './types';
 import { MergeConflictError, KeyError } from './errors';
 
-type Collection<V> = Array<V> | {[key: string]: V};
+import type { Collection }  from './types/collection';
 
 /**
 * like lodash/underscore `groupBy` but the iteratee (called `getGroups` here)

@@ -7,7 +7,11 @@
 * 
 */
 
+// deps
 import _ from 'lodash';
+
+// package
+import print from '../print';
 
 /**
 * adapted from Meteor's
@@ -70,6 +74,11 @@ export const BaseError = function(message, details) {
     this.stack = new Error().stack;
   }
   // Safari magically works.
+  
+  // add details to message if provided
+  if (typeof details !== 'undefined') {
+    message += "\n" + print(details);
+  }
 
   constructor.apply(this, [message, details]);
 
