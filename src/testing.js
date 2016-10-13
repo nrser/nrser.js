@@ -44,11 +44,11 @@ export function itMaps({
     chai.expect(actual).to.eql(expected);
   },
   
-  formatArgs = (args: Array<*>, funcName: string): string => (
+  formatArgs = (args: Array<*>, funcName: string) /*: string */ => (
     `${ funcName }(${ _.map(args, (a) => JSON.stringify(a)).join(", ") })`
   ),
   
-  formatExpected = (expected: *): string => {
+  formatExpected = (expected: *) /*: string */ => {
     const json = JSON.stringify(expected);
     if (typeof json === 'string') {
       return json;
@@ -56,10 +56,12 @@ export function itMaps({
     return '???';
   },
   
-  formatter = (args, expected, funcName) => {
+  formatter = (args: Array<*>, expected: *, funcName: string) /*: string */ => {
     if (expected instanceof Throws) {
       return nrser.squish`
-        ${ formatArgs(args, funcName) } throws ${ expected.errorClass.name }
+        ${ formatArgs(args, funcName) }
+        throws
+        ${ expected.errorClass.name }
       `;
       
     } else {
@@ -95,9 +97,12 @@ export function itMaps({
   // a function to format the calling args for display
   formatArgs?: (args: Array<*>, funcName: string) => string,
   
-  // a function to format 
+  // a function to format the expected value
   formatExpected?: (expected: *) => string,
-}) {  
+  
+  // a function to format it all that calls the others by default
+  formatter?: (args: Array<*>, expected: *, funcName: string) => string,
+}): void {
   const mapping: Pairable<*> = map(
     (...args) => args,
     (errorClass, pattern) => new Throws(errorClass, pattern)
