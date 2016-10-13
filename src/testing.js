@@ -7,6 +7,8 @@ import type { $Refinement } from 'tcomb';
 
 import * as nrser from '.';
 
+declare function it(title: string, block: () => void): void;
+
 function isErrorClass(obj: *): boolean {
   return obj.prototype instanceof Error;
 }
@@ -20,6 +22,9 @@ function hasEvenLength(array: Array<*>): boolean {
 type Pairable<V> = Array<V> & $Refinement<typeof hasEvenLength>;
 
 class Throws {
+  errorClass: ErrorClass;
+  pattern: ?RegExp;
+  
   constructor(errorClass: ErrorClass, pattern?: RegExp) {
     this.errorClass = errorClass;
     this.pattern = pattern;
