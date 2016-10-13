@@ -295,7 +295,7 @@ export class Ugh {
     
     this.gulp.task(task.name, (callback: DoneCallback) => {
       task.watcher = gaze(
-        task.src.pattern,
+        task.src.path,
         (initError: ?Error, watcher: gaze.Gaze) => {
           if (initError) {
             // there was an error initializing the gazeInstance
@@ -304,7 +304,7 @@ export class Ugh {
             callback(initError);
             return;
           } else {
-            log(`initialized, watching ${ task.src.pattern }...`);
+            log(`initialized, watching ${ this.relative(task.src.path) }...`);
           }
           
           _.each(['added', 'changed'], (eventName: string): void => {
@@ -711,7 +711,7 @@ export class Ugh {
     };
     
     this.gulp
-      .src(src.pattern, {base: src.base})
+      .src(src.path, {base: src.base})
       
       .pipe(babel())
       .on('error', onError)
@@ -723,7 +723,7 @@ export class Ugh {
         this.notify(
           taskName,
           'COMPILED',
-          `${ this.relative(src.pattern) } => ${ this.relative(dest) }`
+          `${ this.relative(src.path) } => ${ this.relative(dest) }`
         );
         
         if (callback) {
