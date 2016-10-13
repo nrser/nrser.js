@@ -221,8 +221,12 @@ export class Ugh {
   }
   
   /**
-  * creates a task to watch babel sources and compile them. also updated the
-  * general 'watch:babel' task to invoke all 'watch:babel:*' tasks.
+  * creates a task to watch babel sources and compile them.
+  * 
+  * also re-defines:
+  * 
+  * -   `watch:babel` task to invoke all WatchBabelTask instances.
+  * -   `watch` task to invoke all WatchTask instance.
   */
   watchBabel({
     id,
@@ -250,27 +254,7 @@ export class Ugh {
       gutil.log(`${ this.packageName } [${ task.name }]`, ...messages);
     }
     
-    /**
-    * returns the `[eventName, handler]` values to handle events that should
-    * trigger a build (added and changed).
-    */
-    const buildHandler = (eventName: string) => {
-      return [
-        eventName,
-        (filepath: string): void => {
-          // the src should be the filepath but with the same base the `src`
-          // that got passed in so that gulp gets the file to the right
-          // destination
-          const src = new Src(filepath, task.src.base);
-          
-          log(`${ eventName.toUpperCase() } ${ filepath }.`);
-          
-          this.doBabel(task.name, src, task.dest);
-        }
-      ];
-    }
-    
-    this.gulp.task(task.name, (callback) => {
+    this.gulp.task(task.name, (callback: DoneCallback) => {
       task.watcher = gaze(
         task.src.pattern,
         (initError: ?Error, watcher: gaze.Gaze) => {
@@ -284,8 +268,18 @@ export class Ugh {
             log(`initialized, watching ${ task.src.pattern }...`);
           }
           
-          watcher.on(...buildHandler('added'));
-          watcher.on(...buildHandler('changed'));
+          _.each(['added', 'changed'], (eventName: string): void => {
+            watcher.on(eventName, (filepath: string): void => {
+              // the src should be the filepath but with the same base the `src`
+              // that got passed in so that gulp gets the file to the right
+              // destination
+              const src = new Src(filepath, task.src.base);
+              
+              log(`${ eventName.toUpperCase() } ${ filepath }.`);
+              
+              this.doBabel(task.name, src, task.dest);
+            });
+          });
           
           watcher.on('deleted', (filepath) => {
             // we need to find the relative path from the base of the task's src
@@ -308,7 +302,11 @@ export class Ugh {
     
     this.tasksByName[task.name] = task;
     
+    // re-define watch:babel to run all the WatchBabel tasks
     this.gulp.task('watch:babel', this.watchBabelTaskNames);
+    
+    // re-define watch to run all the Watch tasks
+    this.gulp.task('watch', this.watchTaskNames);
   }
   
   /**
@@ -394,8 +392,6 @@ export class Ugh {
   */
   autoTasks() {
     // add a build and watch task for `./src` if it's a directory
-    console.log(this.resolve('src'));
-    
     if (fs.isDirSync(this.resolve('src'))) {
       this.babel({
         id: 'src',
@@ -543,7 +539,7 @@ export class Ugh {
         });
         
         // notify the user
-        this.notify(taskName, 'CLEANED', dest);
+        this.notify(taskName, 'CLEANED', this.relative(dest));
         
         // let caller know we're done here if needed
         if (callback) {
@@ -608,7 +604,11 @@ export class Ugh {
       .on('error', onError)
       
       .on('end', () => {
-        this.notify(taskName, 'COMPILED', `${ src.pattern } => ${ dest }`);
+        this.notify(
+          taskName,
+          'COMPILED',
+          `${ this.relative(src.pattern) } => ${ this.relative(dest) }`
+        );
         
         if (callback) {
           callback();

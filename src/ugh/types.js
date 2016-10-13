@@ -1,12 +1,12 @@
+// system
+import path from 'path';
+
+// deps
 import _ from 'lodash';
 
 import type { $Refinement } from 'tcomb';
 
-function isAbsPath(string: string): boolean {
-  return string.startsWith('/');
-}
-
-export type AbsPath = string & $Refinement<typeof isAbsPath>;
+export type AbsPath = string & $Refinement<typeof path.isAbsolute>;
 
 /**
 * a task 'id' is the part that identifies *which* thing the task is operating on.

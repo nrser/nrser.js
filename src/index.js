@@ -24,6 +24,8 @@ export * as d  from './data';
 export { default as print } from './print';
 export * as metalogger from './metalogger';
 
+export * as path from './path';
+
 export let fs;
 
 if (IS_NODE) {

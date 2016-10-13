@@ -8,7 +8,9 @@
   "plugins": [
     "syntax-flow",
     "transform-export-extensions",
-    "tcomb",
+    ["tcomb", {
+      "skipAsserts": true
+    }],
     "transform-flow-strip-types"
   ]
 }
