@@ -1,15 +1,75 @@
+// @flow
+
+// system
+import util from 'util';
+import {
+  exec as sysExec,
+  execSync as sysExecSync,
+  spawn,
+  spawnSync,
+  ChildProcess,
+} from 'child_process';
+
+// deps
 import shellescape from 'shell-escape';
 import _ from 'lodash';
-import { execSync as sysExecSync } from 'child_process';
-import util from 'util';
 import Promise from 'promise';
+import untildifyImport from 'untildify';
 
-import { squish, tag, deindent } from './string.js';
+// package
+import { squish, tag, deindent } from './string';
 import print from './print';
+import * as errors from './errors';
 
-export untildify from 'untildify';
+// types
 
-export function chdir(dest, block) {
+/**
+* @see https://nodejs.org/api/child_process.html#child_process_child_process_spawnsync_command_args_options
+*/
+export type SpawnResult = {
+  pid: number, // Pid of the child process
+  // TODO are these strings?
+  output: Array<*>, // Array of results from stdio output
+  stdout: Buffer | string, // The contents of output[1]
+  stderr: Buffer | string, // The contents of output[2]
+  status: number, // The exit code of the child process
+  signal: string, // The signal used to kill the child process
+  error: Error, // The error object if the child process failed or timed out
+}
+
+export type CmdOptions = {
+  // common
+  cwd?: string;
+  env?: Object;
+  encoding?: string;
+  maxBuffer?: number;
+  timeout?: number;
+  killSignal?: string;
+  uid?: number;
+  gid?: number;
+  
+  // exec options
+  shell?: string;
+  
+  // exec sync options
+  input?: string | Buffer;
+  stdio?: Array<any>;
+  
+  // spawn options
+  detached?: boolean;
+  
+  // package options
+  trim: boolean;
+  sync: boolean;
+};
+
+// re-exports
+export const untildify = untildifyImport;
+
+export function chdir<T>(
+  dest: string,
+  block?: () => T,
+): ?T {
   if (block) {
     const cwd = process.cwd();
     let result;
@@ -25,7 +85,10 @@ export function chdir(dest, block) {
   }
 }
 
-export function execSync(cmd, options = {encoding: 'utf8', trim: true}) {
+export function execSync(
+  cmd: string,
+  options?: Object = {encoding: 'utf8', trim: true}
+): string {
   const output = sysExecSync(cmd, _.omit(options, ['trim']));
   if (options.trim) {
     return output.trim();
@@ -57,68 +120,160 @@ const escTag = tag(string => shellescape([string]));
 * 
 * @return {string} shell escaped string.
 */
-export function esc(strings, ...values) {
+export function esc(strings: Array<string>, ...values: Array<*>): string {
   return squish(escTag(strings, ...values));
 }
 
 // old name
 export const sh = esc;
 
-const putsTag = tag(s => _.isString(s) ? s : print(s));
+const putsTag = tag(s => typeof s === 'string' ? s : print(s));
 
-export function puts(strings, ...values) {
+export function puts(strings: Array<string>, ...values: Array<*>): void {
   console.log(deindent(putsTag(strings, ...values)));
 }
 
 export const p = puts;
 
 export class Cmd {
-  constructor(options = {}) {
+  options: CmdOptions;
+  
+  /**
+  * handles input, which may come from a direct call or usage as a template
+  * literal.
+  */
+  static getCmdStr(
+    strings: string | Array<string>,
+    ...values: Array<*>
+  ): string {
+    // if we were fed a string just return that
+    if (typeof strings === 'string') {
+      return strings;
+    }
+    
+    if (values.length === 0) {
+      // if there weren't any values, join the strings and squish the results
+      return squish(strings.join(' '));
+    }
+    
+    // otherwise, escape the values as a template literal tag
+    return esc(strings, ...values);
+  }
+  
+  constructor(options: Object = {}) {
     this.options = {
       ...{encoding: 'utf8', trim: true, sync: true},
       ...options,
     };
   }
   
-  out(strings, ...values) {
-    const cmd = esc(strings, ...values);
+  out(
+    strings: string | Array<string>,
+    ...values: Array<*>
+  ): string | Promise<string> {
+    const cmdStr = this.constructor.getCmdStr(strings, ...values);
+    
     if (this.options.sync) {
-      return sysExecSync(cmd, this.options);
+      return sysExecSync(cmdStr, {
+        cwd: this.options.cwd,
+        input: this.options.input,
+        stdio: this.options.stdio,
+        env: this.options.env,
+        encoding: this.options.encoding,
+        timeout: this.options.timeout,
+        maxBuffer: this.options.maxBuffer,
+        killSignal: this.options.killSignal,
+        uid: this.options.uid,
+        gid: this.options.gid,
+      });
+      
     } else {
-      return Promise.denodify(sysExec(cmd, this.options));
-    }
-  }
-  
-  p(strings, ...values) {
-    console.log(this.out(strings, ...values));
-  }
-  
-  spawn(strings, ...values) {
-    const cmd = esc(strings, ...values);
-    if (this.options.sync) {
-      return spawnSync(cmd, this.options);
-    } else {
+      return Promise.denodify(sysExec(cmdStr, {
+        cwd: this.options.cwd,
+        env: this.options.env,
+        encoding: this.options.encoding,
+        shell: this.options.shell,
+        timeout: this.options.timeout,
+        maxBuffer: this.options.maxBuffer,
+        killSignal: this.options.killSignal,
+        uid: this.options.uid,
+        gid: this.options.gid,
+      }));
       
     }
   }
   
-  kexec(strings, ...values) {
-    require('kexec')(esc(strings, ...values));
+  p(
+    strings: string | Array<string>,
+    ...values: Array<*>
+  ): void {
+    if (!this.options.sync) {
+      throw new errors.NrserError("#p doesn't support async (yet)");
+    }
+    
+    console.log(this.out(strings, ...values));
+  }
+  
+  spawn(
+    strings: string | Array<string>,
+    ...values: Array<*>
+  ): SpawnResult | ChildProcess {
+    const cmdStr = this.constructor.getCmdStr(strings, ...values);
+    
+    if (this.options.sync) {
+      const result: SpawnResult = spawnSync(cmdStr, {
+        cwd: this.options.cwd,
+        env: this.options.env,
+        stdio: this.options.stdio,
+        detached: this.options.detached,
+        uid: this.options.uid,
+        gid: this.options.gid,
+      });
+      return result;
+      
+    } else {
+      const child: ChildProcess = spawn(cmdStr, {
+        cwd: this.options.cwd,
+        env: this.options.env,
+        stdio: this.options.stdio,
+        detached: this.options.detached,
+        uid: this.options.uid,
+        gid: this.options.gid,
+      });
+      return child;
+      
+    }
+  }
+  
+  kexec(
+    strings: string | Array<string>,
+    ...values: Array<*>
+  ): void {
+    require('kexec')(this.constructor.getCmdStr(strings, ...values));
   }
 }
 
-export function cmd(options) {
+export function cmd(options: Object) {
   return new Cmd(options);
 }
 
-cmd.out = function(strings, ...values) {
+cmd.out = function(
+  strings: string | Array<string>,
+  ...values: Array<*>
+): string {
   return new Cmd().out(strings, ...values);
 }
 
-cmd.p = function(strings, ...values) {
+cmd.p = function(
+  strings: string | Array<string>,
+  ...values: Array<*>
+): void {
   return new Cmd().p(strings, ...values);
 }
 
-cmd.kexec = function(strings, ...values) {
+cmd.kexec = function(
+  strings: string | Array<string>,
+  ...values: Array<*>
+): void {
   new Cmd().kexec(strings, ...values);
 }
