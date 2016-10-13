@@ -102,6 +102,10 @@ export class Ugh {
     this.babelRelativeDest = babelRelativeDest;
     
     this.tasksByName = {};
+    
+    gulp.task('ugh:tasks', () => {
+      gutil.log(dump(this.tasksByName));
+    })
   }
   
   // public API
@@ -360,7 +364,10 @@ export class Ugh {
     tests: string | Pattern,
     watch?: false | string | Pattern | Array<string|Pattern>,
   }): void {
-    const task = new MochaTask(id, this.toTestsPattern(tests));
+    const task = new MochaTask({
+      id,
+      tests: this.toTestsPattern(tests)}
+    );
     
     this.gulp.task(task.name, (callback: DoneCallback) => {
       this.doMocha(task.name, task.tests, callback);
@@ -730,11 +737,13 @@ export class Ugh {
     tests: Pattern,
     callback?: DoneCallback,
   ) {
+    gutil.log(`doing mocha for ${ taskName}`, {tests});
+    
     // fucking 'end' gets emitted after error?!
     const onceCallback = _.once(callback);
     
     this.gulp
-      .src(_.map(tests, p => p.path), {read: false})
+      .src(tests.path, {read: false})
       .pipe(spawnMocha({growl: true}))
       .on('error', (error) => {
         // mocha takes care of it's own logging and notifs
