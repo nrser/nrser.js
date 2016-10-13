@@ -20,14 +20,14 @@ export class WatchMochaTask extends WatchTask {
   */
   watch: Array<Pattern>;
   
-  constructor({id, src, dest}: {
+  constructor({id, tests, watch}: {
     id: TaskId,
-    src: Pattern,
-    dest: AbsPath,
+    tests: Pattern,
+    watch: Array<Pattern>,
   }) {
-    super(id, `watch:babel:${ id }`);
+    super(id, `watch:mocha:${ id }`);
     
-    this.src = src;
-    this.dest = dest;
+    this.tests = tests;
+    this.watch = watch;
   }
 }

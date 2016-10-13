@@ -25,15 +25,15 @@ describe('ugh/Ugh.js', () => {
       expect(ugh.packageName).to.equal('nrser');
     });
     
-    describe('#toBabelPattern', () => {
+    describe('#toJSPattern', () => {
       const ugh = createUgh();
       
       it("adds the js pattern", () => {
-        const src = ugh.toBabelPattern('src');
+        const src = ugh.toJSPattern('src');
         expect(src).to.be.an.instanceOf(Pattern);
         expect(src.base)
           .to.equal(ugh.resolve('src'));
-        expect(src.pattern)
+        expect(src.path)
           .to.equal(ugh.resolve('src/**/*.{js,jsx,es,es6}'));
       });
     }); // #toBabelPattern
@@ -56,7 +56,7 @@ describe('ugh/Ugh.js', () => {
         func: ugh.relative.bind(ugh),
         map: (f, throws) => [
           f(path.join(ugh.packageDir, 'lib')), 'lib',
-          f(new Pattern(ugh.resolve('src/**/**.js')), '../lib'), 'lib',
+          f(Pattern.fromPath(ugh.resolve('src/**/**.js')), '../lib'), 'lib',
         ]
       })
     }); // #relative
@@ -93,8 +93,10 @@ describe('ugh/Ugh.js', () => {
       });
       
       it("adds 'clean:<id>' and 'clean' tasks to gulp", () => {
-        expect(_.keys(ugh.gulp.tasks)).to.have.members(['clean', 'clean:src']);
-        expect(ugh.gulp.tasks['clean'].dep).to.have.members(['clean:src']);
+        expect(_.keys(ugh.gulp.tasks))
+          .to.include.members(['clean', 'clean:src']);
+        expect(ugh.gulp.tasks['clean'].dep)
+          .to.have.members(['clean:src']);
       });
     }); // #clean
     
@@ -120,17 +122,20 @@ describe('ugh/Ugh.js', () => {
         });
         
         it("adds 'babel:src' and 'babel' tasks to gulp", () => {
-          // expect(_.size(ugh.gulp.tasks)).to.equal(2);
-          expect(_.keys(ugh.gulp.tasks)).to.have.members(['babel', 'babel:src']);
-          expect(ugh.gulp.tasks['babel'].dep).to.have.members(['babel:src']);
+          expect(_.keys(ugh.gulp.tasks))
+            .to.include.members(['babel', 'babel:src']);
+          expect(ugh.gulp.tasks['babel'].dep)
+            .to.have.members(['babel:src']);
         });
         
-        it("defaults src to have the correct pattern and base", () => {
+        it("defaults src to have the correct path, pattern and base", () => {
           const task = ugh.tasks[0];
-          expect(task.src.pattern)
+          expect(task.src.path)
             .to.equal(ugh.resolve('src/**/*.{js,jsx,es,es6}'));
           expect(task.src.base)
             .to.equal(ugh.resolve('src'));
+          expect(task.src.pattern)
+            .to.equal('**/*.{js,jsx,es,es6}');
         });
       }); // just babel task
       
@@ -149,14 +154,13 @@ describe('ugh/Ugh.js', () => {
         });
         
         it("adds a BabelTask and a CleanTask to ugh", () => {
-          expect(ugh.tasks).to.have.lengthOf(2);
           expect(ugh.babelTasks).to.have.lengthOf(1);
           expect(ugh.cleanTasks).to.have.lengthOf(1);
         });
         
         it(`adds babel and clean tasks to gulp`, () => {
           expect(_.keys(ugh.gulp.tasks))
-            .to.have.members([
+            .to.include.members([
               'babel',
               'babel:src',
               'clean',

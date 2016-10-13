@@ -450,7 +450,7 @@ export class Ugh {
     
     this.gulp.task(task.name, (callback) => {
       task.watcher = gaze(
-        task.watch,
+        _.map(task.watch, pattern => pattern.path),
         (initError: ?Error, watcher: gaze.Gaze) => {
           if (initError) {
             // there was an error initializing the gazeInstance
