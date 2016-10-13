@@ -8,7 +8,7 @@
   "plugins": [
     "syntax-flow",
     ["tcomb", {
-      "skipAsserts": true,
+      "skipAsserts": false,
       "globals": [
         {"Class": true}
       ]
