@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+
+/**
+* installs nrser/lib/gulpTasksDependencies dependencies (buncha gulp stuff
+* that you won't want or need unless you're using gulpTasks to build).
+* 
+* saves them as dev dependencies.
+* 
+* run from the dependent package root.
+*/
+
+const fs = require('fs');
+const spawn = require('child_process').spawn;
+const path = require('path');
+
+const packageJSONPath = path.join(__dirname, '..', 'package.json');
+
+const packageJSON = JSON.parse(fs.readFileSync(packageJSONPath, 'utf8'));
+
+const exe = "npm";
+
+const args = ["install", "--save-dev"].concat( 
+  packageJSON.gulpTasksDependencies.map((name) => {
+    const version = packageJSON.devDependencies[name];
+    
+    if (!version) {
+      throw new Error("can't find " + name + " in nrser devDependencies");
+    }
+    
+    return name + "@" + version;
+  })
+);
+
+console.log("install command:\n\n" + exe + " " + args.join(" ") + "\n\n");
+
+const cmd = spawn(exe, args);
+
+console.log("running...");
+
+// cmd.stdout.on('data', (data) => {
+//   process.stdout.write(data);
+// });
+// 
+// cmd.stderr.on('data', (data) => {
+//   process.stderr.write(data);
+// });
+
+cmd.on('close', (code) => {
+  if (code === 0) {
+    console.log("done.");
+  } else {
+    console.log("failed.");
+  }
+  
+  process.exit(code);
+});
