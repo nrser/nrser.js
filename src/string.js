@@ -18,8 +18,8 @@ import _ from 'lodash';
 * @return {function(strings: string[], ...values:Array<TemplateValue>): string}
 *   function that can be uses as a string template tag.
 */
-export function tag(func) {
-  return (strings, ...values) => {
+export function tag(func: (value: *) => string) {
+  return (strings: Array<string>, ...values: Array<*>) => {
     if (_.isArray(strings)) {
       let result = strings[0];
       for (let i = 0; i < values.length; i++) {
@@ -41,7 +41,10 @@ export function tag(func) {
 * 
 * @return {string} squished output.
 */
-export function squish(strings, ...values) {
+export function squish(
+  strings: Array<string> | string,
+  ...values: Array<string>
+) {
   let input: string;
   
   if (Array.isArray(strings)) {
@@ -70,7 +73,11 @@ export const JSONTag = tag(JSON.stringify);
 export const j = JSONTag;
 
 // TODO doesn't work right with regex sep
-export function rsplit(str, sep, maxsplit) {
+export function rsplit(
+  str: string,
+  sep: string,
+  maxsplit: number
+): Array<string> {
   const split = str.split(sep);
   if (maxsplit) {
     return [split.slice(0, -maxsplit).join(sep)].concat(split.slice(-maxsplit))
@@ -79,8 +86,17 @@ export function rsplit(str, sep, maxsplit) {
   }
 } // rsplit()
 
-export function indent(str, {amount = 2, indent = null}) {
-  indent = indent || new Array(amount + 1).join(' ');
+export function indent(
+  str: string,
+  {
+    amount = 2,
+    indent,
+  }: {
+    amount?: number,
+    indent?: string,
+  } = {}
+) {
+  indent = indent || ' '.repeat(amount);
   indent + str.split("\n").join(`\n${ indent }`);
 } // indent()
 
@@ -137,10 +153,14 @@ export function deindent(input: string): string {
   }).join("\n");
 }
 
-export function pad(d, n, p = '0') {
-  d = d.toString();
-  while (d.length < n) {
-    d = p + d;
+export function pad(
+  number: number,
+  padLength: number,
+  padWith: string = '0',
+) {
+  let padded = number.toString();
+  while (padded.length < padLength) {
+    padded = padWith + padded;
   }
-  return d;
+  return padded;
 } // pad()
