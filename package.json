@@ -1,6 +1,6 @@
 {
   "name": "nrser",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "my js utils",
   "main": "lib/index.js",
   "dependencies": {
@@ -34,7 +34,6 @@
     "gulp-changed": "^1.3.2",
     "gulp-clean-dest": "^0.1.1",
     "gulp-debug": "^2.1.2",
-    "gulp-mocha": "^3.0.1",
     "gulp-spawn-mocha": "^3.0.0",
     "gulp-util": "^3.0.7",
     "istanbul": "^0.4.4",
@@ -48,7 +47,7 @@
     "gulp-changed",
     "gulp-clean-dest",
     "gulp-debug",
-    "gulp-mocha",
+    "gulp-spawn-mocha",
     "gulp-util",
     "node-notifier"
   ],
@@ -56,7 +55,8 @@
     "test": "gulp test",
     "build": "gulp build",
     "watch": "gulp watch",
-    "docs": "esdoc -c ./esdoc.json"
+    "docs": "esdoc -c ./esdoc.json",
+    "clean": "git clean -fdX lib test/lib"
   },
   "repository": {
     "type": "git",
