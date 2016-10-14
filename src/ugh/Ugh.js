@@ -349,7 +349,7 @@ export class Ugh {
     
     this.tasksByName[task.name] = task;
     
-    // re-define watch:babel to run all the WatchBabel tasks
+    // re-define watch:babel to run all the WatchBabelTask
     this.gulp.task('watch:babel', this.watchBabelTaskNames);
     
     // re-define watch to run all the Watch tasks
@@ -525,6 +525,10 @@ export class Ugh {
         dest: task.dest,
       });
     }
+    
+    if (watch) {
+      this.watchLess(task);
+    }
   }
   
   /**
@@ -549,7 +553,7 @@ export class Ugh {
     
     this.gulp.task(task.name, (onDone: DoneCallback): void => {
       task.watcher = gaze(
-        task.src.pattern,
+        task.src.path,
         (initError: ?Error, watcher: gaze.Gaze) => {
           if (initError) {
             // there was an error initializing the gazeInstance
@@ -561,9 +565,48 @@ export class Ugh {
             log(`initialized, watching ${ this.relative(task.src.path) }...`);
           }
           
+          _.each(['added', 'changed'], (eventName: string): void => {
+            watcher.on(eventName, (filepath: string): void => {
+              // the src should be the filepath but with the same base the `src`
+              // that got passed in so that gulp gets the file to the right
+              // destination
+              const src = new Pattern({
+                pattern: path.relative(task.src.base, filepath),
+                base: task.src.base,
+              });
+              
+              log(`${ eventName.toUpperCase() } ${ filepath }.`);
+              
+              this.doLess(task.name, src, task.dest);
+            });
+          });
+          
+          watcher.on('deleted', (filepath) => {
+            // we need to find the relative path from the base of the
+            // task's src
+            const relToPatternBase: string = path.relative(
+              task.src.base,
+              filepath
+            );
+            
+            // then we can construct the destination path
+            const dest = path.join(task.dest, relToPatternBase);
+            
+            log(`DELETED ${ filepath }.`);
+            
+            this.doClean(task.name, dest);
+          });
         }
-      );
-    });
+      ); // gaze
+    }); // task
+    
+    this.tasksByName[task.name] = task;
+    
+    // re-define watch:less to run all the WatchLessTask
+    this.gulp.task('watch:less', this.watchLessTaskNames);
+    
+    // re-define watch to run all the Watch tasks
+    this.gulp.task('watch', this.watchTaskNames);
   }
   
   /**
