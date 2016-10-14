@@ -103,7 +103,7 @@ export class Ugh {
     this.tasksByName = {};
     
     gulp.task('ugh:tasks', () => {
-      gutil.log(dump(this.tasksByName));
+      this.log('ugh:tasks', dump(this.tasksByName));
     })
   }
   
@@ -287,9 +287,7 @@ export class Ugh {
     /**
     * log some shit under the package and task name
     */
-    const log = (...messages) => {
-      gutil.log(`${ this.packageName } [${ task.name }]`, ...messages);
-    }
+    const log = this.logger(task.name);
     
     this.gulp.task(task.name, (callback: DoneCallback) => {
       task.watcher = gaze(
@@ -434,9 +432,7 @@ export class Ugh {
       watch: watchPatterns,
     });
       
-    const log = function(...messages) {
-      gutil.log(`[${ task.name }]`, ...messages);
-    }
+    const log = this.logger(task.name);
       
     const scheduler = new Scheduler(
       task.name,
@@ -542,7 +538,7 @@ export class Ugh {
   notifyOfError(taskName: TaskName, error: Error): void {
     let message = error.message;
     
-    gutil.log(message);
+    this.log(taskName, message);
     
     this.notify(taskName, 'ERROR', message);
   }
@@ -554,9 +550,9 @@ export class Ugh {
     gutil.log(`${ this.packageName } [${ taskName }]`, ...messages);
   }
   
-  logger(taskName: TaskName): (...message: Array<*>) => void {
+  logger(taskName: TaskName): (...messages: Array<*>) => void {
     return (...messages: Array<*>): void => {
-      this.log(taskName, ...message);
+      this.log(taskName, ...messages);
     };
   }
   
@@ -679,7 +675,7 @@ export class Ugh {
         // log any outputs
         _.each({stdout, stderr}, (output, name) => {
           if (output) {
-            gutil.log(`[${ taskName }]`, `${ name }: \n${ output }`);
+            this.log(taskName, `${ name }: \n${ output }`);
           }
         });
         
