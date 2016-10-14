@@ -1,5 +1,5 @@
-import gulp from 'gulp';
-import Ugh from './src/ugh';
+const gulp = require('gulp');
+const Ugh = require('./lib/ugh').Ugh;
 
 const ugh = new Ugh(gulp);
 
