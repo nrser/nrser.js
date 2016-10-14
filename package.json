@@ -66,6 +66,7 @@
   "browser": {
     "fs-extra": false,
     "node-notifier": false,
-    "cli-color": false
+    "cli-color": false,
+    "untildify": false
   }
 }
