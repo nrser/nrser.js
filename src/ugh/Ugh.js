@@ -446,7 +446,7 @@ export class Ugh {
       {log},
     );
     
-    this.gulp.task(task.name, (callback) => {
+    this.gulp.task(task.name, [`mocha:${ task.id }`], (callback) => {
       task.watcher = gaze(
         _.map(task.watch, pattern => pattern.path),
         
@@ -469,6 +469,9 @@ export class Ugh {
           
         }
       ); // gaze
+      
+      // kick off
+      this.log(task.name, "kicking off mocha...");
     }); // task
     
     // add the task to the instance
@@ -545,6 +548,19 @@ export class Ugh {
   }
   
   /**
+  * log to gulp-util.log with the package name and task name.
+  */
+  log(taskName: TaskName, ...messages: Array<*>): void {
+    gutil.log(`${ this.packageName } [${ taskName }]`, ...messages);
+  }
+  
+  logger(taskName: TaskName): (...message: Array<*>) => void {
+    return (...messages: Array<*>): void => {
+      this.log(taskName, ...message);
+    };
+  }
+  
+  /**
   * logs an error to the console, including a notification by default.
   */
   logError(
@@ -558,12 +574,14 @@ export class Ugh {
       notify?: boolean,
     } = {}
   ): void {
-    gutil.log(`[${ taskName }] ERROR`);
+    const log = this.logger(taskName);
+    
+    log('ERROR');
     
     if (error.stack) {
-      gutil.log(error.stack.toString());
+      log(error.stack.toString());
     } else {
-      gutil.log(error.toString());
+      log(error.toString());
     }
     
     if (details) {
@@ -574,7 +592,7 @@ export class Ugh {
         detailsMessage += dump(details);
       }
       
-      gutil.log(detailsMessage);
+      log(detailsMessage);
     }
     
     if (notify) {
@@ -723,14 +741,14 @@ export class Ugh {
     tests: Pattern,
     callback?: DoneCallback,
   ) {
-    gutil.log(`doing mocha for ${ taskName}`, {tests});
+    this.log(taskName, `doing mocha`, {tests});
     
     // fucking 'end' gets emitted after error?!
     const onceCallback = _.once(callback);
     
     this.gulp
       .src(tests.path, {read: false})
-      .pipe(spawnMocha({growl: true}))
+      .pipe(spawnMocha({growl: true, reporter: 'min'}))
       .on('error', (error) => {
         // mocha takes care of it's own logging and notifs
         this.logError(taskName, error);
