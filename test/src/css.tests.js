@@ -1,4 +1,4 @@
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import { itMaps } from '../../lib/testing';
 import { cssNamespace, cssNamespacer } from '../../lib/css';
 

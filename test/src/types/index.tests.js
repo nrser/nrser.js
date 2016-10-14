@@ -1,6 +1,6 @@
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import _ from 'lodash';
-import { itMaps, itMaps } from '../../../lib/testing.js';
+import { itMaps } from '../../../lib/testing.js';
 import * as nrser from '../../../lib/index.js';
 import t from 'tcomb';
 import Promise from 'promise';
@@ -23,10 +23,10 @@ describe('types/index.js', () => {
   }); // describe nonEmptyList()
   
   describe('ErrorType', function () {
-    chai.expect(nrser.t.ErrorType.is(new Error('hey'))).to.be.true;
+    expect(nrser.t.ErrorType.is(new Error('hey'))).to.be.true;
   });
 
   describe('PromiseType', function () {
-    chai.expect(nrser.t.PromiseType.is(new Promise(() => {}))).to.be.true;
+    expect(nrser.t.PromiseType.is(new Promise(() => {}))).to.be.true;
   });
 });
