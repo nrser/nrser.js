@@ -7,8 +7,15 @@ import { WatchTask } from './WatchTask';
 import type { TaskId, TaskName, AbsPath } from '../types';
 
 export class WatchLessTask extends WatchTask {
+  /**
+  * pattern for less files to source.
+  */
   src: Pattern;
-  dest: AbsPath;
+  
+  /**
+  * directory to output them.
+  */
+  dest: AbsDir;
   
   constructor({id, src, dest}: {
     id: TaskId,

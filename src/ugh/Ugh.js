@@ -279,7 +279,7 @@ export class Ugh {
     dest, // flow doesn't like = this.relative(src, this.babelRelativeDest),
   } : {
     id: TaskId,
-    src: string | Pattern,
+    src: Patternable,
     dest?: string,
   }): void {
     // if we didn't get a dest, resolve to relative of the src
@@ -528,6 +528,45 @@ export class Ugh {
   }
   
   /**
+  * create a task to watch less files and incrementally build.
+  */
+  watchLess({
+    id,
+    src,
+    dest,
+  } : {
+    id: TaskId,
+    src: Patternable,
+    dest: string,
+  }): void {
+    const task = new WatchLessTask({
+      id,
+      src: this.toLessPattern(src),
+      dest: this.resolveDir(dest),
+    });
+    
+    const log = this.logger(task.name);
+    
+    this.gulp.task(task.name, (onDone: DoneCallback): void => {
+      task.watcher = gaze(
+        task.src.pattern,
+        (initError: ?Error, watcher: gaze.Gaze) => {
+          if (initError) {
+            // there was an error initializing the gazeInstance
+            // this is the only time we callback and end the task
+            this.logError(task.name, initError);
+            callback(initError);
+            return;
+          } else {
+            log(`initialized, watching ${ this.relative(task.src.path) }...`);
+          }
+          
+        }
+      );
+    });
+  }
+  
+  /**
   * auto-create tasks depending on what's present
   */
   autoTasks() {
@@ -609,6 +648,9 @@ export class Ugh {
     );
   }
   
+  /**
+  * get a log function bound to a task name.
+  */
   logger(taskName: TaskName): (...messages: Array<*>) => void {
     return (...messages: Array<*>): void => {
       this.log(taskName, ...messages);
