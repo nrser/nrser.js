@@ -7,7 +7,6 @@ import { exec } from 'child_process';
 // deps
 import babel from 'gulp-babel';
 import notifier from 'node-notifier';
-import path from 'path';
 import spawnMocha from 'gulp-spawn-mocha';
 import gutil from 'gulp-util';
 import _ from 'lodash';
@@ -15,9 +14,11 @@ import glob from 'glob';
 import debug from 'gulp-debug';
 import t from 'tcomb';
 import gaze from 'gaze';
+import less from 'gulp-less';
 
 // package
 import fs from '../fs';
+import * as path from '../path';
 import * as errors from '../errors';
 import { squish } from '../string';
 import {
@@ -48,6 +49,8 @@ import type {
   AbsDir,
   DoneCallback,
 } from './types';
+
+type Patternable = string | Pattern | {base: string, pattern: string};
 
 export class Ugh {
   gulp: Object;
@@ -108,10 +111,10 @@ export class Ugh {
   }
   
   // public API
-  // ==========
+  // =========================================================================
   
   // getting tasks
-  // -------------
+  // -------------------------------------------------------------------------
   
   get tasks(): Array<Task> {
     return _.values(this.tasksByName);
@@ -168,8 +171,8 @@ export class Ugh {
     return this.getTaskNamesForType(MochaTask);
   }
   
-  get babelTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(BabelTask);
+  get lessTaskNames(): Array<TaskName> {
+    return this.getTaskNamesForType(LessTask);
   }
   
   get watchTaskNames(): Array<TaskName> {
@@ -187,6 +190,9 @@ export class Ugh {
   get watchLessTaskNames(): Array<TaskName> {
     return this.getTaskNamesForType(WatchLessTask);
   }
+  
+  // creating tasks
+  // -------------------------------------------------------------------------
   
   /**
   * create a clean task with the provided name that cleans the dest directory.
@@ -230,7 +236,7 @@ export class Ugh {
     clean?: boolean,
     watch?: boolean,
   }): void {
-    if (typeof dest === 'undefined') {
+    if (dest === undefined) {
       dest = this.relative(src, this.babelRelativeDest);
     }
     
@@ -240,15 +246,18 @@ export class Ugh {
       dest: this.resolveDir(dest),
     });
     
-    this.gulp.task(task.name, (onDone) => {
-      this.doBabel(task.name, task.src, task.dest)
+    this.gulp.task(task.name, (onDone: DoneCallback): void => {
+      this.doBabel(task.name, task.src, task.dest, onDone);
     });
     
     this.tasksByName[task.name] = task;
     this.gulp.task('babel', this.babelTaskNames);
     
     if (clean) {
-      this.clean(task);
+      this.clean({
+        id: task.name,
+        dest: task.dest,
+      });
     }
     
     if (watch) {
@@ -481,6 +490,44 @@ export class Ugh {
   }
   
   /**
+  * create a less task and optional watch task.
+  */
+  less({
+    id,
+    src,
+    dest,
+    clean = true,
+    watch = true,
+  } : {
+    id: TaskId,
+    src: Patternable,
+    dest: string,
+    clean?: boolean,
+    watch?: boolean,
+  }): void {
+    const task = new LessTask({
+      id,
+      src: this.toLessPattern(src),
+      dest: this.resolve(dest),
+    });
+    
+    this.gulp.task(task.name, (onDone: DoneCallback): void => {
+      this.doLess(task.name, task.src, task.dest);
+    });
+    
+    this.tasksByName[task.name] = task;
+    
+    this.gulp.task('less', this.lessTaskNames);
+    
+    if (clean) {
+      this.clean({
+        id: task.name,
+        dest: task.dest,
+      });
+    }
+  }
+  
+  /**
   * auto-create tasks depending on what's present
   */
   autoTasks() {
@@ -509,10 +556,10 @@ export class Ugh {
   }
   
   // private API
-  // ===========
+  // =========================================================================
   
   // util
-  // ----
+  // -------------------------------------------------------------------------
   
   /**
   * the glob pattern for `this.jsExts`, like "{js,jsx,es,es6}".
@@ -521,6 +568,9 @@ export class Ugh {
   get jsExtsPattern(): string {
     return `{${ this.jsExts.join(',') }}`;
   }
+  
+  // logging and notifications
+  // -------------------------------------------------------------------------
   
   /**
   * dispatches a notification.
@@ -547,7 +597,16 @@ export class Ugh {
   * log to gulp-util.log with the package name and task name.
   */
   log(taskName: TaskName, ...messages: Array<*>): void {
-    gutil.log(`${ this.packageName } [${ taskName }]`, ...messages);
+    gutil.log(
+      `${ this.packageName } [${ taskName }]`,
+      ..._.map(messages, (message: *): string => {
+        if (typeof message === 'string') {
+          return message;
+        } else {
+          return dump(message);
+        }
+      })
+    );
   }
   
   logger(taskName: TaskName): (...messages: Array<*>) => void {
@@ -596,6 +655,9 @@ export class Ugh {
     }
   }
   
+  // paths
+  // -------------------------------------------------------------------------
+  
   /**
   * resolve path against the package dir.
   */
@@ -624,12 +686,22 @@ export class Ugh {
     return path.relative(this.packageDir, this.resolve(...segments));
   }
   
+  // patterns
+  // -------------------------------------------------------------------------
+  
   /**
   * takes a sources argument, which may be a string path, 
   */
-  toPattern(input: string | Pattern, defaultPattern: string): Pattern {
+  toPattern(input: Patternable, defaultPattern: string): Pattern {
     if (input instanceof Pattern) {
       return input;
+    }
+    
+    if (typeof input === 'object') {
+      return new Pattern({
+        base: this.resolveDir(input.base),
+        pattern: input.pattern,
+      });
     }
     
     if (hasGlobPattern(input)) {
@@ -647,22 +719,38 @@ export class Ugh {
   /**
   * gets a Pattern instance to find js files.
   */
-  toJSPattern(input: string | Pattern): Pattern {
+  toJSPattern(input: Patternable): Pattern {
     return this.toPattern(input, `**/*.${ this.jsExtsPattern }`);
   }
   
   /**
   * get a Pattern instance to find test files.
   */
-  toTestsPattern(input: string | Pattern): Pattern {
+  toTestsPattern(input: Patternable): Pattern {
     return this.toPattern(input, `**/*.test?(s).${ this.jsExtsPattern }`);
   }
   
-  // do stuff
-  // --------
+  toLessPattern(input: Patternable): Pattern {
+    return this.toPattern(input, '**/*.less');
+  }
+  
+  // actions
+  // -------------------------------------------------------------------------
   
   doClean(taskName: TaskName, dest: string, callback: ?DoneCallback) {
-    exec(`git clean -fdX ${ dest }`, (error, stdout, stderr) => {
+    const log = this.logger(taskName);
+    
+    let relDest = this.relative(dest);
+    
+    if (!relDest.endsWith('/')) {
+      relDest += '/';
+    }
+    
+    const cmd = `git clean -fdX ${ relDest }`;
+    
+    log("cleaning", {dest, relDest, cmd});
+    
+    exec(cmd, {cwd: this.packageDir}, (error, stdout, stderr) => {
       if (error) {
         this.logError(taskName, error);
         
@@ -675,7 +763,7 @@ export class Ugh {
         // log any outputs
         _.each({stdout, stderr}, (output, name) => {
           if (output) {
-            this.log(taskName, `${ name }: \n${ output }`);
+            log(`${ name }: \n${ output }`);
           }
         });
         
@@ -691,22 +779,22 @@ export class Ugh {
   }
   
   /**
-  * runs the babel transform stream from a source to a destination.
+  * runs the babel gulp pipeline.
   * 
-  * if `callback` is provided, calls with an error if one occurs or
+  * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
   doBabel(
     taskName: TaskName,
     src: Pattern,
     dest: AbsDir,
-    callback?: DoneCallback,
+    onDone?: DoneCallback,
   ) {
     const onError = (error: Error) => {
       this.logError(taskName, error, {src, dest});
       
-      if (callback) {
-        callback(error);
+      if (onDone) {
+        onDone(error);
       }
     };
     
@@ -726,12 +814,18 @@ export class Ugh {
           `${ this.relative(src.path) } => ${ this.relative(dest) }`
         );
         
-        if (callback) {
-          callback();
+        if (onDone) {
+          onDone();
         }
       });
   }
-    
+  
+  /**
+  * run the mocha gulp pipeline.
+  * 
+  * if `onDone` is provided, calls with an error if one occurs or
+  * with no arguments when done.
+  */
   doMocha(
     taskName: TaskName,
     tests: Pattern,
@@ -756,6 +850,44 @@ export class Ugh {
       .on('end', () => {
         if (callback) {
           onceCallback();
+        }
+      });
+  }
+  
+  /**
+  * run the gulp less pipeline.
+  * 
+  * if `onDone` is provided, calls with an error if one occurs or
+  * with no arguments when done.
+  */
+  doLess(
+    taskName: TaskName,
+    src: Pattern,
+    dest: AbsDir,
+    onDone?: DoneCallback,
+  ): void {
+    const onError = (error: Error) => {
+      this.logError(taskName, error, {src, dest});
+      
+      if (onDone) {
+        onDone(error);
+      }
+    };
+    
+    this.gulp.src(src.path, {base: src.base})
+      .pipe(less())
+      .on('error', onError)
+      .pipe(this.gulp.dest(dest))
+      .on('error', onError)
+      .on('end', () => {
+        this.notify(
+          taskName,
+          'COMPILED',
+          `${ this.relative(src.path) } => ${ this.relative(dest) }`
+        );
+        
+        if (onDone) {
+          onDone();
         }
       });
   }

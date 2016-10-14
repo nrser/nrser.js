@@ -11,13 +11,11 @@ export type AbsPath = string & $Refinement<typeof path.isAbsolute>;
 export type AbsDir = AbsPath;
 
 /**
-* a task 'id' is the part that identifies *which* thing the task is operating on.
-* 
-* it's the last part of the Gulp task name, the 'src' in 'babel:src', 
-* 'watch:babel:src', etc.
+* a task 'id' is the part that identifies *which* thing the task is
+* operating on.
 */
 function isTaskId(string: string): boolean {
-  return string.length > 0 && string.indexOf(':') === -1;
+  return string.length > 0;
 }
 
 export type TaskId = string & $Refinement<typeof isTaskId>;

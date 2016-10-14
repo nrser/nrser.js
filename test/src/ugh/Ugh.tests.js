@@ -164,7 +164,7 @@ describe('ugh/Ugh.js', () => {
               'babel',
               'babel:src',
               'clean',
-              'clean:src',
+              'clean:babel:src',
             ]);
             
           expect(ugh.gulp.tasks['babel'].dep)

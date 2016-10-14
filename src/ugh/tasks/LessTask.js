@@ -17,12 +17,14 @@ export class LessTask extends Task {
   */
   dest: AbsDir;
   
-  constructor({id, tests}: {
+  constructor({id, src, dest}: {
     id: TaskId,
-    tests: Pattern,
+    src: Pattern,
+    dest: AbsDir,
   }) {
-    super(id, `mocha:${ id }`);
+    super(id, `less:${ id }`);
     
-    this.tests = tests;
+    this.src = src;
+    this.dest = dest;
   }
 }
