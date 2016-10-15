@@ -759,7 +759,7 @@ export class Ugh {
           return segment;
         } else if (segment instanceof Pattern) {
           return segment.base;
-        } else if (typeof segment === 'object' && segement.base ) {
+        } else if (typeof segment === 'object' && segment.base ) {
           return segment.base;
         } else {
           throw new TypeError(`bad segment: ${ dump(segment) }`);
