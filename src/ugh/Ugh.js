@@ -451,7 +451,7 @@ export class Ugh {
       {log},
     );
     
-    this.gulp.task(task.name, [`mocha:${ task.id }`], (callback) => {
+    this.gulp.task(task.name, (callback) => {
       task.watcher = gaze(
         _.map(task.watch, pattern => pattern.path),
         
@@ -477,6 +477,7 @@ export class Ugh {
       
       // kick off
       this.log(task.name, "kicking off mocha...");
+      scheduler.schedule();
     }); // task
     
     // add the task to the instance
