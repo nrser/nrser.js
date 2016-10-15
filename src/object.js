@@ -88,7 +88,7 @@ export function mergeNoConflicts(...objects: Array<Object>): Object {
 */
 export function need(
   object: Object,
-  keyPath: KeyPath,
+  keyPath?: KeyPath,
   {defaultValue}: {defaultValue?: mixed} = {}
 ): * {
   const result = _.isEmpty(keyPath) ? (
