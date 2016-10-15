@@ -560,7 +560,7 @@ export class Ugh {
             // there was an error initializing the gazeInstance
             // this is the only time we callback and end the task
             this.logError(task.name, initError);
-            callback(initError);
+            onDone(initError);
             return;
           } else {
             log(`initialized, watching ${ this.relative(task.src.path) }...`);
@@ -751,12 +751,20 @@ export class Ugh {
   /**
   * resolve path against the package dir.
   */
-  resolve(...segments: Array<string|Pattern>): AbsPath { 
+  resolve(...segments: Array<Patternable>): AbsPath { 
     return path.resolve(
       this.packageDir,
-      ..._.map(segments, segment => (
-        segment instanceof Pattern ? segment.base : segment
-      ))
+      ..._.map(segments, (segment: Patternable): string => {
+        if (typeof segment === 'string') {
+          return segment;
+        } else if (segment instanceof Pattern) {
+          return segment.base;
+        } else if (typeof segment === 'object' && segement.base ) {
+          return segment.base;
+        } else {
+          throw new TypeError(`bad segment: ${ dump(segment) }`);
+        }
+      })
     );
   }
   
@@ -772,7 +780,7 @@ export class Ugh {
   * resolve a path against the package dir and return it's representation
   * relative to there.
   */
-  relative(...segments: Array<string|Pattern>): string {
+  relative(...segments: Array<Patternable>): string {
     return path.relative(this.packageDir, this.resolve(...segments));
   }
   
