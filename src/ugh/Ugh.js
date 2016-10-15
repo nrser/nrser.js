@@ -599,6 +599,10 @@ export class Ugh {
           });
         }
       ); // gaze
+      
+      // kick off
+      log("kicking off...");
+      this.doLess(task.name, task.src, task.dest);
     }); // task
     
     this.tasksByName[task.name] = task;
