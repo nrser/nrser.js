@@ -1,8 +1,8 @@
 "use strict";
 
 /**
-* print npm package v1.0
-* https://github.com/Alhadis/Print/tree/v1.0.0
+* print npm package v1.0.1
+* https://raw.githubusercontent.com/Alhadis/Print/v1.0.1/print.js
 * 
 * coppied here 'cause meteor is on fuckin' node v4.5.0 and print wants node
 * >=6.0.0 so we'll pass the source through babel.
@@ -298,7 +298,7 @@ function print(input, options = {}, /*…Internal:*/ name = "", refs = null){
 		typeName = "Arguments";
 	
 	else{
-		const ctr = input.constructor.name;
+		const ctr = input.constructor ? input.constructor.name : "";
 		switch(ctr){
 			
 			case "GeneratorFunction":
