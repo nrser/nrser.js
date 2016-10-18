@@ -24,7 +24,7 @@
     }],
     "syntax-flow",
     ["tcomb", {
-      "skipAsserts": false,
+      "skipAsserts": true,
       "globals": [
         {"Class": true}
       ]

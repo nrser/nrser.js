@@ -54,7 +54,7 @@ export class WatchMochaTask extends WatchTask {
     );
   }
   
-  start(onDone: DoneCallback) /* tcomb fail : void */ {
+  start(onDone: DoneCallback): void {
     super.start(onDone);
     
     // kick off

@@ -51,7 +51,7 @@ export class WatchLessTask extends WatchTask {
     this.watch = watch;
   }
   
-  start(onDone: DoneCallback) {
+  start(onDone: DoneCallback): void {
     super.start(onDone);
     
     // kick off
