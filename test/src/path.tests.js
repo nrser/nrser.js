@@ -23,7 +23,7 @@ function describeFunc(...args) {
       map = args[3];
       break;
     default:
-      throw new nrser.ArgumentError(`expected 2 or 3 args`);
+      throw new nrser.ValueError(`expected 2 or 3 args`);
   }
   
   itMaps({func, funcName, map});
