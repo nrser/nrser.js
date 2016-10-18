@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import chai, { expect } from 'chai';
-import { itMaps } from '../../../lib/testing.js';
+import '../testHelpers';
+import { itMaps } from '../../../lib/testing';
 import {
   Ugh,
   Pattern,
