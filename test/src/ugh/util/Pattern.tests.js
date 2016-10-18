@@ -30,6 +30,22 @@ describe('ugh/util/Pattern.js', () => {
           .to.have.property('path')
           .that.is.equal(p);
       })
-    });
-  });
-})
+    }); // .fromPath
+    
+    describe('#match', () => {
+      itMaps({
+        func: (patternStr: string, filepath: string): boolean => {
+          return Pattern.fromPath(
+            path.resolve(patternStr)
+          ).match(path.resolve(filepath));
+        },
+        
+        map: (f, throws) => [
+          f('src/**/*.js', 'src/index.js'), true,
+          f('src/**/*.js', 'src/index.jsx'), false,
+          f('src/**/*.js', 'src/server/index.js'), true,
+        ]
+      })
+    }); // #match
+  }); // Pattern
+}); // ugh/util/Pattern.js

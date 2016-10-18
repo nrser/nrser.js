@@ -1,7 +1,7 @@
 // package
 import { Pattern } from '../util';
-
 import { Task } from './Task';
+import { Ugh } from '../Ugh';
 
 // types
 import type { TaskId, TaskName } from '../types';
@@ -15,11 +15,12 @@ import type { TaskId, TaskName } from '../types';
 export class CleanTask extends Task {
   dest: string;
   
-  constructor({id, dest}: {
+  constructor({ugh, id, dest}: {
+    ugh: Ugh,
     id: TaskId,
     dest: string,
   }) {
-    super(id, `clean:${ id }`);
+    super({ugh, id, name: `clean:${ id }`});
     
     this.dest = dest;
   }

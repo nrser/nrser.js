@@ -1,6 +1,6 @@
 // package
 import { Pattern } from '../util';
-
+import { Ugh } from '../Ugh';
 import { Task } from './Task';
 
 // types
@@ -12,11 +12,12 @@ export class MochaTask extends Task {
   */
   tests: Pattern;
   
-  constructor({id, tests}: {
+  constructor({ugh, id, tests}: {
+    ugh: Ugh,
     id: TaskId,
     tests: Pattern,
   }) {
-    super(id, `mocha:${ id }`);
+    super({ugh, id, name: `mocha:${ id }`});
     
     this.tests = tests;
   }

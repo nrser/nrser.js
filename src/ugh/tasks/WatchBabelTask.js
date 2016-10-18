@@ -1,6 +1,7 @@
 // package
 import * as errors from '../../errors';
 import { Pattern } from '../util';
+import { Ugh } from '../Ugh';
 import { WatchTask } from './WatchTask';
 
 // types
@@ -13,12 +14,19 @@ export class WatchBabelTask extends WatchTask {
   src: Pattern;
   dest: AbsPath;
   
-  constructor({id, src, dest}: {
+  constructor({ugh, id, src, dest, watch}: {
+    ugh: Ugh,
     id: TaskId,
     src: Pattern,
     dest: AbsPath,
+    watch?: Array<Pattern>,
   }) {
-    super(id, `watch:babel:${ id }`);
+    super({
+      ugh,
+      id,
+      name: `watch:babel:${ id }`,
+      watch: (watch === undefined) ? [src] : watch,
+    });
     
     this.src = src;
     this.dest = dest;

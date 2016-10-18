@@ -50,7 +50,15 @@ import type {
   DoneCallback,
 } from './types';
 
+/**
+* something that can be used to create a single Pattern.
+*/
 type Patternable = string | Pattern | {base: string, pattern: string};
+
+/**
+* something that can be used to create an array of Patterns.
+*/
+type Patternables = Patternable | Array<Patternable>;
 
 export class Ugh {
   gulp: Object;
@@ -207,7 +215,7 @@ export class Ugh {
     id: TaskId,
     dest: string,
   }): void {
-    const task = new CleanTask({id, dest});
+    const task = new CleanTask({ugh: this, id, dest});
     
     this.gulp.task(task.name, (callback) => {
       this.doClean(task.name, task.dest, callback);
@@ -231,7 +239,7 @@ export class Ugh {
     watch = true,
   }: {
     id: string,
-    src: string | Pattern,
+    src: Patternable,
     dest?: string,
     clean?: boolean,
     watch?: boolean,
@@ -241,6 +249,7 @@ export class Ugh {
     }
     
     const task = new BabelTask({
+      ugh: this,
       id,
       src: this.toJSPattern(src),
       dest: this.resolveDir(dest),
@@ -288,6 +297,7 @@ export class Ugh {
     }
     
     const task = new WatchBabelTask({
+      ugh: this,
       id,
       src: this.toJSPattern(src),
       dest: this.resolveDir(dest),
@@ -366,10 +376,11 @@ export class Ugh {
     watch,
   }: {
     id: TaskId,
-    tests: string | Pattern,
-    watch?: false | string | Pattern | Array<string|Pattern>,
+    tests: Patternable,
+    watch?: false | Patternables,
   }): void {
     const task = new MochaTask({
+      ugh: this,
       id,
       tests: this.toTestsPattern(tests)}
     );
@@ -413,7 +424,7 @@ export class Ugh {
   }: {  
     id: TaskId,
     tests: string | Pattern,
-    watch?: string | Pattern | Array<string|Pattern>,
+    watch?: Patternables,
   }) {
     // resolve / default watch patterns
     let watchPatterns: Array<Pattern>;
@@ -436,6 +447,7 @@ export class Ugh {
     }
     
     const task = new WatchMochaTask({
+      ugh: this,
       id,
       tests: this.toTestsPattern(tests),
       watch: watchPatterns,
@@ -498,15 +510,16 @@ export class Ugh {
     src,
     dest,
     clean = true,
-    watch = true,
+    watch,
   } : {
     id: TaskId,
     src: Patternable,
     dest: string,
     clean?: boolean,
-    watch?: boolean,
+    watch?: false | Patternables,
   }): void {
     const task = new LessTask({
+      ugh: this,
       id,
       src: this.toLessPattern(src),
       dest: this.resolve(dest),
@@ -527,8 +540,13 @@ export class Ugh {
       });
     }
     
-    if (watch) {
-      this.watchLess(task);
+    if (watch !== false) {
+      this.watchLess({
+        id: task.id,
+        src: task.src,
+        dest: task.dest,
+        watch,
+      });
     }
   }
   
@@ -539,22 +557,42 @@ export class Ugh {
     id,
     src,
     dest,
+    watch,
   } : {
     id: TaskId,
     src: Patternable,
     dest: string,
+    watch: Patternable,
   }): void {
+    let watchPatterns: Array<Pattern>;
+    
+    if (watch === undefined) {
+      // default to the src
+      watchPatterns = [src];
+      
+    } else {
+      // otherwise make them using {#toLessPattern}
+      
+      if (!Array.isArray(watch)) {
+        watch = [watch];
+      }
+      
+      watchPatterns = _.map(watch, this.toLessPattern.bind(this));
+    }
+    
     const task = new WatchLessTask({
+      ugh: this,
       id,
       src: this.toLessPattern(src),
       dest: this.resolveDir(dest),
+      watch: watchPatterns,
     });
     
     const log = this.logger(task.name);
     
     this.gulp.task(task.name, (onDone: DoneCallback): void => {
       task.watcher = gaze(
-        task.src.path,
+        _.map(task.watch, pattern => pattern.path),
         (initError: ?Error, watcher: gaze.Gaze) => {
           if (initError) {
             // there was an error initializing the gazeInstance
@@ -803,7 +841,7 @@ export class Ugh {
     }
     
     if (hasGlobPattern(input)) {
-      return new Pattern.fromPath(input);
+      return new Pattern.fromPath(this.resolve(input));
       
     } else {
       return new Pattern({

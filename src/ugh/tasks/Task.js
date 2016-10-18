@@ -1,32 +1,22 @@
 // package
 import * as errors from '../../errors';
+import { Ugh } from '../Ugh';
 
 // types
-import type { TaskId, TaskName, GulpTask } from '../types';
+import type { TaskId, TaskName } from '../types';
 
 export class Task {
+  ugh: Ugh;
   id: TaskId;
   name: TaskName;
-  _gulpTask: ?GulpTask;
   
-  constructor(id: TaskId, name: TaskName) {
+  constructor({ugh, id, name} : {
+    ugh: Ugh,
+    id: TaskId,
+    name: TaskName,
+  }) {
+    this.ugh = ugh;
     this.id = id;
     this.name = name;
-  }
-  
-  get gulpTask(): GulpTask {
-    if (typeof this._gulpTask === 'undefined') {
-      throw new Error("no gulp task has been assigned");
-    }
-    
-    return this._gulpTask;
-  }
-  
-  set gulpTask(gulpTask: GulpTask): void {
-    if (typeof this._gulpTask !== 'undefined') {
-      throw new NrserError("gulp task already set", {gulpTask: this.gulpTask});
-    }
-    
-    this._gulpTask = gulpTask;
   }
 }

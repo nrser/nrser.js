@@ -2,6 +2,7 @@
 import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { WatchTask } from './WatchTask';
+import { Ugh } from '../Ugh';
 
 // types
 import type { TaskId, TaskName, AbsPath } from '../types';
@@ -20,14 +21,14 @@ export class WatchMochaTask extends WatchTask {
   */
   watch: Array<Pattern>;
   
-  constructor({id, tests, watch}: {
+  constructor({ugh, id, tests, watch}: {
+    ugh: Ugh,
     id: TaskId,
     tests: Pattern,
     watch: Array<Pattern>,
   }) {
-    super(id, `watch:mocha:${ id }`);
+    super({ugh, id, name: `watch:mocha:${ id }`, watch});
     
     this.tests = tests;
-    this.watch = watch;
   }
 }

@@ -1,6 +1,6 @@
 // package
 import { Pattern } from '../util';
-
+import { Ugh } from '../Ugh';
 import { Task } from './Task';
 
 // types
@@ -17,12 +17,13 @@ export class LessTask extends Task {
   */
   dest: AbsDir;
   
-  constructor({id, src, dest}: {
+  constructor({ugh, id, src, dest}: {
+    ugh: Ugh,
     id: TaskId,
     src: Pattern,
     dest: AbsDir,
   }) {
-    super(id, `less:${ id }`);
+    super(ugh, id, `less:${ id }`);
     
     this.src = src;
     this.dest = dest;

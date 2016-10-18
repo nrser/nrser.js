@@ -48,4 +48,13 @@ export class Pattern {
   get path(): AbsPath {
     return path.join(this.base, this.pattern);
   }
+  
+  /**
+  * see if this pattern matches a filepath.
+  */
+  match(filepath: AbsPath): boolean {
+    const glob: Glob = new Glob(this.path);
+    
+    return glob.minimatch.match(filepath);
+  }
 }
