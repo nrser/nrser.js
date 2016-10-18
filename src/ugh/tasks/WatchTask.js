@@ -86,6 +86,9 @@ export class WatchTask extends Task {
     });
   }
   
+  /**
+  * start the gaze watcher.
+  */
   start(onDone: DoneCallback) {
     this.watcher = gaze(
       this.watchPaths,
@@ -116,19 +119,7 @@ export class WatchTask extends Task {
               method.call(this, this.filepathToPattern(filepath));
             });
           }
-        )
-        
-        // watcher.on('added', (filepath: string): void => {
-        //   this.onAdded(this.filepathToPattern(filepath));
-        // });
-        // 
-        // watcher.on('changed', (filepath: string): void => {
-        //   this.onChanged(this.filepathToPattern(filepath));
-        // });
-        // 
-        // watcher.on('deleted', (filepath: string): void => {
-        //   this.onDeleted(this.filepathToPattern(filepath));
-        // });
+        );
       } // gaze init
     ); // gaze()
   } // #start

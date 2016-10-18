@@ -1,3 +1,6 @@
+// system
+import path from 'path';
+
 // package
 import * as errors from '../../errors';
 import { Pattern } from '../util';
@@ -41,8 +44,6 @@ export class WatchBabelTask extends WatchTask {
   }
   
   onDeleted(filePattern: Pattern): void {
-    const dest = path.join(this.dest, filePattern.pattern);
-    
-    this.ugh.doClean(this.name, dest);
+    this.ugh.doClean(this.name, path.join(this.dest, filePattern.pattern));
   }
 }

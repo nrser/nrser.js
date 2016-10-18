@@ -1,3 +1,6 @@
+// system
+import path from 'path';
+
 // package
 import * as errors from '../../errors';
 import { Pattern } from '../util';
@@ -5,7 +8,13 @@ import { Ugh } from '../Ugh';
 import { WatchTask } from './WatchTask';
 
 // types
-import type { TaskId, TaskName, AbsPath } from '../types';
+import type {
+  TaskId,
+  TaskName,
+  AbsPath,
+  GazeEvent,
+  DoneCallback,
+} from '../types';
 
 export class WatchLessTask extends WatchTask {
   /**
@@ -42,7 +51,25 @@ export class WatchLessTask extends WatchTask {
     this.watch = watch;
   }
   
-  onDeleted(filepath) {
+  start(onDone: DoneCallback) {
+    super.start(onDone);
     
+    // kick off
+    // TOOD this will still run if gaze errors on init... that's generally not
+    //      handled well at all.
+    this.log("kicking off...");
+    this.ugh.doLess(this.name, this.src, this.dest);
+  }
+  
+  onAdded(filePattern: Pattern): void {
+    this.ugh.doLess(this.name, filePattern, this.dest);
+  }
+  
+  onChanged(filePattern: Pattern): void {
+    this.ugh.doLess(this.name, filePattern, this.dest);
+  }
+  
+  onDeleted(filePattern: Pattern): void {
+    this.doClean(task.name, path.join(this.dest, filePattern.pattern));
   }
 }

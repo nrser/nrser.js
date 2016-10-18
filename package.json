@@ -48,7 +48,7 @@
     "node-notifier": "^4.6.1"
   },
   "scripts": {
-    "clean": "git clean -fdX lib test/lib",
+    "clean": "git clean -fdX lib/ test/lib/",
     "build": "npm run clean && babel src -d lib && babel test/src -d test/lib",
     "test": "npm run build && gulp mocha",
     "watch": "npm run build && gulp watch",

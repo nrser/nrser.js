@@ -508,56 +508,7 @@ export class Ugh {
     const log = this.logger(task.name);
     
     this.gulp.task(task.name, (onDone: DoneCallback): void => {
-      task.watcher = gaze(
-        _.map(task.watch, pattern => pattern.path),
-        (initError: ?Error, watcher: gaze.Gaze) => {
-          if (initError) {
-            // there was an error initializing the gazeInstance
-            // this is the only time we callback and end the task
-            this.logError(task.name, initError);
-            onDone(initError);
-            return;
-          } else {
-            log(`initialized, watching ${ this.relative(task.src.path) }...`);
-          }
-          
-          _.each(['added', 'changed'], (eventName: string): void => {
-            watcher.on(eventName, (filepath: string): void => {
-              // the src should be the filepath but with the same base the `src`
-              // that got passed in so that gulp gets the file to the right
-              // destination
-              const src = new Pattern({
-                pattern: path.relative(task.src.base, filepath),
-                base: task.src.base,
-              });
-              
-              log(`${ eventName.toUpperCase() } ${ filepath }.`);
-              
-              this.doLess(task.name, src, task.dest);
-            });
-          });
-          
-          watcher.on('deleted', (filepath) => {
-            // we need to find the relative path from the base of the
-            // task's src
-            const relToPatternBase: string = path.relative(
-              task.src.base,
-              filepath
-            );
-            
-            // then we can construct the destination path
-            const dest = path.join(task.dest, relToPatternBase);
-            
-            log(`DELETED ${ filepath }.`);
-            
-            this.doClean(task.name, dest);
-          });
-        }
-      ); // gaze
-      
-      // kick off
-      log("kicking off...");
-      this.doLess(task.name, task.src, task.dest);
+      task.start(onDone);
     }); // task
     
     this.tasksByName[task.name] = task;
@@ -800,11 +751,16 @@ export class Ugh {
   doClean(taskName: TaskName, dest: string, callback: ?DoneCallback) {
     const log = this.logger(taskName);
     
-    let relDest = this.relative(dest);
-    
-    if (!relDest.endsWith('/')) {
-      relDest += '/';
+    // for `git clean` to work the way we want it - removing all files from
+    // a directory that are ignored by git - even if that directory has
+    // checked-in files in it, we want it to end with a slash
+    if (fs.isDirSync(dest)) {
+      if (!dest.endsWith('/')) {
+        dest += '/';
+      }
     }
+    
+    let relDest = this.relative(dest);
     
     const cmd = `git clean -fdX ${ relDest }`;
     
