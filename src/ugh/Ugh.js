@@ -3,6 +3,7 @@
 // system
 import util from 'util';
 import { exec } from 'child_process';
+import os from 'os';
 
 // deps
 import babel from 'gulp-babel';
@@ -17,6 +18,7 @@ import gaze from 'gaze';
 import less from 'gulp-less';
 
 // package
+import '../metalogger';
 import fs from '../fs';
 import * as path from '../path';
 import * as errors from '../errors';
@@ -302,60 +304,10 @@ export class Ugh {
       src: this.toJSPattern(src),
       dest: this.resolveDir(dest),
     });
-    
-    /**
-    * log some shit under the package and task name
-    */
-    const log = this.logger(task.name);
-    
-    this.gulp.task(task.name, (callback: DoneCallback) => {
-      task.watcher = gaze(
-        task.src.path,
-        (initError: ?Error, watcher: gaze.Gaze) => {
-          if (initError) {
-            // there was an error initializing the gazeInstance
-            // this is the only time we callback and end the task
-            this.logError(task.name, initError);
-            callback(initError);
-            return;
-          } else {
-            log(`initialized, watching ${ this.relative(task.src.path) }...`);
-          }
-          
-          _.each(['added', 'changed'], (eventName: string): void => {
-            watcher.on(eventName, (filepath: string): void => {
-              // the src should be the filepath but with the same base the `src`
-              // that got passed in so that gulp gets the file to the right
-              // destination
-              const src = new Pattern({
-                pattern: path.relative(task.src.base, filepath),
-                base: task.src.base,
-              });
-              
-              log(`${ eventName.toUpperCase() } ${ filepath }.`);
-              
-              this.doBabel(task.name, src, task.dest);
-            });
-          });
-          
-          watcher.on('deleted', (filepath) => {
-            // we need to find the relative path from the base of the task's src
-            const relToPatternBase: string = path.relative(
-              task.src.base,
-              filepath
-            );
-            
-            // then we can construct the destination path
-            const dest = path.join(task.dest, relToPatternBase);
-            
-            log(`DELETED ${ filepath }.`);
-            
-            this.doClean(task.name, dest);
-          });
-          
-        }
-      ); // gaze
-    }); // task
+      
+    this.gulp.task(task.name, (onDone: DoneCallback) => {
+      task.start(onDone);
+    });
     
     this.tasksByName[task.name] = task;
     
@@ -452,44 +404,9 @@ export class Ugh {
       tests: this.toTestsPattern(tests),
       watch: watchPatterns,
     });
-      
-    const log = this.logger(task.name);
-      
-    const scheduler = new Scheduler(
-      task.name,
-      (onDone: DoneCallback) => {
-        this.doMocha(task.name, task.tests, onDone);
-      },
-      {log},
-    );
     
-    this.gulp.task(task.name, (callback) => {
-      task.watcher = gaze(
-        _.map(task.watch, pattern => pattern.path),
-        
-        (initError: ?Error, watcher: gaze.Gaze) => {
-          if (initError) {
-            // there was an error initializing the gazeInstance
-            // this is the only time we callback and end the task
-            this.logError(task.name, initError);
-            callback(initError);
-            return;
-          }
-          
-          watcher.on('all', (event, filepath) => {
-            const rel = this.relative(filepath);
-            
-            log(`${ event } ${ rel }.`);
-            
-            scheduler.schedule();
-          });
-          
-        }
-      ); // gaze
-      
-      // kick off
-      this.log(task.name, "kicking off mocha...");
-      scheduler.schedule();
+    this.gulp.task(task.name, (onDone: DoneCallback) => {
+      task.start(onDone);
     }); // task
     
     // add the task to the instance
@@ -828,7 +745,7 @@ export class Ugh {
   /**
   * takes a sources argument, which may be a string path, 
   */
-  toPattern(input: Patternable, defaultPattern: string): Pattern {
+  toPattern(input: Patternable, defaultPattern?: string): Pattern {
     if (input instanceof Pattern) {
       return input;
     }
@@ -844,6 +761,13 @@ export class Ugh {
       return new Pattern.fromPath(this.resolve(input));
       
     } else {
+      if (defaultPattern === undefined) {
+        throw new TypeError(squish`
+          defaultPattern must be supplied if a string with no glob pattern is
+          passed.
+        `);
+      }
+      
       return new Pattern({
         pattern: defaultPattern,
         base: this.resolveDir(input),
@@ -972,9 +896,19 @@ export class Ugh {
     // fucking 'end' gets emitted after error?!
     const onceCallback = _.once(callback);
     
+    const tempPath = path.join(os.tmpdir(), this.packageName);
+    fs.ensureLinkSync(this.packageDir, path.join(tempPath, this.packageName));
+    
     this.gulp
       .src(tests.path, {read: false})
-      .pipe(spawnMocha({growl: true, reporter: 'min'}))
+      .pipe(spawnMocha({
+        growl: true,
+        reporter: 'min',
+        env: {
+          NODE_ENV: 'test',
+          NODE_PATH: `${ process.env.NODE_PATH }:${ tempPath }`,
+        },
+      }))
       .on('error', (error) => {
         // mocha takes care of it's own logging and notifs
         this.logError(taskName, error);

@@ -31,4 +31,18 @@ export class WatchBabelTask extends WatchTask {
     this.src = src;
     this.dest = dest;
   }
+  
+  onAdded(filePattern: Pattern): void {
+    this.ugh.doBabel(this.name, filePattern, this.dest);
+  }
+  
+  onChanged(filePattern: Pattern): void {
+    this.ugh.doBabel(this.name, filePattern, this.dest);
+  }
+  
+  onDeleted(filePattern: Pattern): void {
+    const dest = path.join(this.dest, filePattern.pattern);
+    
+    this.ugh.doClean(this.name, dest);
+  }
 }

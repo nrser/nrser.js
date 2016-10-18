@@ -19,4 +19,12 @@ export class Task {
     this.id = id;
     this.name = name;
   }
+  
+  log(...messages: Array<*>): void {
+    this.ugh.log(this.name, ...messages);
+  }
+  
+  logError(error: Error): void {
+    this.ugh.logError(this.name, error);
+  }
 }

@@ -41,3 +41,5 @@ export type GulpTask = {
 // };
 
 export type DoneCallback = (error?: Error) => void;
+
+export type GazeEvent = 'added' | 'changed' | 'deleted';

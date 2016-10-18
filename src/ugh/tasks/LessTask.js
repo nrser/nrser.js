@@ -23,7 +23,7 @@ export class LessTask extends Task {
     src: Pattern,
     dest: AbsDir,
   }) {
-    super(ugh, id, `less:${ id }`);
+    super({ugh, id, name: `less:${ id }`});
     
     this.src = src;
     this.dest = dest;
