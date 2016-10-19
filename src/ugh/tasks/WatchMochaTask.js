@@ -2,8 +2,8 @@
 import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { WatchTask } from './WatchTask';
+import { MochaTask } from './MochaTask';
 import { Ugh } from '../Ugh';
-import { Scheduler } from '../util/Scheduler';
 
 // types
 import type {
@@ -33,25 +33,19 @@ export class WatchMochaTask extends WatchTask {
   */
   scheduler: Scheduler;
   
-  constructor({ugh, id, tests, watch}: {
+  constructor({ugh, mochaTask, watch}: {
     ugh: Ugh,
-    id: TaskId,
-    tests: Pattern,
+    mochaTask: MochaTask,
     watch: Array<Pattern>,
   }) {
-    super({ugh, id, name: `watch:mocha:${ id }`, watch});
+    super({
+      ugh,
+      id: mochaTask.id,
+      name: `watch:mocha:${ mochaTask.id }`,
+      watch
+    });
     
-    this.tests = tests;
-    
-    this.scheduler = new Scheduler(
-      this.name,
-      (onDone: DoneCallback) => {
-        this.ugh.doMocha(this.name, this.tests, onDone);
-      },
-      {
-        log: this.log.bind(this),
-      },
-    );
+    this.mochaTask = mochaTask;
   }
   
   start(onDone: DoneCallback): void {
@@ -59,10 +53,13 @@ export class WatchMochaTask extends WatchTask {
     
     // kick off
     this.log("kicking off mocha...");
-    this.scheduler.schedule();
+    
+    // NOTE `onDone` is for the *entire watch task* - we **don't** want to 
+    //      provide it to the watched {MochaTask#run}
+    this.mochaTask.run();
   }
   
   onAll(event: GazeEvent, filePattern: Pattern): void {
-    this.scheduler.schedule();
+    this.mochaTask.run();
   }
 }

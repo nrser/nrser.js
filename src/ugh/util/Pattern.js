@@ -52,8 +52,12 @@ export class Pattern {
   /**
   * see if this pattern matches a filepath.
   */
-  match(filepath: AbsPath): boolean {
+  match(filepath: AbsPath | Pattern): boolean {
     const glob: Glob = new Glob(this.path);
+    
+    if (filepath instanceof Pattern) {
+      filepath = filepath.path;
+    }
     
     return glob.minimatch.match(filepath);
   }

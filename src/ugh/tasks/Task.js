@@ -27,4 +27,11 @@ export class Task {
   logError(error: Error): void {
     this.ugh.logError(this.name, error);
   }
+  
+  /**
+  * dispatches a notification.
+  */
+  notify(status: string, message: string): void {
+    this.ugh.notify(this.name, status, message);
+  }
 }

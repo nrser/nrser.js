@@ -34,16 +34,26 @@ describe('ugh/util/Pattern.js', () => {
     
     describe('#match', () => {
       itMaps({
-        func: (patternStr: string, filepath: string): boolean => {
-          return Pattern.fromPath(
-            path.resolve(patternStr)
-          ).match(path.resolve(filepath));
+        func: (patternArg: string | Object, filepath: string): boolean => {
+          let pattern: Pattern;
+          
+          if (typeof patternArg === 'string') {
+            pattern = Pattern.fromPath(path.resolve(patternArg))
+          } else {
+            pattern = new Pattern({
+              base: path.resolve(patternArg.base),
+              pattern: patternArg.pattern,
+            });
+          }
+          
+          return pattern.match(path.resolve(filepath));
         },
         
         map: (f, throws) => [
           f('src/**/*.js', 'src/index.js'), true,
           f('src/**/*.js', 'src/index.jsx'), false,
           f('src/**/*.js', 'src/server/index.js'), true,
+          f({base: 'src', pattern: 'index.js'}, 'src/index.js'), true,
         ]
       })
     }); // #match

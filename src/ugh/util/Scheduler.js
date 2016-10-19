@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export class Scheduler {
   /**
   * flag set to true when scheduled to run.
@@ -30,6 +32,11 @@ export class Scheduler {
   */
   log: boolean | Function;
   
+  /**
+  * callback to fire with no args on success or with an error on failure.
+  */
+  onDones: Array<DoneCallback>;
+  
   constructor(
     name,
     run,
@@ -44,6 +51,7 @@ export class Scheduler {
     this.timeout = timeout;
     this.log = log
     this.run = run;
+    this.onDones = [];
   }
   
   // public API
@@ -52,8 +60,13 @@ export class Scheduler {
   /**
   * call to schedule a run.
   */
-  schedule(): boolean {
+  schedule(onDone?: DoneCallback): boolean {
     this._log("scheduling...");
+    
+    // add the callback to list to fire when run completes
+    if (onDone) {
+      this.onDones.push(onDone);
+    }
     
     // don't do anything if it's already scheduled
     if (this.scheduled) {
@@ -108,18 +121,32 @@ export class Scheduler {
     // unset the scheduled flag
     this.scheduled = false;
     
-    // start the operation, providing {#done} as a callback for it to fire
+    // start the operation, providing {#_done} as a callback for it to fire
     // when it's complete
     this.run(this._done.bind(this));
   }
   
-  _done(): void {
+  /**
+  * called by the task when it's done, firing any onDone callbacks that
+  * were scheduled.
+  */
+  _done(error?: Error): void {
     this._log("run complete.");
     
     // unset the running flag
     this.running = false;
     
-    // if we're scheduled, it happen while we were running
+    // fire the callbacks
+    _.each(this.onDones, (onDone: DoneCallback): void => {
+      // this.log('firing callback', {error});
+      
+      onDone(error);
+    });
+    
+    // clear the callbacks
+    this.onDones = [];
+    
+    // if we're scheduled, the scheduling happen while we were running
     if (this.scheduled) {
       this._log(`scheduled to run again, will run in ${ this.timeout }ms.`);
       

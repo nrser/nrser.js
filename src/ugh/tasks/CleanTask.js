@@ -4,7 +4,7 @@ import { Task } from './Task';
 import { Ugh } from '../Ugh';
 
 // types
-import type { TaskId, TaskName } from '../types';
+import type { TaskId, TaskName, DoneCallback } from '../types';
 
 /**
 * little struct that hold info about a babel task that's been created.
@@ -23,5 +23,13 @@ export class CleanTask extends Task {
     super({ugh, id, name: `clean:${ id }`});
     
     this.dest = dest;
+  }
+  
+  runAll(onDone?: DoneCallback): void {
+    this.ugh.runCleanPipeline(this.name, this.dest, onDone);
+  }
+  
+  runOne(dest: string, onDone?: DoneCallback): void {
+    this.ugh.runCleanPipeline(this.name, dest, onDone);
   }
 }

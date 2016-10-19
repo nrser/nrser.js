@@ -18,37 +18,33 @@ import type {
 
 export class WatchLessTask extends WatchTask {
   /**
-  * pattern for less files to source.
+  * the corresponding less task
   */
-  src: Pattern;
-  
-  /**
-  * directory to output them.
-  */
-  dest: AbsDir;
+  lessTask: LessTask;
   
   /**
   * patterns to watch
   */
   watch: Array<Pattern>;
   
-  constructor({ugh, id, src, dest, watch}: {
+  constructor({ugh, lessTask, watch}: {
     ugh: Ugh,
-    id: TaskId,
-    src: Pattern,
-    dest: AbsPath,
+    lessTask: LessTask,
     watch?: Array<Pattern>,
   }) {
     super({
       ugh,
-      id,
-      name: `watch:less:${ id }`,
-      watch: (watch === undefined) ? [src] : watch,
+      id: lessTask.id,
+      name: `watch:less:${ lessTask.id }`,
+      watch: (watch === undefined) ? [lessTask.src] : watch,
     });
     
-    this.src = src;
-    this.dest = dest;
+    this.lessTask = lessTask;
     this.watch = watch;
+  }
+  
+  runAll(onDone?: DoneCallback): void {
+    this.lessTask.run(onDone);
   }
   
   start(onDone: DoneCallback): void {
@@ -58,18 +54,38 @@ export class WatchLessTask extends WatchTask {
     // TOOD this will still run if gaze errors on init... that's generally not
     //      handled well at all.
     this.log("kicking off...");
-    this.ugh.doLess(this.name, this.src, this.dest);
+    this.lessTask.runAll();
+  }
+  
+  onAddedOrChanged(filePattern: Pattern): void {
+    if (this.lessTask.src.match(filePattern)) {
+      // if the watched file is in the source pattern run individually on that
+      // file
+      this.lessTask.runOne(filePattern);
+      
+    } else {
+      // run the whole thing
+      this.lessTask.runAll();
+    }
   }
   
   onAdded(filePattern: Pattern): void {
-    this.ugh.doLess(this.name, filePattern, this.dest);
+    this.onAddedOrChanged(filePattern);
   }
   
   onChanged(filePattern: Pattern): void {
-    this.ugh.doLess(this.name, filePattern, this.dest);
+    this.onAddedOrChanged(filePattern);
   }
   
   onDeleted(filePattern: Pattern): void {
-    this.doClean(task.name, path.join(this.dest, filePattern.pattern));
+    if (this.lessTask.src.match(filePattern) && this.lessTask.cleanTask) {
+      // if the watched file is in the source pattern remove that destination
+      // (if there is an associated clean task)
+      this.lessTask.cleanTask.runOne(filePattern.path);
+      
+    } else {
+      // run the whole thing
+      this.lessTask.runAll();
+    }
   }
 }

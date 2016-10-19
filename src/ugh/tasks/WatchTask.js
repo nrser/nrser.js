@@ -33,7 +33,18 @@ export class WatchTask extends Task {
   */
   watch: Array<Pattern>;
   
+  /**
+  * 'private' variables holding the gaze instance watching the files, if any.
+  */
   _watcher: ?Gaze;
+  
+  /**
+  * callback optionally provided to {#start} to fire when done (either with
+  * an error when initialization fails, or with no args when {#stop} is
+  * called - errors occurring in the triggered operations are reported 
+  * but the task continues to run).
+  */
+  onDone: ?DoneCallback;
   
   constructor({ugh, id, name, watch}: {
     ugh: Ugh,
@@ -52,7 +63,7 @@ export class WatchTask extends Task {
   
   set watcher(watcher: Gaze): void {
     if (typeof this._watcher !== 'undefined') {
-      throw new errors.NrserError("watcher instance already set.");
+      throw new errors.StateError("watcher instance already set.");
     }
     
     this._watcher = watcher;
@@ -88,22 +99,39 @@ export class WatchTask extends Task {
   
   /**
   * start the gaze watcher.
+  * 
+  * `onInitError` is  DoneCallback that is *only* erred-back when gaze
+  * initialization fails - 
   */
-  start(onDone: DoneCallback) {
-    this.watcher = gaze(
+  start(onDone?: DoneCallback) {
+    if (this.watcher !== undefined) {
+      throw new errors.StateError(`already watching`);
+    }
+    
+    gaze(
       this.watchPaths,
       (initError: ?Error, watcher: gaze.Gaze): void => {
         if (initError) {
           // there was an error initializing the gazeInstance
           // this is the only time we callback and end the task
           this.logError(initError);
-          onDone(initError);
-          return;
+          
+          // if we received a DoneCallback, fire that with the error.
+          if (onDone) {
+            onDone(initError);
+            return;
+          }
+          
+          // otherwise it's not handled, so throw it (better than just
+          // swallowing it i guess)
+          throw initError;
           
         } else {
           this.log(`initialized, watching...`, {paths: this.watchPaths});
           
         }
+        
+        this.watcher = watcher;
         
         _.each(
           {
@@ -122,7 +150,28 @@ export class WatchTask extends Task {
         );
       } // gaze init
     ); // gaze()
+    
+    this.onDone = onDone;
   } // #start
+  
+  /**
+  * stops watching and fires the onDone callback with no arguments if one was
+  * provided to {#start}.
+  */
+  stop(): void {
+    this.watcher.close();
+    delete this._watcher;
+    
+    // if we received an onDone callback, fire it.
+    // we don't use this but it seems good to have in there for completeness /
+    // consistency's sake, rather than just never firing unless there was an
+    // init error.
+    if (this.onDone) {
+      this.onDone();
+    }
+    
+    delete this.onDone;
+  } // #stop
   
   onAdded(filePattern: Pattern): void {
     this.onAll('added', filePattern);

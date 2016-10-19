@@ -44,6 +44,9 @@ export class WatchBabelTask extends WatchTask {
   }
   
   onDeleted(filePattern: Pattern): void {
-    this.ugh.doClean(this.name, path.join(this.dest, filePattern.pattern));
+    this.ugh.runCleanPipeline(
+      this.name,
+      path.join(this.dest, filePattern.pattern)
+    );
   }
 }

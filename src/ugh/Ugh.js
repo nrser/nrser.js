@@ -216,16 +216,18 @@ export class Ugh {
   }: {
     id: TaskId,
     dest: string,
-  }): void {
+  }): CleanTask {
     const task = new CleanTask({ugh: this, id, dest});
     
-    this.gulp.task(task.name, (callback) => {
-      this.doClean(task.name, task.dest, callback);
+    this.gulp.task(task.name, (onDone: DoneCallback) => {
+      task.runAll(onDone);
     });
     
     this.tasksByName[task.name] = task;
     
     this.gulp.task('clean', this.cleanTaskNames);
+    
+    return task;
   }
   
   /**
@@ -245,7 +247,7 @@ export class Ugh {
     dest?: string,
     clean?: boolean,
     watch?: boolean,
-  }): void {
+  }): BabelTask {
     if (dest === undefined) {
       dest = this.relative(src, this.babelRelativeDest);
     }
@@ -265,7 +267,7 @@ export class Ugh {
     this.gulp.task('babel', this.babelTaskNames);
     
     if (clean) {
-      this.clean({
+      task.cleanTask = this.clean({
         id: task.name,
         dest: task.dest,
       });
@@ -274,6 +276,8 @@ export class Ugh {
     if (watch) {
       this.watchBabel(task);
     }
+    
+    return task;
   }
   
   /**
@@ -330,7 +334,7 @@ export class Ugh {
     id: TaskId,
     tests: Patternable,
     watch?: false | Patternables,
-  }): void {
+  }): MochaTask {
     const task = new MochaTask({
       ugh: this,
       id,
@@ -338,7 +342,7 @@ export class Ugh {
     );
     
     this.gulp.task(task.name, (callback: DoneCallback) => {
-      this.doMocha(task.name, task.tests, callback);
+      this.runMochaPipeline(task.name, task.tests, callback);
     });
     
     this.tasksByName[task.name] = task;
@@ -348,11 +352,12 @@ export class Ugh {
     // create a watch task unless `watch` is false
     if (watch !== false) {      
       this.watchMocha({
-        id,
-        tests,
+        mochaTask: task,
         watch,
       });
     }
+    
+    return task;
   }
   
   /**
@@ -370,12 +375,10 @@ export class Ugh {
   * if another change event comes in during the run.
   */
   watchMocha({
-    id,
-    tests,
+    mochaTask,
     watch,
   }: {  
-    id: TaskId,
-    tests: string | Pattern,
+    mochaTask: mochaTask,
     watch?: Patternables,
   }) {
     // resolve / default watch patterns
@@ -400,14 +403,11 @@ export class Ugh {
     
     const task = new WatchMochaTask({
       ugh: this,
-      id,
-      tests: this.toTestsPattern(tests),
+      mochaTask,
       watch: watchPatterns,
     });
     
-    this.gulp.task(task.name, (onDone: DoneCallback) => {
-      task.start(onDone);
-    }); // task
+    this.gulp.task(task.name, task.start.bind(task));
     
     // add the task to the instance
     this.tasksByName[task.name] = task;
@@ -442,16 +442,14 @@ export class Ugh {
       dest: this.resolve(dest),
     });
     
-    this.gulp.task(task.name, (onDone: DoneCallback): void => {
-      this.doLess(task.name, task.src, task.dest);
-    });
+    this.gulp.task(task.name, task.runAll.bind(task));
     
     this.tasksByName[task.name] = task;
     
     this.gulp.task('less', this.lessTaskNames);
     
     if (clean) {
-      this.clean({
+      task.cleanTask = this.clean({
         id: task.name,
         dest: task.dest,
       });
@@ -459,9 +457,7 @@ export class Ugh {
     
     if (watch !== false) {
       this.watchLess({
-        id: task.id,
-        src: task.src,
-        dest: task.dest,
+        lessTask: task,
         watch,
       });
     }
@@ -471,14 +467,10 @@ export class Ugh {
   * create a task to watch less files and incrementally build.
   */
   watchLess({
-    id,
-    src,
-    dest,
+    lessTask,
     watch,
   } : {
-    id: TaskId,
-    src: Patternable,
-    dest: string,
+    lessTask: LessTask,
     watch: Patternable,
   }): void {
     let watchPatterns: Array<Pattern>;
@@ -499,9 +491,7 @@ export class Ugh {
     
     const task = new WatchLessTask({
       ugh: this,
-      id,
-      src: this.toLessPattern(src),
-      dest: this.resolveDir(dest),
+      lessTask: lessTask,
       watch: watchPatterns,
     });
     
@@ -748,7 +738,7 @@ export class Ugh {
   // actions
   // -------------------------------------------------------------------------
   
-  doClean(taskName: TaskName, dest: string, callback: ?DoneCallback) {
+  runCleanPipeline(taskName: TaskName, dest: string, callback: ?DoneCallback) {
     const log = this.logger(taskName);
     
     // for `git clean` to work the way we want it - removing all files from
@@ -842,7 +832,7 @@ export class Ugh {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  doMocha(
+  runMochaPipeline(
     taskName: TaskName,
     tests: Pattern,
     callback?: DoneCallback,
@@ -886,7 +876,7 @@ export class Ugh {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  doLess(
+  runLessPipeline(
     taskName: TaskName,
     src: Pattern,
     dest: AbsDir,
