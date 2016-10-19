@@ -6,16 +6,21 @@ import { exec } from 'child_process';
 import os from 'os';
 
 // deps
-import babel from 'gulp-babel';
-import notifier from 'node-notifier';
-import spawnMocha from 'gulp-spawn-mocha';
-import gutil from 'gulp-util';
+// ====
+
+// nrser deps used
 import _ from 'lodash';
-import glob from 'glob';
-import debug from 'gulp-debug';
 import t from 'tcomb';
+
+// ugh-specific deps that need to be co-installed
+// 
+// NOTE gulp itself is missing since we pass it in from the gulpfile so we
+//      add tasks to the same instance .
+//
+import notifier from 'node-notifier';
+import gutil from 'gulp-util';
+import glob from 'glob';
 import gaze from 'gaze';
-import less from 'gulp-less';
 
 // package
 import '../metalogger';
@@ -765,6 +770,8 @@ export class Ugh {
     dest: AbsDir,
     onDone?: DoneCallback,
   ): void {
+    const babel = require('gulp-babel');
+    
     const onError = (error: Error) => {
       this.logError(taskName, error, {src, dest});
       
@@ -806,6 +813,8 @@ export class Ugh {
     tests: Pattern,
     callback?: DoneCallback,
   ): void {
+    const spawnMocha = require('gulp-spawn-mocha');
+    
     this.log(taskName, `doing mocha`, {tests});
     
     // fucking 'end' gets emitted after error?!
@@ -851,6 +860,8 @@ export class Ugh {
     dest: AbsDir,
     onDone?: DoneCallback,
   ): void {
+    const less = require('gulp-less');
+    
     const onError = (error: Error) => {
       this.logError(taskName, error, {src, dest});
       
