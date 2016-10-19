@@ -1,3 +1,5 @@
+// @flow
+
 // system
 import path from 'path';
 
@@ -6,6 +8,7 @@ import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
 import { WatchTask } from './WatchTask';
+import { BabelTask } from './BabelTask';
 
 // types
 import type { TaskId, TaskName, AbsPath } from '../types';
@@ -14,39 +17,40 @@ import type { TaskId, TaskName, AbsPath } from '../types';
 * little struct that hold info about a watch babel task that's been created.
 */
 export class WatchBabelTask extends WatchTask {
-  src: Pattern;
-  dest: AbsPath;
+  babelTask: BabelTask;
   
-  constructor({ugh, id, src, dest, watch}: {
+  constructor({ugh, babelTask, watch}: {
     ugh: Ugh,
-    id: TaskId,
-    src: Pattern,
-    dest: AbsPath,
+    babelTask: BabelTask,
     watch?: Array<Pattern>,
   }) {
     super({
       ugh,
-      id,
-      name: `watch:babel:${ id }`,
-      watch: (watch === undefined) ? [src] : watch,
+      id: babelTask.id,
+      name: `watch:babel:${ babelTask.id }`,
+      watch: (watch === undefined) ? [babelTask.src] : watch,
     });
     
-    this.src = src;
-    this.dest = dest;
+    this.babelTask = babelTask;
+  }
+  
+  onAddedOrChanged(filePattern: Pattern): void {
+    this.babelTask.runOne(filePattern);
   }
   
   onAdded(filePattern: Pattern): void {
-    this.ugh.doBabel(this.name, filePattern, this.dest);
+    this.onAddedOrChanged(filePattern);
   }
   
   onChanged(filePattern: Pattern): void {
-    this.ugh.doBabel(this.name, filePattern, this.dest);
+    this.onAddedOrChanged(filePattern);
   }
   
   onDeleted(filePattern: Pattern): void {
-    this.ugh.runCleanPipeline(
-      this.name,
-      path.join(this.dest, filePattern.pattern)
-    );
+    if (this.babelTask.cleanTask) {
+      this.babelTask.cleanTask.runOne(
+        path.join(this.babelTask.dest, filePattern.pattern)
+      );
+    }
   }
 }

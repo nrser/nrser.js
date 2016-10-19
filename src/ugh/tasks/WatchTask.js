@@ -1,3 +1,5 @@
+// @flow
+
 // system
 import path from 'path';
 

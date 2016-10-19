@@ -57,9 +57,7 @@ export class LessTask extends CleanableTask {
   /**
   * run pipe on all source files
   */
-  runAll(onDone?: DoneCallback): void {
-    // TOOD this should really be scheduled so that multiple events don't
-    // cause it to step on itself
+  run(onDone?: DoneCallback): void {
     this.scheduler.schedule(onDone);
   }
   

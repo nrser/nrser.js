@@ -1,12 +1,14 @@
+// @flow
+
 // package
 import { Pattern } from '../util';
-import { Task } from './Task';
+import { CleanableTask } from './CleanableTask';
 import { Ugh } from '../Ugh';
 
 // types
 import type { TaskId, TaskName, AbsDir } from '../types';
 
-export class BabelTask extends Task {
+export class BabelTask extends CleanableTask {
   /**
   * pattern to find source files.
   */
@@ -27,5 +29,19 @@ export class BabelTask extends Task {
     
     this.src = src;
     this.dest = dest;
+  }
+  
+  /**
+  * run pipe on all source files
+  */
+  run(onDone?: DoneCallback): void {
+    this.ugh.runBabelPipeline(this.name, this.src, this.dest, onDone);
+  }
+  
+  /**
+  * run the pipeline on a single source file
+  */
+  runOne(filePattern: Pattern, onDone?: DoneCallback): void {
+    this.ugh.runBabelPipeline(this.name, filePattern, this.dest, onDone);
   }
 }

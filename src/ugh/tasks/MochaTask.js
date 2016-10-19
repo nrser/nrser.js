@@ -1,3 +1,5 @@
+// @flow
+
 // package
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';

@@ -219,9 +219,7 @@ export class Ugh {
   }): CleanTask {
     const task = new CleanTask({ugh: this, id, dest});
     
-    this.gulp.task(task.name, (onDone: DoneCallback) => {
-      task.runAll(onDone);
-    });
+    this.gulp.task(task.name, task.run.bind(task));
     
     this.tasksByName[task.name] = task;
     
@@ -248,6 +246,7 @@ export class Ugh {
     clean?: boolean,
     watch?: boolean,
   }): BabelTask {
+    // if we didn't get a dest, resolve to relative of the src
     if (dest === undefined) {
       dest = this.relative(src, this.babelRelativeDest);
     }
@@ -259,11 +258,10 @@ export class Ugh {
       dest: this.resolveDir(dest),
     });
     
-    this.gulp.task(task.name, (onDone: DoneCallback): void => {
-      this.doBabel(task.name, task.src, task.dest, onDone);
-    });
+    this.gulp.task(task.name, task.run.bind(task));
     
     this.tasksByName[task.name] = task;
+    
     this.gulp.task('babel', this.babelTaskNames);
     
     if (clean) {
@@ -288,30 +286,13 @@ export class Ugh {
   * -   `watch:babel` task to invoke all WatchBabelTask instances.
   * -   `watch` task to invoke all WatchTask instance.
   */
-  watchBabel({
-    id,
-    src,
-    dest, // flow doesn't like = this.relative(src, this.babelRelativeDest),
-  } : {
-    id: TaskId,
-    src: Patternable,
-    dest?: string,
-  }): void {
-    // if we didn't get a dest, resolve to relative of the src
-    if (dest === undefined) {
-      dest = this.relative(src, this.babelRelativeDest);
-    }
-    
+  watchBabel(babelTask: babelTask): WatchBabelTask {
     const task = new WatchBabelTask({
       ugh: this,
-      id,
-      src: this.toJSPattern(src),
-      dest: this.resolveDir(dest),
+      babelTask,
     });
       
-    this.gulp.task(task.name, (onDone: DoneCallback) => {
-      task.start(onDone);
-    });
+    this.gulp.task(task.name, task.start.bind(task));
     
     this.tasksByName[task.name] = task;
     
@@ -320,6 +301,8 @@ export class Ugh {
     
     // re-define watch to run all the Watch tasks
     this.gulp.task('watch', this.watchTaskNames);
+    
+    return task;
   }
   
   /**
@@ -341,9 +324,7 @@ export class Ugh {
       tests: this.toTestsPattern(tests)}
     );
     
-    this.gulp.task(task.name, (callback: DoneCallback) => {
-      this.runMochaPipeline(task.name, task.tests, callback);
-    });
+    this.gulp.task(task.name, task.run.bind(task));
     
     this.tasksByName[task.name] = task;
     
@@ -351,10 +332,7 @@ export class Ugh {
     
     // create a watch task unless `watch` is false
     if (watch !== false) {      
-      this.watchMocha({
-        mochaTask: task,
-        watch,
-      });
+      this.watchMocha(task, watch);
     }
     
     return task;
@@ -374,13 +352,7 @@ export class Ugh {
   * to avoid over-running of mocha. also avoids running mocha over it's self
   * if another change event comes in during the run.
   */
-  watchMocha({
-    mochaTask,
-    watch,
-  }: {  
-    mochaTask: mochaTask,
-    watch?: Patternables,
-  }) {
+  watchMocha(mochaTask: MochaTask, watch?: Patternables): WatchMochaTask {
     // resolve / default watch patterns
     let watchPatterns: Array<Pattern>;
     
@@ -417,6 +389,8 @@ export class Ugh {
     
     // re-define watch to run all the Watch tasks
     this.gulp.task('watch', this.watchTaskNames);
+    
+    return task;
   }
   
   /**
@@ -434,7 +408,7 @@ export class Ugh {
     dest: string,
     clean?: boolean,
     watch?: false | Patternables,
-  }): void {
+  }): LessTask {
     const task = new LessTask({
       ugh: this,
       id,
@@ -442,7 +416,7 @@ export class Ugh {
       dest: this.resolve(dest),
     });
     
-    this.gulp.task(task.name, task.runAll.bind(task));
+    this.gulp.task(task.name, task.run.bind(task));
     
     this.tasksByName[task.name] = task;
     
@@ -456,23 +430,16 @@ export class Ugh {
     }
     
     if (watch !== false) {
-      this.watchLess({
-        lessTask: task,
-        watch,
-      });
+      this.watchLess(task, watch);
     }
+    
+    return task;
   }
   
   /**
   * create a task to watch less files and incrementally build.
   */
-  watchLess({
-    lessTask,
-    watch,
-  } : {
-    lessTask: LessTask,
-    watch: Patternable,
-  }): void {
+  watchLess(lessTask: LessTask, watch: Patternable): WatchLessTask {
     let watchPatterns: Array<Pattern>;
     
     if (watch === undefined) {
@@ -495,11 +462,7 @@ export class Ugh {
       watch: watchPatterns,
     });
     
-    const log = this.logger(task.name);
-    
-    this.gulp.task(task.name, (onDone: DoneCallback): void => {
-      task.start(onDone);
-    }); // task
+    this.gulp.task(task.name, task.start.bind(task));
     
     this.tasksByName[task.name] = task;
     
@@ -508,6 +471,8 @@ export class Ugh {
     
     // re-define watch to run all the Watch tasks
     this.gulp.task('watch', this.watchTaskNames);
+    
+    return task;
   }
   
   /**
@@ -738,7 +703,11 @@ export class Ugh {
   // actions
   // -------------------------------------------------------------------------
   
-  runCleanPipeline(taskName: TaskName, dest: string, callback: ?DoneCallback) {
+  runCleanPipeline(
+    taskName: TaskName,
+    dest: string,
+    callback: ?DoneCallback
+  ): void {
     const log = this.logger(taskName);
     
     // for `git clean` to work the way we want it - removing all files from
@@ -790,12 +759,12 @@ export class Ugh {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  doBabel(
+  runBabelPipeline(
     taskName: TaskName,
     src: Pattern,
     dest: AbsDir,
     onDone?: DoneCallback,
-  ) {
+  ): void {
     const onError = (error: Error) => {
       this.logError(taskName, error, {src, dest});
       
@@ -836,7 +805,7 @@ export class Ugh {
     taskName: TaskName,
     tests: Pattern,
     callback?: DoneCallback,
-  ) {
+  ): void {
     this.log(taskName, `doing mocha`, {tests});
     
     // fucking 'end' gets emitted after error?!

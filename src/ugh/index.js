@@ -1,3 +1,5 @@
+// @flow
+
 import { Ugh } from './Ugh';
 
 export * from './util';

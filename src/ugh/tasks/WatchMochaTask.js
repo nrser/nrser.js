@@ -1,3 +1,5 @@
+// @flow
+
 // package
 import * as errors from '../../errors';
 import { Pattern } from '../util';

@@ -1,3 +1,5 @@
+// @flow
+
 export * from './Task';
 export * from './BabelTask';
 export * from './CleanTask';

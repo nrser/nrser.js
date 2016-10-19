@@ -1,3 +1,5 @@
+// @flow
+
 // system
 import path from 'path';
 
@@ -43,10 +45,6 @@ export class WatchLessTask extends WatchTask {
     this.watch = watch;
   }
   
-  runAll(onDone?: DoneCallback): void {
-    this.lessTask.run(onDone);
-  }
-  
   start(onDone: DoneCallback): void {
     super.start(onDone);
     
@@ -54,7 +52,7 @@ export class WatchLessTask extends WatchTask {
     // TOOD this will still run if gaze errors on init... that's generally not
     //      handled well at all.
     this.log("kicking off...");
-    this.lessTask.runAll();
+    this.lessTask.run();
   }
   
   onAddedOrChanged(filePattern: Pattern): void {
@@ -65,7 +63,7 @@ export class WatchLessTask extends WatchTask {
       
     } else {
       // run the whole thing
-      this.lessTask.runAll();
+      this.lessTask.run();
     }
   }
   
@@ -81,11 +79,13 @@ export class WatchLessTask extends WatchTask {
     if (this.lessTask.src.match(filePattern) && this.lessTask.cleanTask) {
       // if the watched file is in the source pattern remove that destination
       // (if there is an associated clean task)
-      this.lessTask.cleanTask.runOne(filePattern.path);
+      this.lessTask.cleanTask.runOne(
+        path.join(this.lessTask.dest, filePattern.pattern)
+      );
       
     } else {
       // run the whole thing
-      this.lessTask.runAll();
+      this.lessTask.run();
     }
   }
 }

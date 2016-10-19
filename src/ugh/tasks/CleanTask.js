@@ -1,3 +1,5 @@
+// @flow
+
 // package
 import { Pattern } from '../util';
 import { Task } from './Task';
@@ -25,7 +27,7 @@ export class CleanTask extends Task {
     this.dest = dest;
   }
   
-  runAll(onDone?: DoneCallback): void {
+  run(onDone?: DoneCallback): void {
     this.ugh.runCleanPipeline(this.name, this.dest, onDone);
   }
   
