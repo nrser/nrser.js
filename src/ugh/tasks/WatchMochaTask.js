@@ -31,9 +31,9 @@ export class WatchMochaTask extends WatchTask {
   watch: Array<Pattern>;
   
   /**
-  * scheduler to spawn mocha
+  * associated mocha task
   */
-  scheduler: Scheduler;
+  mochaTask: MochaTask;
   
   constructor({ugh, mochaTask, watch}: {
     ugh: Ugh,
@@ -50,7 +50,7 @@ export class WatchMochaTask extends WatchTask {
     this.mochaTask = mochaTask;
   }
   
-  start(onDone: DoneCallback): void {
+  start(onDone?: DoneCallback): void {
     super.start(onDone);
     
     // kick off

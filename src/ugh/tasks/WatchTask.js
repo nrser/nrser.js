@@ -71,7 +71,7 @@ export class WatchTask extends Task {
     this._watcher = watcher;
   }
   
-  get watchPaths() {
+  get watchPaths(): Array<AbsPath> {
     return _.map(this.watch, pattern => pattern.path);
   }
   
@@ -161,8 +161,10 @@ export class WatchTask extends Task {
   * provided to {#start}.
   */
   stop(): void {
-    this.watcher.close();
-    delete this._watcher;
+    if (this.watcher) {
+      this.watcher.close();
+      delete this._watcher;
+    }
     
     // if we received an onDone callback, fire it.
     // we don't use this but it seems good to have in there for completeness /

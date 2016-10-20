@@ -291,7 +291,7 @@ export class Ugh {
   * -   `watch:babel` task to invoke all WatchBabelTask instances.
   * -   `watch` task to invoke all WatchTask instance.
   */
-  watchBabel(babelTask: babelTask): WatchBabelTask {
+  watchBabel(babelTask: BabelTask): WatchBabelTask {
     const task = new WatchBabelTask({
       ugh: this,
       babelTask,
@@ -444,12 +444,12 @@ export class Ugh {
   /**
   * create a task to watch less files and incrementally build.
   */
-  watchLess(lessTask: LessTask, watch: Patternable): WatchLessTask {
+  watchLess(lessTask: LessTask, watch?: Patternables): WatchLessTask {
     let watchPatterns: Array<Pattern>;
     
     if (watch === undefined) {
       // default to the src
-      watchPatterns = [src];
+      watchPatterns = [lessTask.src];
       
     } else {
       // otherwise make them using {#toLessPattern}

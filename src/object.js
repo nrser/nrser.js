@@ -97,16 +97,20 @@ export function need(
     _.get(object, keyPath)
   );
   
-  if (_.isUndefined(result)) {
-    if (_.isUndefined(defaultValue)) {
-      const keyStr = typeof keyPath === 'string' ? (
-        keyPath
-      ) : (
-        keyPath.join('.')
-      );
+  if (result === undefined) {
+    if (defaultValue === undefined) {
+      let keyPathStr: string;
+      
+      if (keyPath === undefined) {
+        keyPathStr = 'undefined';
+      } else if (Array.isArray(keyPath)) {
+        keyPathStr = keyPath.join('.');
+      } else {
+        keyPathStr = keyPath;
+      }
       
       throw new KeyError(
-        `key ${ keyStr } not found`,
+        `key ${ keyPathStr } not found`,
         {object, keyPath}
       );
     } else {

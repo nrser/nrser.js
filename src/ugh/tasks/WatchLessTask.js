@@ -8,6 +8,7 @@ import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
 import { WatchTask } from './WatchTask';
+import { LessTask } from './LessTask';
 
 // types
 import type {
@@ -42,10 +43,9 @@ export class WatchLessTask extends WatchTask {
     });
     
     this.lessTask = lessTask;
-    this.watch = watch;
   }
   
-  start(onDone: DoneCallback): void {
+  start(onDone?: DoneCallback): void {
     super.start(onDone);
     
     // kick off

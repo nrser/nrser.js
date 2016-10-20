@@ -7,7 +7,7 @@ import { Task } from './Task';
 import { Scheduler } from '../util/Scheduler';
 
 // types
-import type { TaskId, TaskName } from '../types';
+import type { TaskId, TaskName, DoneCallback } from '../types';
 
 export class MochaTask extends Task {
   /**

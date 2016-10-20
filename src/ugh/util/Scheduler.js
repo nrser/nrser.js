@@ -2,6 +2,8 @@
 
 import _ from 'lodash';
 
+import type { DoneCallback } from '../types';
+
 export class Scheduler {
   /**
   * flag set to true when scheduled to run.
@@ -21,7 +23,7 @@ export class Scheduler {
   /**
   * function to run.
   */
-  run: Function;
+  run: (onDone: DoneCallback) => void;
   
   /**
   * ms to wait after a change to run
@@ -32,7 +34,7 @@ export class Scheduler {
   * if true, will log to console. if a function will call that with
   * log messages.
   */
-  log: boolean | Function;
+  log: void | boolean | Function;
   
   /**
   * callback to fire with no args on success or with an error on failure.
@@ -40,18 +42,21 @@ export class Scheduler {
   onDones: Array<DoneCallback>;
   
   constructor(
-    name,
-    run,
+    name: string,
+    run: (onDone: DoneCallback) => void,
     {
       timeout = 300,
       log = false,
+    } : {
+      timeout?: number,
+      log?: Function | boolean,
     } = {}
   ) {
     this.name = name;
     this.scheduled = false;
     this.running = false;
     this.timeout = timeout;
-    this.log = log
+    this.log = log;
     this.run = run;
     this.onDones = [];
   }
@@ -97,7 +102,7 @@ export class Scheduler {
   /**
   * log a message if `log` is not false.
   */
-  _log(...messages): void {
+  _log(...messages: Array<*>): void {
     if (!this.log) {
       return;
     }

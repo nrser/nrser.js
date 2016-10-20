@@ -6,7 +6,7 @@ import { CleanableTask } from './CleanableTask';
 import { Ugh } from '../Ugh';
 
 // types
-import type { TaskId, TaskName, AbsDir } from '../types';
+import type { TaskId, TaskName, AbsDir, DoneCallback } from '../types';
 
 export class BabelTask extends CleanableTask {
   /**
