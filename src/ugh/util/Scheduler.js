@@ -4,6 +4,8 @@ import _ from 'lodash';
 
 import type { DoneCallback } from '../types';
 
+type Log = boolean | Function;
+
 export class Scheduler {
   /**
   * flag set to true when scheduled to run.
@@ -34,7 +36,7 @@ export class Scheduler {
   * if true, will log to console. if a function will call that with
   * log messages.
   */
-  log: void | boolean | Function;
+  log: ?Log;
   
   /**
   * callback to fire with no args on success or with an error on failure.
@@ -46,10 +48,10 @@ export class Scheduler {
     run: (onDone: DoneCallback) => void,
     {
       timeout = 300,
-      log = false,
+      log,
     } : {
       timeout?: number,
-      log?: Function | boolean,
+      log?: Log,
     } = {}
   ) {
     this.name = name;
