@@ -820,9 +820,6 @@ export class Ugh {
     // fucking 'end' gets emitted after error?!
     const onceCallback = _.once(callback);
     
-    const tempPath = path.join(os.tmpdir(), this.packageName);
-    fs.ensureLinkSync(this.packageDir, path.join(tempPath, this.packageName));
-    
     this.gulp
       .src(tests.path, {read: false})
       .pipe(spawnMocha({
@@ -830,7 +827,7 @@ export class Ugh {
         reporter: 'min',
         env: {
           NODE_ENV: 'test',
-          NODE_PATH: `${ process.env.NODE_PATH }:${ tempPath }`,
+          // NODE_PATH: `${ process.env.NODE_PATH }:${ tempPath }`,
         },
       }))
       .on('error', (error) => {

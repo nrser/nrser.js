@@ -52,7 +52,8 @@
     "build": "npm run clean && babel src -d lib && babel test/src -d test/lib",
     "test": "npm run build && gulp mocha",
     "watch": "npm run build && gulp watch",
-    "docs": "esdoc -c ./esdoc.json"
+    "docs": "esdoc -c ./esdoc.json",
+    "prepublish": "npm run test && flow check"
   },
   "repository": {
     "type": "git",

@@ -1,8 +1,8 @@
-import { chai, expect, resolve, itMaps } from 'nrser/test/lib/testHelpers';
+import { chai, expect, resolve, itMaps } from '../../testHelpers';
 
 import path from 'path';
 import gulp from 'gulp';
-import { Ugh, Pattern, WatchTask } from 'nrser/lib/ugh';
+import { Ugh, Pattern, WatchTask } from '../../../../lib/ugh';
 
 describe('ugh/tasks/WatchTask.js', () => {
   describe('WatchTask', () => {
