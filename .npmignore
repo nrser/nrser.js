@@ -1,0 +1,10 @@
+/dev
+# since there's nothing in it
+/doc
+/tmp
+/.babelrc
+/.flowconfig
+/.gitignore
+/esdoc.json
+/gulpfile.js
+.qb-options.yml
