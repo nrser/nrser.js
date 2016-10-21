@@ -157,6 +157,13 @@ export class WatchTask extends Task {
   } // #start
   
   /**
+  * alias for {#start}
+  */
+  run(onDone?: DoneCallback): void {
+    this.start(onDone);
+  }
+  
+  /**
   * stops watching and fires the onDone callback with no arguments if one was
   * provided to {#start}.
   */

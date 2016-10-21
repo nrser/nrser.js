@@ -14,7 +14,7 @@ import path from 'path';
 import { squish } from '../../../lib/string';
 
 function createUgh(options = {}): Ugh {
-  const ugh = new Ugh(new gulp.Gulp(), options);
+  const ugh = new Ugh({packageDir: process.cwd(), ...options});
   return ugh;
 }
 
@@ -94,6 +94,8 @@ describe('ugh/Ugh.js', () => {
       });
       
       it("adds 'clean:<id>' and 'clean' tasks to gulp", () => {
+        ugh.createGulpTasks(new gulp.Gulp());
+        
         expect(_.keys(ugh.gulp.tasks))
           .to.include.members(['clean', 'clean:src']);
         expect(ugh.gulp.tasks['clean'].dep)
@@ -123,6 +125,8 @@ describe('ugh/Ugh.js', () => {
         });
         
         it("adds 'babel:src' and 'babel' tasks to gulp", () => {
+          ugh.createGulpTasks(new gulp.Gulp());
+          
           expect(_.keys(ugh.gulp.tasks))
             .to.include.members(['babel', 'babel:src']);
           expect(ugh.gulp.tasks['babel'].dep)
@@ -160,6 +164,8 @@ describe('ugh/Ugh.js', () => {
         });
         
         it(`adds babel and clean tasks to gulp`, () => {
+          ugh.createGulpTasks(new gulp.Gulp());
+          
           expect(_.keys(ugh.gulp.tasks))
             .to.include.members([
               'babel',

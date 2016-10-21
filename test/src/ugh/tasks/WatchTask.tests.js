@@ -6,7 +6,7 @@ import { Ugh, Pattern, WatchTask } from '../../../../lib/ugh';
 
 describe('ugh/tasks/WatchTask.js', () => {
   describe('WatchTask', () => {
-    const ugh = new Ugh(gulp);
+    const ugh = new Ugh({packageDir: process.cwd()});
     
     const src = ugh.toPattern('src/**/*.js');
     const test = ugh.toPattern('test/src/**/*.js');
