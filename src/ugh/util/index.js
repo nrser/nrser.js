@@ -34,9 +34,9 @@ export function dump(value: *): string {
 * reads the `package.json` file in the current directory to get the
 * package name, falling back to the directory name.
 */
-export function getPackageName(packageDir: AbsPath = process.cwd()) {
+export function getPackageName(packageDir: AbsPath) {
   try {
-    return fs.readJsonSync('./package.json').name;
+    return fs.readJsonSync(path.join(packageDir, 'package.json')).name;
   } catch (error) {
     return path.basename(packageDir);
   }

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import chai, { expect } from 'chai';
-import '../testHelpers';
+import * as helpers from '../testHelpers';
 import { itMaps } from '../../../lib/testing';
 import {
   Ugh,
@@ -14,7 +14,11 @@ import path from 'path';
 import { squish } from '../../../lib/string';
 
 function createUgh(options = {}): Ugh {
-  const ugh = new Ugh({packageDir: process.cwd(), ...options});
+  const ugh = new Ugh({
+    packageDir: helpers.PROJECT_ROOT,
+    ...options
+  });
+  
   return ugh;
 }
 
@@ -22,7 +26,7 @@ describe('ugh/Ugh.js', () => {
   describe('Ugh', () => {    
     it("constructs", () => {
       const ugh = createUgh();
-      expect(ugh.packageDir).to.equal(process.cwd());
+      expect(ugh.packageDir).to.equal(helpers.PROJECT_ROOT);
       expect(ugh.packageName).to.equal('nrser');
     });
     

@@ -180,7 +180,7 @@ export class Ugh {
         watch: this.watchTaskNames,
       },
       (deps: Array<TaskName>, name: TaskName): void => {
-        this.gulp.task(namespaced(name), deps);
+        this.gulp.task(namespaced(name), _.map(deps, namespaced));
       }
     );
   }
