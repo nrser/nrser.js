@@ -52,7 +52,7 @@
     "test": "npm run build && gulp mocha",
     "watch": "npm run build && gulp watch",
     "docs": "esdoc -c ./esdoc.json",
-    "prepublish": "npm run test && flow check"
+    "prepublish": "npm run test"
   },
   "repository": {
     "type": "git",

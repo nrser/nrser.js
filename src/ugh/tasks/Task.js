@@ -36,4 +36,11 @@ export class Task {
   notify(status: string, message: string): void {
     this.ugh.notify(this.name, status, message);
   }
+  
+  /**
+  * run pipe on all source files
+  */
+  run(onDone?: DoneCallback): void {
+    throw new errors.NotImplementedError();
+  }
 }

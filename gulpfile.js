@@ -1,6 +1,4 @@
 const gulp = require('gulp');
-const Ugh = require('./lib/ugh').Ugh;
+const ugh = require('./ughfile');
 
-const ugh = new Ugh(gulp);
-
-ugh.autoTasks();
+ugh.createGulpTasks(gulp);
