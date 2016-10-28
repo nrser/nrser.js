@@ -9,7 +9,6 @@ import { IS_NODE, IS_BROWSER } from './env';
 export * from './env.js';
 
 export * from './errors';
-export * from './css';
 export * from './Logger';
 export * from './object';
 export * from './string';
