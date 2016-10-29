@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 import type { $Refinement } from 'tcomb';
 
-export type PackageJSON = {
+export type PackageJson = {
   name: string,
 };
 
@@ -50,11 +50,12 @@ export type GulpTask = {
   fn: Function,
 };
 
-// export type GulpType = {
-//   task: Function,
-//   src: Function,
-//   tasks: {[name: TaskName]: GulpTask},
-// };
+export type GulpType = {
+  task: Function,
+  src: Function,
+  dest: Function,
+  tasks: {[name: TaskName]: GulpTask},
+};
 
 export type DoneCallback = (error?: Error) => void;
 

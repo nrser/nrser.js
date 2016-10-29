@@ -35,13 +35,59 @@ export class BabelTask extends CleanableTask {
   * run pipe on all source files
   */
   run(onDone?: DoneCallback): void {
-    this.ugh.runBabelPipeline(this.name, this.src, this.dest, onDone);
+    this.pipeline(this.src, onDone);
   }
   
   /**
   * run the pipeline on a single source file
   */
   runOne(filePattern: Pattern, onDone?: DoneCallback): void {
-    this.ugh.runBabelPipeline(this.name, filePattern, this.dest, onDone);
+    this.pipeline(filePattern, onDone);
+  }
+  
+  /**
+  * runs the babel gulp pipeline.
+  * 
+  * if `onDone` is provided, calls with an error if one occurs or
+  * with no arguments when done.
+  */
+  pipeline(
+    src: Pattern,
+    onDone?: DoneCallback,
+  ): void {
+    const babel = require('gulp-babel');
+    
+    const details = {src, dest: this.dest};
+    
+    this.log("pipelining babel", details);
+    
+    const onError = (error: Error) => {
+      this.logError(error, {details});
+      
+      if (onDone) {
+        onDone(error);
+      }
+    };
+    
+    this.gulp
+      .src(src.path, {base: src.base})
+      
+      .pipe(babel())
+      .on('error', onError)
+      
+      .pipe(this.gulp.dest(dest))
+      .on('error', onError)
+      
+      .on('end', () => {
+        this.notify(
+          taskName,
+          'COMPILED',
+          `${ this.relative(src.path) } => ${ this.relative(dest) }`
+        );
+        
+        if (onDone) {
+          onDone();
+        }
+      });
   }
 }

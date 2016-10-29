@@ -33,7 +33,7 @@ export class MochaTask extends Task {
     this.scheduler = new Scheduler(
       this.name,
       (onDone: DoneCallback) => {
-        this.ugh.runMochaPipeline(this.name, this.tests, onDone);
+        this.pipeline(onDone);
       },
       {
         log: this.log.bind(this),
@@ -44,4 +44,45 @@ export class MochaTask extends Task {
   run(onDone?: DoneCallback): void {
     this.scheduler.schedule(onDone);
   }
+  
+  /**
+  * run the mocha gulp pipeline.
+  * 
+  * if `onDone` is provided, calls with an error if one occurs or
+  * with no arguments when done.
+  */
+  pipeline(onDone?: DoneCallback): void {
+    const spawnMocha = require('gulp-spawn-mocha');
+    
+    const details = {tests: this.tests};
+    
+    this.log(`pipelining mocha`, details);
+    
+    // fucking 'end' gets emitted after error?!
+    const onceOnDone = _.once(onDone);
+    
+    this.ugh.gulp
+      .src(tests.path, {read: false})
+      .pipe(spawnMocha({
+        growl: true,
+        reporter: 'min',
+        env: {
+          NODE_ENV: 'test',
+          // NODE_PATH: `${ process.env.NODE_PATH }:${ tempPath }`,
+        },
+      }))
+      .on('error', (error) => {
+        // mocha takes care of it's own logging and notifs
+        this.logError(error, {details});
+        
+        if (onDone) {
+          onceOnDone(error);
+        }
+      })
+      .on('end', () => {
+        if (onDone) {
+          onceOnDone();
+        }
+      });
+  } // #pipeline
 }

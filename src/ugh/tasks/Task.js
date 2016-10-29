@@ -26,8 +26,17 @@ export class Task {
     this.ugh.log(this.name, ...messages);
   }
   
-  logError(error: Error): void {
-    this.ugh.logError(this.name, error);
+  logError(
+    error: Error,
+    {
+      details,
+      notify = true,
+    }: {
+      details?: *,
+      notify?: boolean,
+    } = {}
+  ): void {
+    this.pkg.logError(this.name, error, {details, notify});
   }
   
   /**

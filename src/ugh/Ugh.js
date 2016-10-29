@@ -28,6 +28,9 @@ import fs from '../fs';
 import * as path from '../path';
 import * as errors from '../errors';
 import { squish } from '../string';
+import { need } from '../object';
+
+// ugh
 import {
   dump,
   getPackageName,
@@ -55,6 +58,8 @@ import type {
   AbsPath,
   AbsDir,
   DoneCallback,
+  PackageJson,
+  GulpType,
 } from './types';
 
 /**
@@ -68,12 +73,34 @@ type Patternable = string | Pattern | {base: string, pattern: string};
 type Patternables = Patternable | Array<Patternable>;
 
 export class Ugh {
-  _gulp: ?Object;
+  _gulp: GulpType;
   
+  /**
+  * absolute path to the packge directory
+  */
   packageDir: AbsPath;
+  
+  /**
+  * the package.json
+  */
+  packageJson: PackageJson;
+  
+  /**
+  * the package name from package.json
+  */
   packageName: string;
+  
   jsExts: Array<string>;
+  
   babelRelativeDest: string;
+  
+  /**
+  * the parent Ugh if this instance has been included.
+  */
+  _parent: ?Ugh;
+  
+  
+  children: Array<Ugh>;
   
   /**
   * Task instances by name.
@@ -81,18 +108,11 @@ export class Ugh {
   tasksByName: {[name: TaskName]: Task};
   
   constructor(
-    // gulp: Object,
     {
-      // the current working directory to base off
-      // this defaults to the cwd that the script is invoked from, though 
-      // you might want to change it for testing at least and maybe for 
-      // including tasks from submodules.
-      // packageDir = process.cwd(),
-      packageDir,
+      gulp,
       
-      // name of the package, used in notifs so you can tell where they're
-      // coming from
-      packageName = getPackageName(packageDir),
+      // where the package is
+      packageDir,
       
       // javascript extensions to build / watch
       jsExts = ['js', 'jsx', 'es', 'es6'],
@@ -100,7 +120,8 @@ export class Ugh {
       // default destination for babel builds relative to the source dir
       babelRelativeDest = '../lib',
     }: {
-      // packageDir?: string,
+      gulp: GulpType,
+      
       packageDir: AbsPath,
       
       packageName?: string,
@@ -108,28 +129,52 @@ export class Ugh {
       jsExts?: Array<string>,
       
       babelRelativeDest?: string,
-    } = {}
+    }
   ) {
-    this.packageDir = packageDir;
+    this._gulp = gulp;
     
-    this.packageName = packageName;
+    this.packageDir = AbsPath(path.normalize(packageDir));
+    
+    this.packageJson = fs.readJsonSync(
+      path.join(this.packageDir, 'package.json')
+    );
+    
+    this.packageName = need(this.packageJson, 'name');
     
     this.jsExts = jsExts;
     
     this.babelRelativeDest = babelRelativeDest;
     
     this.tasksByName = {};
-  }
+    
+    this.children = [];
+  } // constructor
   
   // public API
   // =========================================================================
   
-  get gulp(): Object {
-    if (this._gulp === undefined) {
-      throw new errors.StateError(`gulp not set`);
+  /**
+  * accessor for the Gulp instance. normally returns the Gulp instance it was
+  * constructed with, but if it has a parent Ugh, return's *that* Ugh's 
+  * gulp.
+  */
+  get gulp(): GulpType {
+    if (this.parent) {
+      return this.parent.gulp;
     }
     
     return this._gulp;
+  }
+  
+  get parent(): ?Ugh {
+    return this._parent;
+  }
+  
+  include(pth: string): void {
+    const gulpfilePath = this.resolve(pth, 'gulpfile');
+    const child: Ugh = require(gulpfilePath);
+    child.included(this);
+    this.children.push(child);
   }
   
   createGulpTasks(gulp: Object, namespace?: string): void {
@@ -768,186 +813,6 @@ export class Ugh {
   
   toLessPattern(input: Patternable): Pattern {
     return this.toPattern(input, '**/*.less');
-  }
-  
-  // actions
-  // -------------------------------------------------------------------------
-  
-  runCleanPipeline(
-    taskName: TaskName,
-    dest: string,
-    callback: ?DoneCallback
-  ): void {
-    const log = this.logger(taskName);
-    
-    // for `git clean` to work the way we want it - removing all files from
-    // a directory that are ignored by git - even if that directory has
-    // checked-in files in it, we want it to end with a slash
-    if (fs.isDirSync(dest)) {
-      if (!dest.endsWith('/')) {
-        dest += '/';
-      }
-    }
-    
-    let relDest = this.relative(dest);
-    
-    const cmd = `git clean -fdX ${ relDest }`;
-    
-    log("cleaning", {dest, relDest, cmd});
-    
-    exec(cmd, {cwd: this.packageDir}, (error, stdout, stderr) => {
-      if (error) {
-        this.logError(taskName, error);
-        
-        // let caller know there was a problem if needed
-        if (callback) {
-          callback(error);
-        }
-        
-      } else {
-        // log any outputs
-        _.each({stdout, stderr}, (output, name) => {
-          if (output) {
-            log(`${ name }: \n${ output }`);
-          }
-        });
-        
-        // notify the user
-        this.notify(taskName, 'CLEANED', this.relative(dest));
-        
-        // let caller know we're done here if needed
-        if (callback) {
-          callback();
-        }
-      }
-    });
-  }
-  
-  /**
-  * runs the babel gulp pipeline.
-  * 
-  * if `onDone` is provided, calls with an error if one occurs or
-  * with no arguments when done.
-  */
-  runBabelPipeline(
-    taskName: TaskName,
-    src: Pattern,
-    dest: AbsDir,
-    onDone?: DoneCallback,
-  ): void {
-    const babel = require('gulp-babel');
-    
-    const onError = (error: Error) => {
-      this.logError(taskName, error, {src, dest});
-      
-      if (onDone) {
-        onDone(error);
-      }
-    };
-    
-    this.gulp
-      .src(src.path, {base: src.base})
-      
-      .pipe(babel())
-      .on('error', onError)
-      
-      .pipe(this.gulp.dest(dest))
-      .on('error', onError)
-      
-      .on('end', () => {
-        this.notify(
-          taskName,
-          'COMPILED',
-          `${ this.relative(src.path) } => ${ this.relative(dest) }`
-        );
-        
-        if (onDone) {
-          onDone();
-        }
-      });
-  }
-  
-  /**
-  * run the mocha gulp pipeline.
-  * 
-  * if `onDone` is provided, calls with an error if one occurs or
-  * with no arguments when done.
-  */
-  runMochaPipeline(
-    taskName: TaskName,
-    tests: Pattern,
-    callback?: DoneCallback,
-  ): void {
-    const spawnMocha = require('gulp-spawn-mocha');
-    
-    this.log(taskName, `doing mocha`, {tests});
-    
-    // fucking 'end' gets emitted after error?!
-    const onceCallback = _.once(callback);
-    
-    this.gulp
-      .src(tests.path, {read: false})
-      .pipe(spawnMocha({
-        growl: true,
-        reporter: 'min',
-        env: {
-          NODE_ENV: 'test',
-          // NODE_PATH: `${ process.env.NODE_PATH }:${ tempPath }`,
-        },
-      }))
-      .on('error', (error) => {
-        // mocha takes care of it's own logging and notifs
-        this.logError(taskName, error);
-        
-        if (callback) {
-          onceCallback(error);
-        }
-      })
-      .on('end', () => {
-        if (callback) {
-          onceCallback();
-        }
-      });
-  }
-  
-  /**
-  * run the gulp less pipeline.
-  * 
-  * if `onDone` is provided, calls with an error if one occurs or
-  * with no arguments when done.
-  */
-  runLessPipeline(
-    taskName: TaskName,
-    src: Pattern,
-    dest: AbsDir,
-    onDone?: DoneCallback,
-  ): void {
-    const less = require('gulp-less');
-    
-    const onError = (error: Error) => {
-      this.logError(taskName, error, {src, dest});
-      
-      if (onDone) {
-        onDone(error);
-      }
-    };
-    
-    this.gulp.src(src.path, {base: src.base})
-      .pipe(less())
-      .on('error', onError)
-      .pipe(this.gulp.dest(dest))
-      .on('error', onError)
-      .on('end', () => {
-        this.notify(
-          taskName,
-          'COMPILED',
-          `${ this.relative(src.path) } => ${ this.relative(dest) }`
-        );
-        
-        if (onDone) {
-          onDone();
-        }
-      });
   }
   
 } // Ugh

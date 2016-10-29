@@ -46,7 +46,7 @@ export class LessTask extends CleanableTask {
     this.scheduler = new Scheduler(
       this.name,
       (onDone: DoneCallback) => {
-        this.ugh.runLessPipeline(this.name, this.src, this.dest, onDone);
+        this.pipeline(this.src, onDone);
       },
       {
         log: this.log.bind(this),
@@ -65,6 +65,44 @@ export class LessTask extends CleanableTask {
   * run the pipeline on a single source file
   */
   runOne(filePattern: Pattern, onDone?: DoneCallback): void {
-    this.ugh.runLessPipeline(this.name, filePattern, this.dest, onDone);
+    this.pipeline(filePattern, onDone);
   }
+  
+  /**
+  * run the gulp less pipeline.
+  * 
+  * if `onDone` is provided, calls with an error if one occurs or
+  * with no arguments when done.
+  */
+  pipeline(src: Pattern, onDone?: DoneCallback): void{
+    const less = require('gulp-less');
+    
+    const details = {src, dest: this.dest};
+    
+    this.log(`pipelining less`, details);
+    
+    const onError = (error: Error) => {
+      this.logError(error, {details});
+      
+      if (onDone) {
+        onDone(error);
+      }
+    };
+    
+    this.ugh.gulp.src(src.path, {base: src.base})
+      .pipe(less())
+      .on('error', onError)
+      .pipe(this.ugh.gulp.dest(dest))
+      .on('error', onError)
+      .on('end', () => {
+        this.notify(
+          'COMPILED',
+          `${ this.ugh.relative(src.path) } => ${ this.ugh.relative(this.dest) }`
+        );
+        
+        if (onDone) {
+          onDone();
+        }
+      });
+  } // #pipeline
 }

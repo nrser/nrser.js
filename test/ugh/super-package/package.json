@@ -1,0 +1,43 @@
+{
+  "name": "super-package",
+  "version": "0.1.0",
+  "description": "super-package package",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run build && gulp mocha",
+    "watch": "npm run clean && gulp babel && gulp watch",
+    "build": "npm run clean && gulp babel",
+    "clean": "gulp clean"
+  },
+  "keywords": [
+
+  ],
+  "author": "nrser",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "lodash": "^3.1.0",
+    "tcomb": "^3.2.13"
+  },
+  "devDependencies": {
+    "babel-preset-stage-2": "^6.17.0",
+    "gulp-spawn-mocha": "^3.1.0",
+    "babel-plugin-metalog": "^0.1.0",
+    "istanbul": "^0.4.5",
+    "babel-polyfill": "^6.13.0",
+    "chai": "^3.5.0",
+    "babel-cli": "^6.14.0",
+    "gulp-babel": "^6.1.2",
+    "babel-preset-es2015": "^6.14.0",
+    "mocha": "^3.1.2",
+    "gulp": "^3.9.1",
+    "babel-plugin-transform-export-extensions": "^6.8.0",
+    "gulp-util": "^3.0.7",
+    "node-notifier": "^4.6.1",
+    "babel-preset-react": "^6.11.1",
+    "babel-plugin-tcomb": "^0.3.13",
+    "kexec": "^3.0.0",
+    "flow-bin": "^0.32.0",
+    "babel-core": "^6.14.0"
+  }
+}
