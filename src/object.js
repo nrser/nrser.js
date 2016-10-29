@@ -4,7 +4,6 @@ import _ from 'lodash';
 import t from 'tcomb';
 
 import { j, squish } from './string.js';
-import { Undefined, Empty } from './types';
 import type { KeyPath } from './types';
 import { MergeConflictError, KeyError } from './errors';
 
