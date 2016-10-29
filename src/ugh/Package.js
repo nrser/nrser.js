@@ -1,9 +1,9 @@
 // @flow
 
 // package
-import fs from '../../fs';
-import path from '../../path';
-import { need } from '../../object';
+import fs from '../fs';
+import * as path from '../path';
+import { need } from '../object';
 
 // types
 import type {
@@ -67,7 +67,7 @@ export class Package {
       babelRelativeDest?: string,
     } = {},
   ) {
-    this.dir = path.normalize(dir);
+    this.dir = AbsPath(path.normalize(dir));
     
     this.jsonPath = path.join(dir, 'package.json');
     
