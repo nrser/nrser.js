@@ -74,5 +74,7 @@ export class Package {
     this.json = fs.readJsonSync(this.jsonPath);
     
     this.name = need(this.json, 'name');
+    
+    this.tasksByName = {};
   } // constructor
 }
