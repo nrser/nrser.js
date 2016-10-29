@@ -8,6 +8,10 @@ import _ from 'lodash';
 
 import type { $Refinement } from 'tcomb';
 
+export type PackageJSON = {
+  name: string,
+};
+
 export type AbsPath = string & $Refinement<typeof path.isAbsolute>;
 
 export type AbsDir = AbsPath;
