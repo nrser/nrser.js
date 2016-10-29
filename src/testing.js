@@ -1,11 +1,14 @@
 // @flow
 
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import _ from 'lodash';
 import t from 'tcomb';
 import type { $Refinement } from 'tcomb';
 
 import * as nrser from '.';
+
+// types
+// =====
 
 declare function it(title: string, block: () => void): void;
 
@@ -39,6 +42,38 @@ class Throws {
   }
 }
 
+
+/**
+* OO structure for expectations.
+*/
+export class Expect {
+  constructor({
+    instanceOf,
+    props,
+  }) {
+    this.instanceOf = instanceOf;
+    this.props = props;
+  }
+  
+  test(actual) {
+    if (this.instanceOf) {
+      expect(actual).to.be.instanceOf(this.instanceOf);
+    }
+    
+    if (this.properties) {
+      _.each(this.properties, (value, name) => {
+        expect(actual).to.have.property(name);
+        
+        if (value instanceof Expect) {
+          value.test(actual[name]);
+        } else {
+          expect(actual[name]).to.eql(value);
+        }
+      });
+    }
+  }
+}
+
 export function itMaps({
   func,
   map,
@@ -46,14 +81,18 @@ export function itMaps({
   funcName = func.name ? func.name.replace('bound ', '') : 'f',
   
   tester = ({actual, expected}) => {
-    chai.expect(actual).to.eql(expected);
+    if (expected instanceof Expect) {
+      expected.test(actual);
+    } else {
+      expect(actual).to.eql(expected);
+    }
   },
   
-  formatArgs = (args: Array<*>, funcName: string) /*: string */ => (
+  formatArgs = (args: Array<*>, funcName: string): string => (
     `${ funcName }(${ _.map(args, (a) => JSON.stringify(a)).join(", ") })`
   ),
   
-  formatExpected = (expected: *) /*: string */ => {
+  formatExpected = (expected: *): string => {
     const json = JSON.stringify(expected);
     if (typeof json === 'string') {
       return json;
@@ -61,7 +100,7 @@ export function itMaps({
     return '???';
   },
   
-  formatter = (args: Array<*>, expected: *, funcName: string) /*: string */ => {
+  formatter = (args: Array<*>, expected: *, funcName: string): string => {
     if (expected instanceof Throws) {
       return nrser.squish`
         ${ formatArgs(args, funcName) }
