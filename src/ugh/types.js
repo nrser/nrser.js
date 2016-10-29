@@ -12,9 +12,19 @@ export type PackageJSON = {
   name: string,
 };
 
-export type AbsPath = string & $Refinement<typeof path.isAbsolute>;
+export function isAbsPath(pth: string): boolean {
+  return path.isAbsolute(pth);
+}
+
+export type AbsPath = string & $Refinement<typeof isAbsPath>;
 
 export type AbsDir = AbsPath;
+
+export function isRelPath(pth: string): boolean {
+  return !isAbsPath(pth);
+}
+
+export type RelPath = string & $Refinement<typeof isRelPath>;
 
 /**
 * a task 'id' is the part that identifies *which* thing the task is

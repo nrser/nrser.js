@@ -71,8 +71,22 @@ export class WatchTask extends Task {
     this._watcher = watcher;
   }
   
+  /**
+  *
+  */
   get watchPaths(): Array<AbsPath> {
     return _.map(this.watch, pattern => pattern.path);
+  }
+  
+  /**
+  * looks like the paths for Gaze need to be relative.
+  * 
+  * @see https://github.com/shama/gaze/issues/41
+  */
+  get watchRelPaths(): Array<RelPath> {
+    return _.map(this.watchPaths, (absPath: AbsPath): RelPath => {
+      return path.relative(process.cwd(), absPath);
+    });
   }
   
   /**
@@ -110,8 +124,13 @@ export class WatchTask extends Task {
       throw new errors.StateError(`already watching`);
     }
     
+    this.log(`initializing...`, {
+      absPaths: this.watchPaths,
+      relPaths: this.watchRelPaths,
+    });
+    
     gaze(
-      this.watchPaths,
+      this.watchRelPaths,
       (initError: ?Error, watcher: gaze.Gaze): void => {
         if (initError) {
           // there was an error initializing the gazeInstance
@@ -129,7 +148,10 @@ export class WatchTask extends Task {
           throw initError;
           
         } else {
-          this.log(`initialized, watching...`, {paths: this.watchPaths});
+          this.log(`initialized, watching...`, {
+            absPaths: this.watchPaths,
+            relPaths: this.watchRelPaths,
+          });
           
         }
         
