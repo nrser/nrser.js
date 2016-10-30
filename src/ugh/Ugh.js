@@ -494,7 +494,7 @@ export class Ugh {
   /**
   * log to gulp-util.log with the package name and task name.
   */
-  log(taskName: TaskName, ...messages: Array<*>): void {
+  log(taskName: string | TaskName, ...messages: Array<*>): void {
     gutil.log(
       `${ this.packageName } [${ taskName.toString() }]`,
       ..._.map(messages, (message: *): string => {
@@ -691,17 +691,20 @@ export class Ugh {
   }
 
   createGulpTasks(): void { 
-    // TODO add back
+    // add a task to dump the instance for inspection / debugging
+    const dumpTaskName = TaskName.format({
+      typeName: ['ugh'],
+      packageName: this.packageName,
+      id: 'dump',
+    });
+    
     this.createGulpTask(
-      TaskName.format({
-        typeName: ['ugh'],
-        id: 'tasks',
-      }),
+      dumpTaskName,
       (onDone: DoneCallback) => {
         this.log(
-          'ugh:tasks',
-          dump(this.tasksByName, {
-            omit: [this],
+          dumpTaskName,
+          dump(this, {
+            omit: [this.gulp, this.packageJson],
           })
         );
         onDone();
