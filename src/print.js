@@ -19,6 +19,7 @@
  * @param {Boolean} showArrayIndices - Show the index of each element in an array
  * @param {Boolean} showArrayLength  - Display an array's "length" property after its values
  * @param {Boolean} sortProps        - Alphabetise the enumerable properties of printed objects
+ * @param {Array<*>|*} omit 					 - objects to omit from printing.
  * @return {String}
  */
 function print(input, options = {}, /*…Internal:*/ name = "", refs = null){
@@ -30,13 +31,23 @@ function print(input, options = {}, /*…Internal:*/ name = "", refs = null){
 		maxArrayLength,
 		showArrayIndices,
 		showArrayLength,
-		sortProps
+		sortProps,
+		omit
 	} = options;
 	
 	ampedSymbols   = undefined === ampedSymbols   ? true : ampedSymbols;
 	escapeChars    = undefined === escapeChars    ? /(?!\x20)\s|\\/g : escapeChars;
 	sortProps      = undefined === sortProps      ? true  : sortProps;
 	maxArrayLength = undefined === maxArrayLength ? 100   : (!+maxArrayLength ? false : maxArrayLength);
+	
+	if(omit !== undefined && !(omit instanceof Set)) {
+		if (!Array.isArray(omit)) {
+			omit = [omit];
+		}
+		omit = new Set(omit);
+		
+		options = {...options, omit};
+	}
 
 	if(escapeChars && "function" !== typeof escapeChars)
 		escapeChars = (function(pattern){
@@ -102,6 +113,11 @@ function print(input, options = {}, /*…Internal:*/ name = "", refs = null){
 			
 			return `"${input}"`;
 		}
+	}
+	
+	/** omit references in omit option */
+	if(omit !== undefined && omit.has(input)) {
+		return "-> {omitted}";
 	}
 	
 	/** Guard against circular references */
