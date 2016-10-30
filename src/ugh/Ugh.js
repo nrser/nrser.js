@@ -8,7 +8,6 @@ import os from 'os';
 // deps
 // ====
 
-// nrser deps used
 import _ from 'lodash';
 import t from 'tcomb';
 
@@ -27,8 +26,9 @@ import '../metalogger';
 import fs from '../fs';
 import * as path from '../path';
 import * as errors from '../errors';
-import { squish } from '../string';
+import { squish, I } from '../string';
 import { need } from '../object';
+import * as types from '../types';
 
 // ugh
 import {
@@ -37,6 +37,7 @@ import {
   Pattern,
   hasGlobPattern,
   Scheduler,
+  TaskName,
 } from './util';
 
 import {
@@ -54,7 +55,6 @@ import {
 // types
 import type {
   TaskId,
-  TaskName,
   AbsPath,
   AbsDir,
   DoneCallback,
@@ -105,7 +105,7 @@ export class Ugh {
   /**
   * Task instances by name.
   */
-  tasksByName: {[name: TaskName]: Task};
+  tasksByName: {[name: string]: Task};
   
   constructor(
     {
@@ -173,62 +173,146 @@ export class Ugh {
   include(pth: string): void {
     const gulpfilePath = this.resolve(pth, 'gulpfile');
     const child: Ugh = require(gulpfilePath);
-    child.included(this);
+    // child.included(this);
     this.children.push(child);
   }
   
-  createGulpTasks(gulp: Object, namespace?: string): void {
-    // if (this._gulp !== undefined) {
-    //   throw new errors.StateError(`gulp already set`);
-    // }
+  createGulpTask(
+    taskName: string | TaskName,
+    fnOrDeps: Array<string|Task|TaskName> | (onDone?: DoneCallback) => void,
+  ): void {
+    let gulpTaskTarget: Array<string> | (onDone?: DoneCallback) => void;
     
-    this._gulp = gulp;
-    
-    const namespaced = (name: TaskName): TaskName => {
-      if (namespace) {
-        return `${ namespace }:${ name }`;
-      } else {
-        return name;
-      }
+    if (Array.isArray(fnOrDeps)) {
+      gulpTaskTarget = _.map(
+        fnOrDeps,
+        (named: string|Task|TaskName): string => {
+          if (named instanceof Task) {
+            return named.name.toString();
+          } else if (named instanceof TaskName) {
+            return named.toString();
+          } else if (typeof named === 'string') {
+            return named;
+          } else {
+            throw new TypeError(
+              I`must be string, Task or TaskName, not ${ named }`
+            );
+          }
+        }
+      );
+    } else {
+      gulpTaskTarget = fnOrDeps;
     }
     
-    this.gulp.task(namespaced('ugh:tasks'), () => {
-      this.log('ugh:tasks', dump(this.tasksByName));
-    });
-    
-    _.each(
-      [
-        this.cleanTasks,
-        this.babelTasks,
-        this.watchBabelTasks,
-        this.mochaTasks,
-        this.watchMochaTasks,
-        this.lessTasks,
-        this.watchLessTasks,
-      ],
-      (tasks: Array<Task>): void => {
-        _.each(tasks, (task: Task): void => {
-          this.gulp.task(namespaced(task.name), task.run.bind(task));
-        });
-      }
-    );
-    
-    _.each(
-      {
-        clean: this.cleanTaskNames,
-        babel: this.babelTaskNames,
-        'watch:babel': this.watchBabelTaskNames,
-        mocha: this.mochaTaskNames,
-        'watch:mocha': this.watchMochaTaskNames,
-        less: this.lessTaskNames,
-        'watch:less': this.watchLessTaskNames,
-        watch: this.watchTaskNames,
-      },
-      (deps: Array<TaskName>, name: TaskName): void => {
-        this.gulp.task(namespaced(name), _.map(deps, namespaced));
-      }
-    );
+    this.gulp.task(taskName.toString(), gulpTaskTarget);
   }
+  
+  createGulpTasks(): void {      
+    // TODO add back
+    // this.gulp.task(namespaced('ugh:tasks'), () => {
+    //   this.log('ugh:tasks', dump(this.tasksByName));
+    // });
+    
+    const taskClasses: Array<Class<Task>> = [
+      CleanTask,
+      BabelTask,
+      WatchBabelTask,
+      MochaTask,
+      WatchMochaTask,
+      LessTask,
+      WatchLessTask,
+    ];
+    
+    _.each(taskClasses, (taskClass: Class<Task>): void => {
+      const tasks: Array<Task> = this.getTasksForType(taskClass);
+      
+      // create the direct gulp task -> ugh task maps
+      // 
+      // EXAMPLE
+      // 
+      //    'babel:nrser:src' => BabelTask {id='src', ugh.packageName='nrser'}
+      // 
+      _.each(tasks, (task: Task): void => {
+        this.createGulpTask(task.name, task.run.bind(task));
+      });
+      
+      // create the gulp tasks that run all of a type of Ugh task for each
+      // package.
+      // 
+      // EXAMPLE
+      //
+      //     'babel:nrser' => ['babel:nrser:src', 'babel:nrser:test']
+      // 
+      const packageGroups = _.groupBy(
+        tasks,
+        (task: Task): string => {
+          return new TaskName({
+            typeName: taskClass.typeName,
+            packageName: task.ugh.packageName,
+          }).toString();
+        }
+      );
+      
+      _.each(
+        packageGroups,
+        (tasks: Array<Task>, gulpTaskName: string): void => {
+          this.createGulpTask(gulpTaskName, tasks);
+        }
+      );
+      
+      // create the gulp tasks that run all of a type of Ugh for **all**
+      // packages.
+      //
+      // EXAMPLE
+      // 
+      //    'babel' => [
+      //      'babel:@nrser/ugh_super-package',
+      //      'babel:nrser',
+      //    ]
+      // 
+      this.createGulpTask(
+        new TaskName({
+          typeName: taskClass.typeName,
+        }),
+        _.keys(packageGroups)
+      );
+      
+      // create gulp tasks that roll up all of type of Ugh task by id
+      // 
+      // EXAMPLE
+      // 
+      //    'babel:src' => [
+      //      'babel:@nrser/ugh_super-package:src',
+      //      'babel:nrser:src',
+      //    ]
+      // 
+      
+      const idGroups = _.groupBy(
+        tasks,
+        (task: Task): TaskId => {
+          return task.name.id;
+        }
+      );
+      
+      _.each(
+        idGroups,
+        (idTasks, id): void => {
+          const groupName = new TaskName({
+            typeName: taskClass.typeName,
+            id
+          });
+          
+          this.createGulpTask(
+            groupName,
+            _.map(idTasks, (task): string => {
+              return task.name.toString();
+            })
+          );
+        }
+      ); // each group
+      
+    }); // each task class  
+  } // #createGulpTasks
   
   // getting tasks
   // -------------------------------------------------------------------------
@@ -238,9 +322,17 @@ export class Ugh {
   }
   
   getTasksForType<T>(taskClass: Class<T>): Array<T> {
-    return _.filter(this.tasks, (task: Task): boolean => {
+    const tasks = _.filter(this.tasks, (task: Task): boolean => {
       return task instanceof taskClass;
     });
+    
+    _.each(this.children, (child: Ugh): void => {
+      _.each(child.getTasksForType(taskClass), (task: Task): void => {
+        tasks.push(task);
+      });
+    });
+    
+    return tasks;
   }
   
   get cleanTasks(): Array<CleanTask> {
@@ -336,7 +428,7 @@ export class Ugh {
     
     // this.gulp.task(task.name, task.run.bind(task));
     
-    this.tasksByName[task.name] = task;
+    this.tasksByName[task.name.toString()] = task;
     
     // this.gulp.task('clean', this.cleanTaskNames);
     
@@ -375,13 +467,13 @@ export class Ugh {
     
     // this.gulp.task(task.name, task.run.bind(task));
     
-    this.tasksByName[task.name] = task;
+    this.tasksByName[task.name.toString()] = task;
     
     // this.gulp.task('babel', this.babelTaskNames);
     
     if (clean) {
       task.cleanTask = this.clean({
-        id: task.name,
+        id: task.name.id,
         dest: task.dest,
       });
     }

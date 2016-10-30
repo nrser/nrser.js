@@ -26,7 +26,7 @@ export class MochaTask extends Task {
     id: TaskId,
     tests: Pattern,
   }) {
-    super({ugh, id, name: `mocha:${ id }`});
+    super({ugh, id});
     
     this.tests = tests;
     

@@ -1,25 +1,39 @@
 // @flow
 
+// deps
+import _ from 'lodash';
+
 // package
 import * as errors from '../../errors';
 import { Ugh } from '../Ugh';
+import { TaskName } from '../util/TaskName';
 
 // types
-import type { TaskId, TaskName } from '../types';
+import type { TaskId, TaskTypeName } from '../types';
 
 export class Task {
   ugh: Ugh;
-  id: TaskId;
   name: TaskName;
   
-  constructor({ugh, id, name} : {
+  static get typeName(): TaskTypeName {
+    return _.map(
+      _.words(this.name.replace(/Task$/, '')),
+      (word: string): string => {
+        return word.toLowerCase();
+      }
+    );
+  }
+  
+  constructor({ugh, id} : {
     ugh: Ugh,
     id: TaskId,
-    name: TaskName,
   }) {
     this.ugh = ugh;
-    this.id = id;
-    this.name = name;
+    this.name = new TaskName({
+      id,
+      typeName: this.constructor.typeName,
+      packageName: this.ugh.packageName,
+    });
   }
   
   log(...messages: Array<*>): void {

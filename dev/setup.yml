@@ -12,6 +12,7 @@
 
   roles:
   - role: nrser.dev_setup
+    tags: refs
     # repos that are co-developed but don't make sense as submodules
     dev_setup_repos: []
     # example:
@@ -21,11 +22,20 @@
     # sources that are used for reference only
     dev_setup_refs:
       github:
-      - owner:    meteor
-        name:     meteor
-        version:  release/METEOR@1.4.0.1
-        dir_name: meteor-1.4.0.1
-        depth:    1
+      # - owner:    meteor
+      #   name:     meteor
+      #   version:  release/METEOR@1.4.0.1
+      #   dir_name: meteor-1.4.0.1
+      #   depth:    1
+      - owner: gulpjs
+        name: gulp
+        version: v3.9.1
+        depth: 1
+      
+      - owner: robrich
+        name: orchestrator
+        version: v0.3.7
+        depth: 1
       
       archive: []
       # example:

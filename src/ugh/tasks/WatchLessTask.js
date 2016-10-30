@@ -37,8 +37,7 @@ export class WatchLessTask extends WatchTask {
   }) {
     super({
       ugh,
-      id: lessTask.id,
-      name: `watch:less:${ lessTask.id }`,
+      id: lessTask.name.id,
       watch: (watch === undefined) ? [lessTask.src] : watch,
     });
     

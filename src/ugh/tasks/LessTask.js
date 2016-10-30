@@ -38,7 +38,7 @@ export class LessTask extends CleanableTask {
     src: Pattern,
     dest: AbsDir,
   }) {
-    super({ugh, id, name: `less:${ id }`});
+    super({ugh, id});
     
     this.src = src;
     this.dest = dest;

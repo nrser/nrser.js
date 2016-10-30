@@ -13,6 +13,7 @@ import type { AbsPath } from '../types';
 // re-export
 export { Scheduler } from './Scheduler';
 export { Pattern } from './Pattern';
+export { TaskName } from './TaskName';
 
 /**
 * dumps a value to a string in a way that shouldn't ever fail. uses

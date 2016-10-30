@@ -25,7 +25,7 @@ export class CleanTask extends Task {
     id: TaskId,
     dest: string,
   }) {
-    super({ugh, id, name: `clean:${ id }`});
+    super({ugh, id});
     
     this.dest = dest;
   }

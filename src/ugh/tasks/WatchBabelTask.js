@@ -16,7 +16,7 @@ import type { TaskId, TaskName, AbsPath } from '../types';
 /**
 * little struct that hold info about a watch babel task that's been created.
 */
-export class WatchBabelTask extends WatchTask {
+export class WatchBabelTask extends WatchTask {  
   babelTask: BabelTask;
   
   constructor({ugh, babelTask, watch}: {
@@ -26,8 +26,7 @@ export class WatchBabelTask extends WatchTask {
   }) {
     super({
       ugh,
-      id: babelTask.id,
-      name: `watch:babel:${ babelTask.id }`,
+      id: babelTask.name.id,
       watch: (watch === undefined) ? [babelTask.src] : watch,
     });
     

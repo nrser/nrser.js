@@ -1,5 +1,5 @@
 {
-  "name": "super-package",
+  "name": "@nrser/ugh_super-package",
   "version": "0.1.0",
   "description": "super-package package",
   "main": "lib/index.js",

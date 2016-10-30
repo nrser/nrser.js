@@ -1,13 +1,17 @@
-import _ from 'lodash';
-import chai, { expect } from 'chai';
-import * as helpers from '../testHelpers';
-import { itMaps } from '../../../lib/testing';
+import {
+  _,
+  PROJECT_ROOT,
+  expect,
+  Expect,
+  itMaps,
+} from '../testHelpers';
 import {
   Ugh,
   Pattern,
   BabelTask,
   CleanTask,
   WatchBabelTask,
+  TaskName,
 } from '../../../lib/ugh';
 import gulp from 'gulp';
 import path from 'path';
@@ -15,7 +19,7 @@ import { squish } from '../../../lib/string';
 
 function createUgh(options = {}): Ugh {
   const ugh = new Ugh({
-    packageDir: helpers.PROJECT_ROOT,
+    packageDir: PROJECT_ROOT,
     ...options
   });
   
@@ -26,7 +30,7 @@ describe('ugh/Ugh.js', () => {
   describe('Ugh', () => {    
     it("constructs", () => {
       const ugh = createUgh();
-      expect(ugh.packageDir).to.equal(helpers.PROJECT_ROOT);
+      expect(ugh.packageDir).to.equal(PROJECT_ROOT);
       expect(ugh.packageName).to.equal('nrser');
     });
     
@@ -78,32 +82,46 @@ describe('ugh/Ugh.js', () => {
         });
       });
       
-      it("adds a CleanTask to ugh", () => {
-        expect(ugh.tasksByName)
-          .to.satisfy(x => _.size(x) === 1)
-          .and.to.have.property('clean:src')
-          .that.is.an.instanceOf(CleanTask)
-          .with.property('name')
-          .that.equals('clean:src');
+      it("adds a CleanTask to ugh", () => {        
+        const taskName = new Expect({
+          instanceOf: TaskName,
+          props: {
+            id: 'src',
+            packageName: 'nrser',
+            typeName: ['clean'],
+          },
+        });
         
-        expect(ugh.tasks)
-          .to.have.lengthOf(1)
-          .with.deep.property('[0]')
-          .that.is.an.instanceOf(CleanTask)
-          .with.property('name')
-          .that.equals('clean:src');
+        new Expect({
+          size: 1,
+          props: {
+            'clean:nrser:src': taskName,
+          },
+        }).test(ugh.tasksByName);
         
-        expect(ugh.cleanTaskNames)
-          .to.have.members(['clean:src']);
+        new Expect({
+          lengthOf: 1,
+          instanceOf: Array,
+          props: {
+            '0': taskName,
+          },
+        }).test(ugh.tasks);
+        
+        new Expect({
+          lengthOf: 1,
+          props: {
+            '0': taskName,
+          }
+        }).test(ugh.cleanTaskNames);
       });
       
       it("adds 'clean:<id>' and 'clean' tasks to gulp", () => {
         ugh.createGulpTasks(new gulp.Gulp());
         
         expect(_.keys(ugh.gulp.tasks))
-          .to.include.members(['clean', 'clean:src']);
+          .to.include.members(['clean', 'clean:nrser:src']);
         expect(ugh.gulp.tasks['clean'].dep)
-          .to.have.members(['clean:src']);
+          .to.have.members(['clean:nrser:src']);
       });
     }); // #clean
     

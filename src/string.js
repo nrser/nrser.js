@@ -1,6 +1,7 @@
 // @flow
 
 import _ from 'lodash';
+import print from './print';
 
 /**
 * make a tag function for string template literals that applies a function to
@@ -85,6 +86,10 @@ export function rsplit(
     return split
   }
 } // rsplit()
+
+export const inspect = tag(print);
+
+export const I = inspect;
 
 export function indent(
   str: string,

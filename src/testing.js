@@ -46,13 +46,19 @@ class Throws {
 /**
 * OO structure for expectations.
 */
-export class Expect {
+export class Expect {  
   constructor({
     instanceOf,
     props,
+    size,
+    lengthOf,
+    // members,
   }) {
     this.instanceOf = instanceOf;
     this.props = props;
+    this.size = size;
+    this.lengthOf = lengthOf;
+    // this.members = members;
   }
   
   test(actual) {
@@ -71,6 +77,23 @@ export class Expect {
         }
       });
     }
+    
+    if (this.size) {
+      expect(_.size(actual)).to.equal(this.size);
+    }
+    
+    if (this.lengthOf) {
+      expect(actual).to.have.lengthOf(this.lengthOf);
+    }
+      
+    // TODO figure this out...
+    // if (this.members) {
+    //   _.each(this.members, (value) => {
+    //     if (value instanceof Expect) {
+    //       expect(actual).to.have.any.member.that.satisfy()
+    //     }
+    //   });
+    // }
   }
 }
 

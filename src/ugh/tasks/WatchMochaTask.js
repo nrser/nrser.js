@@ -42,8 +42,7 @@ export class WatchMochaTask extends WatchTask {
   }) {
     super({
       ugh,
-      id: mochaTask.id,
-      name: `watch:mocha:${ mochaTask.id }`,
+      id: mochaTask.name.id,
       watch
     });
     

@@ -48,13 +48,12 @@ export class WatchTask extends Task {
   */
   onDone: ?DoneCallback;
   
-  constructor({ugh, id, name, watch}: {
+  constructor({ugh, id, watch}: {
     ugh: Ugh,
     id: TaskId,
-    name: TaskName,
     watch: Array<Pattern>,
   }) {
-    super({ugh, id, name});
+    super({ugh, id});
     
     this.watch = watch;
   }

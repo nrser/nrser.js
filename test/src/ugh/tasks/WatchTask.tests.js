@@ -53,6 +53,10 @@ describe('ugh/tasks/WatchTask.js', () => {
         ]
       })
     });
+    
+    describe('.typeName', () => {
+      expect(WatchTask.typeName).to.eql(['watch']);
+    });
   }); // WatchTask
   
 }); // ugh/tasks/WatchTask.js

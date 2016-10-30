@@ -25,7 +25,7 @@ export class BabelTask extends CleanableTask {
     src: Pattern,
     dest: AbsDir,
   }) {
-    super({ugh, id, name: `babel:${ id }`});
+    super({ugh, id});
     
     this.src = src;
     this.dest = dest;
@@ -69,20 +69,19 @@ export class BabelTask extends CleanableTask {
       }
     };
     
-    this.gulp
+    this.ugh.gulp
       .src(src.path, {base: src.base})
       
       .pipe(babel())
       .on('error', onError)
       
-      .pipe(this.gulp.dest(dest))
+      .pipe(this.ugh.gulp.dest(this.dest))
       .on('error', onError)
       
       .on('end', () => {
         this.notify(
-          taskName,
           'COMPILED',
-          `${ this.relative(src.path) } => ${ this.relative(dest) }`
+          `${ this.ugh.relative(src.path) } => ${ this.ugh.relative(this.dest) }`
         );
         
         if (onDone) {
