@@ -6,7 +6,7 @@ import path from 'path';
 // deps
 import _ from 'lodash';
 
-import type { $Refinement } from 'tcomb';
+import type { $Refinement, $Reify } from 'tcomb';
 
 export type PackageJson = {
   name: string,
@@ -17,6 +17,8 @@ export function isAbsPath(pth: string): boolean {
 }
 
 export type AbsPath = string & $Refinement<typeof isAbsPath>;
+
+export const ReifiedAbsPath = (({}: any): $Reify<AbsPath>);
 
 export type AbsDir = AbsPath;
 
@@ -44,6 +46,8 @@ function isTaskName(string: string): boolean {
 }
 export type TaskName = string & $Refinement<typeof isTaskName>;
 
+export type TaskTypeName = Array<string>;
+
 export interface IGulpTask {
   name: string,
   dep: Array<string>,
@@ -56,6 +60,8 @@ export interface IGulp {
   dest: Function,
   tasks: {[name: string]: IGulpTask},
 };
+
+export const ReifiedIGulp = (({}: any): $Reify<IGulp>);
 
 export type DoneCallback = (error?: Error) => void;
 

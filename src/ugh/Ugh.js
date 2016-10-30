@@ -2,7 +2,6 @@
 
 // system
 import util from 'util';
-import { exec } from 'child_process';
 import os from 'os';
 
 // deps
@@ -27,7 +26,6 @@ import fs from '../fs';
 import * as path from '../path';
 import * as errors from '../errors';
 import { squish, I } from '../string';
-import { need } from '../object';
 import * as types from '../types';
 
 // ugh
@@ -61,6 +59,8 @@ import type {
   PackageJson,
   IGulp,
 } from './types';
+
+import { ReifiedIGulp, ReifiedAbsPath } from './types';
 
 /**
 * something that can be used to create a single Pattern.
@@ -97,7 +97,7 @@ export class Ugh {
   /**
   * the parent Ugh if this instance has been included.
   */
-  _parent: ?Ugh;
+  parent: ?Ugh;
   
   
   children: Array<Ugh>;
@@ -131,17 +131,25 @@ export class Ugh {
       babelRelativeDest?: string,
     }
   ) {
-    t.assert(IGulp.is(gulp), I`gulp must be a Gulp, not ${ gulp }`);
+    t.assert(
+      ReifiedIGulp.is(gulp),
+      I`gulp must be a Gulp, not ${ gulp }`
+    );
+    
+    t.assert(
+      ReifiedAbsPath.is(packageDir),
+      I`packageDir must be and absolute path, found ${ packageDir }`
+    );
     
     this._gulp = gulp;
     
-    this.packageDir = AbsPath(path.normalize(packageDir));
+    this.packageDir = path.normalize(packageDir);
     
     this.packageJson = fs.readJsonSync(
       path.join(this.packageDir, 'package.json')
     );
     
-    this.packageName = need(this.packageJson, 'name');
+    this.packageName = this.packageJson.name;
     
     this.jsExts = jsExts;
     
@@ -171,6 +179,7 @@ export class Ugh {
   include(pth: string): void {
     const gulpfilePath = this.resolve(pth, 'gulpfile');
     const child: Ugh = require(gulpfilePath);
+    child.parent = this;
     this.children.push(child);
     
     this.createGulpTasks();
@@ -466,7 +475,7 @@ export class Ugh {
   */
   notify(taskName: TaskName, status: string, message: string): void {
     notifier.notify({
-      title: `${ this.packageName } [${ taskName }] ${ status }`,
+      title: `${ this.packageName } [${ taskName.toString() }] ${ status }`,
       message,
     });
   }
@@ -487,7 +496,7 @@ export class Ugh {
   */
   log(taskName: TaskName, ...messages: Array<*>): void {
     gutil.log(
-      `${ this.packageName } [${ taskName }]`,
+      `${ this.packageName } [${ taskName.toString() }]`,
       ..._.map(messages, (message: *): string => {
         if (typeof message === 'string') {
           return message;
@@ -721,10 +730,10 @@ export class Ugh {
       const packageGroups = _.groupBy(
         tasks,
         (task: Task): string => {
-          return new TaskName({
+          return TaskName.format({
             typeName: taskClass.typeName,
             packageName: task.ugh.packageName,
-          }).toString();
+          });
         }
       );
       
@@ -749,7 +758,7 @@ export class Ugh {
       // 
       if (!_.isEmpty(packageGroups)) {
         this.createGulpTask(
-          new TaskName({
+          TaskName.format({
             typeName: taskClass.typeName,
           }),
           _.keys(packageGroups)
@@ -776,7 +785,7 @@ export class Ugh {
       _.each(
         idGroups,
         (idTasks, id): void => {
-          const groupName = new TaskName({
+          const groupName = TaskName.format({
             typeName: taskClass.typeName,
             id
           });

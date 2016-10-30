@@ -46,13 +46,23 @@ class Throws {
 /**
 * OO structure for expectations.
 */
-export class Expect {  
+export class Expect<T> {
+  instanceOf: T;
+  props: Object;
+  size: number;
+  lengthOf: number;
+  
   constructor({
     instanceOf,
     props,
     size,
     lengthOf,
     // members,
+  }: {
+    instanceOf: T,
+    props: Object,
+    size: number,
+    lengthOf: number,
   }) {
     this.instanceOf = instanceOf;
     this.props = props;
@@ -61,7 +71,7 @@ export class Expect {
     // this.members = members;
   }
   
-  test(actual) {
+  test(actual: *): void {
     if (this.instanceOf) {
       expect(actual).to.be.instanceOf(this.instanceOf);
     }

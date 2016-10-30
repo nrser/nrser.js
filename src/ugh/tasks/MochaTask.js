@@ -34,7 +34,7 @@ export class MochaTask extends Task {
     this.tests = tests;
     
     this.scheduler = new Scheduler(
-      this.name,
+      this.name.toString(),
       (onDone: DoneCallback) => {
         this.pipeline(onDone);
       },

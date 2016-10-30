@@ -44,7 +44,7 @@ export class LessTask extends CleanableTask {
     this.dest = dest;
     
     this.scheduler = new Scheduler(
-      this.name,
+      this.name.toString(),
       (onDone: DoneCallback) => {
         this.pipeline(this.src, onDone);
       },
@@ -92,7 +92,7 @@ export class LessTask extends CleanableTask {
     this.ugh.gulp.src(src.path, {base: src.base})
       .pipe(less())
       .on('error', onError)
-      .pipe(this.ugh.gulp.dest(dest))
+      .pipe(this.ugh.gulp.dest(this.dest))
       .on('error', onError)
       .on('end', () => {
         this.notify(

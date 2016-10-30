@@ -9,7 +9,7 @@ import { Ugh } from '../Ugh';
 import { TaskName } from '../util/TaskName';
 
 // types
-import type { TaskId, TaskTypeName } from '../types';
+import type { TaskId, TaskTypeName, DoneCallback } from '../types';
 
 export class Task {
   ugh: Ugh;

@@ -21,6 +21,7 @@ import type {
   AbsPath,
   DoneCallback,
   GazeEvent,
+  RelPath,
 } from '../types';
 
 /**

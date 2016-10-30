@@ -1,5 +1,11 @@
 // @flow
 
+// system
+import { exec } from 'child_process';
+
+// deps
+import _ from 'lodash';
+
 // package
 import fs from '../../fs';
 
@@ -53,7 +59,7 @@ export class CleanTask extends Task {
         dest += '/';
       }
       
-      let relDest = this.relative(dest);
+      let relDest = this.ugh.relative(dest);
 
       const cmd = `git clean -fdX ${ relDest }`;
       
@@ -79,7 +85,7 @@ export class CleanTask extends Task {
           });
           
           // notify the user
-          this.notify('CLEANED', this.relative(dest));
+          this.notify('CLEANED', this.ugh.relative(dest));
           
           // let caller know we're done here if needed
           if (onDone) {
