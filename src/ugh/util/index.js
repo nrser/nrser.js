@@ -19,10 +19,10 @@ export { TaskName } from './TaskName';
 * dumps a value to a string in a way that shouldn't ever fail. uses
 * `print` if it can, falling back to node's `util.inspect`.
 */
-export function dump(value: *): string {
+export function dump(value: *, printOptions = {}): string {
   try {
     const print = require('../../print');
-    return print(value);
+    return print(value, printOptions);
     
   } catch (error) {
     const inspect = require('util').inspect;

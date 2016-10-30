@@ -692,9 +692,21 @@ export class Ugh {
 
   createGulpTasks(): void { 
     // TODO add back
-    // this.gulp.task(namespaced('ugh:tasks'), () => {
-    //   this.log('ugh:tasks', dump(this.tasksByName));
-    // });
+    this.createGulpTask(
+      TaskName.format({
+        typeName: ['ugh'],
+        id: 'tasks',
+      }),
+      (onDone: DoneCallback) => {
+        this.log(
+          'ugh:tasks',
+          dump(this.tasksByName, {
+            omit: [this],
+          })
+        );
+        onDone();
+      }
+    );
     
     const taskClasses: Array<Class<Task>> = [
       CleanTask,
