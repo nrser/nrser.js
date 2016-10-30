@@ -16,7 +16,7 @@ export class TaskName {
     typeName,
     packageName,
   }: {
-    id: TaskId,
+    id?: TaskId,
     typeName: TaskTypeName,
     packageName?: string,
   }) {

@@ -59,7 +59,7 @@ import type {
   AbsDir,
   DoneCallback,
   PackageJson,
-  GulpType,
+  IGulp,
 } from './types';
 
 /**
@@ -73,7 +73,7 @@ type Patternable = string | Pattern | {base: string, pattern: string};
 type Patternables = Patternable | Array<Patternable>;
 
 export class Ugh {
-  _gulp: GulpType;
+  _gulp: IGulp;
   
   /**
   * absolute path to the packge directory
@@ -120,7 +120,7 @@ export class Ugh {
       // default destination for babel builds relative to the source dir
       babelRelativeDest = '../lib',
     }: {
-      gulp: GulpType,
+      gulp: IGulp,
       
       packageDir: AbsPath,
       
@@ -131,6 +131,8 @@ export class Ugh {
       babelRelativeDest?: string,
     }
   ) {
+    t.assert(IGulp.is(gulp), I`gulp must be a Gulp, not ${ gulp }`);
+    
     this._gulp = gulp;
     
     this.packageDir = AbsPath(path.normalize(packageDir));
@@ -158,7 +160,7 @@ export class Ugh {
   * constructed with, but if it has a parent Ugh, return's *that* Ugh's 
   * gulp.
   */
-  get gulp(): GulpType {
+  get gulp(): IGulp {
     if (this.parent) {
       return this.parent.gulp;
     }
@@ -175,6 +177,8 @@ export class Ugh {
     const child: Ugh = require(gulpfilePath);
     // child.included(this);
     this.children.push(child);
+    
+    this.createGulpTasks();
   }
   
   createGulpTask(
@@ -335,79 +339,6 @@ export class Ugh {
     return tasks;
   }
   
-  get cleanTasks(): Array<CleanTask> {
-    return this.getTasksForType(CleanTask);
-  }
-  
-  get babelTasks(): Array<BabelTask> {
-    return this.getTasksForType(BabelTask);
-  }
-  
-  get mochaTasks(): Array<MochaTask> {
-    return this.getTasksForType(MochaTask);
-  }
-  
-  get lessTasks(): Array<LessTask> {
-    return this.getTasksForType(LessTask);
-  }
-  
-  get watchTasks(): Array<WatchTask> {
-    return this.getTasksForType(WatchTask);
-  }
-  
-  get watchBabelTasks(): Array<WatchBabelTask> {
-    return this.getTasksForType(WatchBabelTask);
-  }
-  
-  get watchMochaTasks(): Array<WatchMochaTask> {
-    return this.getTasksForType(WatchMochaTask);
-  }
-  
-  get watchLessTasks(): Array<WatchLessTask> {
-    return this.getTasksForType(WatchLessTask);
-  }
-  
-  getTaskNamesForType<T>(taskClass: Class<T>): Array<TaskName> {
-    return _.map(
-      this.getTasksForType(taskClass),
-      (task: Task): TaskName => {
-        return task.name;
-      }
-    );
-  }
-  
-  get cleanTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(CleanTask);
-  }
-  
-  get babelTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(BabelTask);
-  }
-  
-  get mochaTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(MochaTask);
-  }
-  
-  get lessTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(LessTask);
-  }
-  
-  get watchTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(WatchTask);
-  }
-  
-  get watchBabelTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(WatchBabelTask);
-  }
-  
-  get watchMochaTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(WatchMochaTask);
-  }
-  
-  get watchLessTaskNames(): Array<TaskName> {
-    return this.getTaskNamesForType(WatchLessTask);
-  }
-  
   // creating tasks
   // -------------------------------------------------------------------------
   
@@ -425,12 +356,6 @@ export class Ugh {
     dest: string,
   }): CleanTask {
     const task = new CleanTask({ugh: this, id, dest});
-    
-    // this.gulp.task(task.name, task.run.bind(task));
-    
-    this.tasksByName[task.name.toString()] = task;
-    
-    // this.gulp.task('clean', this.cleanTaskNames);
     
     return task;
   }
@@ -465,12 +390,6 @@ export class Ugh {
       dest: this.resolveDir(dest),
     });
     
-    // this.gulp.task(task.name, task.run.bind(task));
-    
-    this.tasksByName[task.name.toString()] = task;
-    
-    // this.gulp.task('babel', this.babelTaskNames);
-    
     if (clean) {
       task.cleanTask = this.clean({
         id: task.name.id,
@@ -498,16 +417,6 @@ export class Ugh {
       ugh: this,
       babelTask,
     });
-      
-    // this.gulp.task(task.name, task.start.bind(task));
-    
-    this.tasksByName[task.name] = task;
-    
-    // re-define watch:babel to run all the WatchBabelTask
-    // this.gulp.task('watch:babel', this.watchBabelTaskNames);
-    
-    // re-define watch to run all the Watch tasks
-    // this.gulp.task('watch', this.watchTaskNames);
     
     return task;
   }
@@ -530,12 +439,6 @@ export class Ugh {
       id,
       tests: this.toTestsPattern(tests)}
     );
-    
-    // this.gulp.task(task.name, task.run.bind(task));
-    
-    this.tasksByName[task.name] = task;
-    
-    // this.gulp.task('mocha', this.mochaTaskNames);
     
     // create a watch task unless `watch` is false
     if (watch !== false) {      
@@ -586,17 +489,6 @@ export class Ugh {
       watch: watchPatterns,
     });
     
-    // this.gulp.task(task.name, task.start.bind(task));
-    
-    // add the task to the instance
-    this.tasksByName[task.name] = task;
-    
-    // re-define the watch:mocha task to invoke 'watch:mocha:*'
-    // this.gulp.task('watch:mocha', this.watchMochaTaskNames);
-    
-    // re-define watch to run all the Watch tasks
-    // this.gulp.task('watch', this.watchTaskNames);
-    
     return task;
   }
   
@@ -622,12 +514,6 @@ export class Ugh {
       src: this.toLessPattern(src),
       dest: this.resolve(dest),
     });
-    
-    // this.gulp.task(task.name, task.run.bind(task));
-    
-    this.tasksByName[task.name] = task;
-    
-    // this.gulp.task('less', this.lessTaskNames);
     
     if (clean) {
       task.cleanTask = this.clean({
@@ -668,16 +554,6 @@ export class Ugh {
       lessTask: lessTask,
       watch: watchPatterns,
     });
-    
-    // this.gulp.task(task.name, task.start.bind(task));
-    
-    this.tasksByName[task.name] = task;
-    
-    // re-define watch:less to run all the WatchLessTask
-    // this.gulp.task('watch:less', this.watchLessTaskNames);
-    
-    // re-define watch to run all the Watch tasks
-    // this.gulp.task('watch', this.watchTaskNames);
     
     return task;
   }
@@ -905,6 +781,16 @@ export class Ugh {
   
   toLessPattern(input: Patternable): Pattern {
     return this.toPattern(input, '**/*.less');
+  }
+  
+  /**
+  * add a task and re-creates the gulp tasks so that they're in sync (which
+  * is a bit a brute force way to do it but fuck it for now).
+  */
+  add(task: Task): void {
+    this.tasksByName[task.name.toString()] = task;
+    
+    this.createGulpTasks();
   }
   
 } // Ugh

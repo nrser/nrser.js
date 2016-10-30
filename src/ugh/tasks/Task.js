@@ -34,6 +34,8 @@ export class Task {
       typeName: this.constructor.typeName,
       packageName: this.ugh.packageName,
     });
+    
+    this.ugh.add(this);
   }
   
   log(...messages: Array<*>): void {

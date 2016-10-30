@@ -5,6 +5,4 @@ const ugh = new Ugh({gulp, packageDir: __dirname});
 
 ugh.autoTasks();
 
-ugh.createGulpTasks();
-
 module.exports = ugh;

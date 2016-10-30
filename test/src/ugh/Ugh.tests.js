@@ -19,6 +19,7 @@ import { squish } from '../../../lib/string';
 
 function createUgh(options = {}): Ugh {
   const ugh = new Ugh({
+    gulp: new gulp.Gulp(),
     packageDir: PROJECT_ROOT,
     ...options
   });
@@ -116,8 +117,6 @@ describe('ugh/Ugh.js', () => {
       });
       
       it("adds 'clean:<id>' and 'clean' tasks to gulp", () => {
-        ugh.createGulpTasks(new gulp.Gulp());
-        
         expect(_.keys(ugh.gulp.tasks))
           .to.include.members(['clean', 'clean:nrser:src']);
         expect(ugh.gulp.tasks['clean'].dep)

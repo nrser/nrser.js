@@ -44,17 +44,17 @@ function isTaskName(string: string): boolean {
 }
 export type TaskName = string & $Refinement<typeof isTaskName>;
 
-export type GulpTask = {
-  name: TaskName,
-  dep: Array<TaskName>,
+export interface IGulpTask {
+  name: string,
+  dep: Array<string>,
   fn: Function,
 };
 
-export type GulpType = {
+export interface IGulp {
   task: Function,
   src: Function,
   dest: Function,
-  tasks: {[name: TaskName]: GulpTask},
+  tasks: {[name: string]: IGulpTask},
 };
 
 export type DoneCallback = (error?: Error) => void;
