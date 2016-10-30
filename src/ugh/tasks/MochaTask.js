@@ -1,5 +1,8 @@
 // @flow
 
+// deps
+import _ from 'lodash';
+
 // package
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
@@ -62,7 +65,7 @@ export class MochaTask extends Task {
     const onceOnDone = _.once(onDone);
     
     this.ugh.gulp
-      .src(tests.path, {read: false})
+      .src(this.tests.path, {read: false})
       .pipe(spawnMocha({
         growl: true,
         reporter: 'min',

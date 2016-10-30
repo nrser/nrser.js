@@ -327,7 +327,7 @@ export class Ugh {
     if (watch === undefined) {
       // default to all the babel destinations
       watchPatterns = _.map(
-        this.babelTasks,
+        this.getTasksForType(BabelTask),
         (babelTask: BabelTask): Pattern => {
           return this.toJSPattern(babelTask.dest);
         });
@@ -690,10 +690,11 @@ export class Ugh {
     const taskClasses: Array<Class<Task>> = [
       CleanTask,
       BabelTask,
-      WatchBabelTask,
       MochaTask,
-      WatchMochaTask,
       LessTask,
+      WatchTask,
+      WatchBabelTask,
+      WatchMochaTask,
       WatchLessTask,
     ];
     
@@ -730,7 +731,9 @@ export class Ugh {
       _.each(
         packageGroups,
         (tasks: Array<Task>, gulpTaskName: string): void => {
-          this.createGulpTask(gulpTaskName, tasks);
+          if (tasks.length > 0) {
+            this.createGulpTask(gulpTaskName, tasks);
+          }
         }
       );
       
@@ -744,12 +747,14 @@ export class Ugh {
       //      'babel:nrser',
       //    ]
       // 
-      this.createGulpTask(
-        new TaskName({
-          typeName: taskClass.typeName,
-        }),
-        _.keys(packageGroups)
-      );
+      if (!_.isEmpty(packageGroups)) {
+        this.createGulpTask(
+          new TaskName({
+            typeName: taskClass.typeName,
+          }),
+          _.keys(packageGroups)
+        );
+      }
       
       // create gulp tasks that roll up all of type of Ugh task by id
       // 

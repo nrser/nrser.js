@@ -52,7 +52,7 @@ export class Task {
       notify?: boolean,
     } = {}
   ): void {
-    this.pkg.logError(this.name, error, {details, notify});
+    this.ugh.logError(this.name, error, {details, notify});
   }
   
   /**

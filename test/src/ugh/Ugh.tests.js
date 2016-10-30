@@ -109,18 +109,19 @@ describe('ugh/Ugh.js', () => {
         }).test(ugh.tasks);
         
         new Expect({
+          instanceOf: Array,
           lengthOf: 1,
           props: {
             '0': taskName,
           }
-        }).test(ugh.cleanTaskNames);
+        }).test(ugh.getTasksForType(CleanTask));
       });
       
       it("adds 'clean:<id>' and 'clean' tasks to gulp", () => {
         expect(_.keys(ugh.gulp.tasks))
-          .to.include.members(['clean', 'clean:nrser:src']);
+          .to.include.members(['clean', 'clean:src', 'clean:nrser:src']);
         expect(ugh.gulp.tasks['clean'].dep)
-          .to.have.members(['clean:nrser:src']);
+          .to.have.members(['clean:nrser']);
       });
     }); // #clean
     
@@ -141,17 +142,15 @@ describe('ugh/Ugh.js', () => {
         
         it("adds a single BabelTask to ugh", () => {
           expect(ugh.tasks).to.have.lengthOf(1);
-          expect(ugh.babelTasks).to.have.lengthOf(1);
+          expect(ugh.getTasksForType(BabelTask)).to.have.lengthOf(1);
           expect(ugh.tasks[0]).to.be.an.instanceOf(BabelTask);
         });
         
-        it("adds 'babel:src' and 'babel' tasks to gulp", () => {
-          ugh.createGulpTasks(new gulp.Gulp());
-          
+        it("adds 'babel:src' and 'babel' tasks to gulp", () => {          
           expect(_.keys(ugh.gulp.tasks))
-            .to.include.members(['babel', 'babel:src']);
+            .to.include.members(['babel', 'babel:nrser:src', 'babel:src']);
           expect(ugh.gulp.tasks['babel'].dep)
-            .to.have.members(['babel:src']);
+            .to.have.members(['babel:nrser']);
         });
         
         it("defaults src to have the correct path, pattern and base", () => {
@@ -180,8 +179,8 @@ describe('ugh/Ugh.js', () => {
         });
         
         it("adds a BabelTask and a CleanTask to ugh", () => {
-          expect(ugh.babelTasks).to.have.lengthOf(1);
-          expect(ugh.cleanTasks).to.have.lengthOf(1);
+          expect(ugh.getTasksForType(BabelTask)).to.have.lengthOf(1);
+          expect(ugh.getTasksForType(CleanTask)).to.have.lengthOf(1);
         });
         
         it(`adds babel and clean tasks to gulp`, () => {
@@ -190,49 +189,18 @@ describe('ugh/Ugh.js', () => {
           expect(_.keys(ugh.gulp.tasks))
             .to.include.members([
               'babel',
+              'babel:nrser:src',
               'babel:src',
               'clean',
-              'clean:babel:src',
+              'clean:nrser:src',
+              'clean:src',
             ]);
             
           expect(ugh.gulp.tasks['babel'].dep)
-            .to.have.members(['babel:src']);
+            .to.have.members(['babel:nrser']);
         });
       }); // babel and clean tasks
       
     }); // #babel
-    
-    describe('watchBabel', () => {
-      let ugh;
-      
-      beforeEach(() => {
-        ugh = createUgh();
-        
-        ugh.watchBabel({
-          id: 'src',
-          src: 'src',
-        });
-      });
-      
-      it("adds a WatchBabelTask to ugh", () => {
-        expect(ugh.tasksByName)
-          .to.satisfy(x => _.size(x) === 1)
-          .and.to.have.property('watch:babel:src')
-          .that.is.an.instanceOf(WatchBabelTask)
-          .with.property('name')
-          .that.equals('watch:babel:src');
-        
-        _.each([ugh.tasks, ugh.watchBabelTasks], (tasks) => {
-          expect(tasks)
-            .to.have.lengthOf(1)
-            .with.deep.property('[0]')
-            .that.is.an.instanceOf(WatchBabelTask);
-        });
-        
-        expect(ugh.watchBabelTaskNames)
-          .to.have.members(['watch:babel:src']);
-      });
-      
-    }); // watchBabel
   }); // Ugh
 });
