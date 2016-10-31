@@ -40,6 +40,7 @@ import {
 
 import {
   Task,
+  BuildTask,
   BabelTask,
   CleanTask,
   MochaTask,
@@ -182,7 +183,7 @@ export class Ugh {
     child.parent = this;
     this.children.push(child);
     
-    this.createGulpTasks();
+    this.setGulpTasks();
   }
   
   // getting tasks
@@ -224,6 +225,8 @@ export class Ugh {
   }): CleanTask {
     const task = new CleanTask({ugh: this, id, dest});
     
+    this.add(task);
+    
     return task;
   }
   
@@ -250,19 +253,26 @@ export class Ugh {
       dest = this.relative(src, this.babelRelativeDest);
     }
     
+    // resolve to an absolute dir
+    dest = this.resolveDir(dest)
+    
+    let cleanTask: ?CleanTask;
+    
+    if (clean) {
+      cleanTask = this.clean({id, dest});
+      
+      this.add(cleanTask);
+    }
+    
     const task = new BabelTask({
       ugh: this,
       id,
       src: this.toJSPattern(src),
       dest: this.resolveDir(dest),
+      cleanTask,
     });
     
-    if (clean) {
-      task.cleanTask = this.clean({
-        id: task.name.id,
-        dest: task.dest,
-      });
-    }
+    this.add(task);
     
     if (watch) {
       this.watchBabel(task);
@@ -273,17 +283,14 @@ export class Ugh {
   
   /**
   * creates a task to watch babel sources and compile them.
-  * 
-  * also re-defines:
-  * 
-  * -   `watch:babel` task to invoke all WatchBabelTask instances.
-  * -   `watch` task to invoke all WatchTask instance.
   */
   watchBabel(babelTask: BabelTask): WatchBabelTask {
     const task = new WatchBabelTask({
       ugh: this,
       babelTask,
     });
+    
+    this.add(task);
     
     return task;
   }
@@ -306,6 +313,8 @@ export class Ugh {
       id,
       tests: this.toTestsPattern(tests)}
     );
+    
+    this.add(task);
     
     // create a watch task unless `watch` is false
     if (watch !== false) {      
@@ -356,6 +365,8 @@ export class Ugh {
       watch: watchPatterns,
     });
     
+    this.add(task);
+    
     return task;
   }
   
@@ -375,19 +386,24 @@ export class Ugh {
     clean?: boolean,
     watch?: false | Patternables,
   }): LessTask {
+    dest = this.resolve(dest);
+    
+    let cleanTask: ?CleanTask;
+    
+    if (clean) {
+      cleanTask = this.clean({id, dest});
+      this.add(cleanTask);
+    }
+    
     const task = new LessTask({
       ugh: this,
       id,
       src: this.toLessPattern(src),
-      dest: this.resolve(dest),
+      dest,
+      cleanTask,
     });
     
-    if (clean) {
-      task.cleanTask = this.clean({
-        id: task.name,
-        dest: task.dest,
-      });
-    }
+    this.add(task);
     
     if (watch !== false) {
       this.watchLess(task, watch);
@@ -421,6 +437,8 @@ export class Ugh {
       lessTask: lessTask,
       watch: watchPatterns,
     });
+    
+    this.add(task);
     
     return task;
   }
@@ -657,40 +675,66 @@ export class Ugh {
   add(task: Task): void {
     this.tasksByName[task.name.toString()] = task;
     
-    this.createGulpTasks();
+    this.setGulpTasks();
   }
   
-  createGulpTask(
-    taskName: string | TaskName,
-    fnOrDeps: Array<string|Task|TaskName> | (onDone?: DoneCallback) => void,
+  /**
+  * sets a task in gulp, handling our structures as well as the standard 
+  * `gulp.task` args.
+  */
+  setGulpTask(
+    name: string | TaskName,
+    depsOrFn: Array<string|Task|TaskName> | Function,
+    fn?: Function,
   ): void {
-    let gulpTaskTarget: Array<string> | (onDone?: DoneCallback) => void;
+    let deps: Array<string|Task|TaskName>;
     
-    if (Array.isArray(fnOrDeps)) {
-      gulpTaskTarget = _.map(
-        fnOrDeps,
-        (named: string|Task|TaskName): string => {
-          if (named instanceof Task) {
-            return named.name.toString();
-          } else if (named instanceof TaskName) {
-            return named.toString();
-          } else if (typeof named === 'string') {
-            return named;
-          } else {
-            throw new TypeError(
-              I`must be string, Task or TaskName, not ${ named }`
-            );
-          }
-        }
-      );
+    // deal with varargs
+    if (typeof depsOrFn === 'function') {
+      fn = depsOrFn;
+      deps = [];
+      
+    } else if (Array.isArray(depsOrFn)) {
+      deps = depsOrFn;
+      
     } else {
-      gulpTaskTarget = fnOrDeps;
+      throw new TypeError(I`
+        second arg must be a function or array, found ${ depsOrFn }
+      `);
+      
     }
     
-    this.gulp.task(taskName.toString(), gulpTaskTarget);
+    // gulp-ize args
+    const gulpName = name.toString();
+    
+    const gulpDeps: Array<string> = _.map(deps, (dep): string => {
+      if (dep instanceof Task) {
+        return dep.name.toString();
+      } else if (dep instanceof TaskName) {
+        return dep.toString();
+      } else if (typeof dep === 'string') {
+        return dep;
+      } else {
+        throw new TypeError(I`
+          each dep must be a Task, TaskName or string, found ${ dep }
+        `);
+      }
+    });
+    
+    // set the task in gulp
+    this.gulp.task(gulpName, gulpDeps, fn);
   }
-
-  createGulpTasks(): void { 
+  
+  /**
+  * set all the gulp tasks.
+  * 
+  * right now, just goes through and sets all of them, brute-force style.
+  * 
+  * we don't have any functionality to remove tasks, so this should be 
+  * sufficient. if we removed tasks, we would need to handle removing them
+  * from gulp at that point to keep things in sync.
+  */
+  setGulpTasks(): void { 
     // add a task to dump the instance for inspection / debugging
     const dumpTaskName = TaskName.format({
       typeName: ['ugh'],
@@ -698,7 +742,7 @@ export class Ugh {
       id: 'dump',
     });
     
-    this.createGulpTask(
+    this.setGulpTask(
       dumpTaskName,
       (onDone: DoneCallback) => {
         this.log(
@@ -712,6 +756,7 @@ export class Ugh {
     );
     
     const taskClasses: Array<Class<Task>> = [
+      BuildTask,
       CleanTask,
       BabelTask,
       MochaTask,
@@ -732,7 +777,7 @@ export class Ugh {
       //    'babel:nrser:src' => BabelTask {id='src', ugh.packageName='nrser'}
       // 
       _.each(tasks, (task: Task): void => {
-        this.createGulpTask(task.name, task.run.bind(task));
+        this.setGulpTask(task.name, task.deps(), task.run.bind(task));
       });
       
       // create the gulp tasks that run all of a type of Ugh task for each
@@ -756,7 +801,7 @@ export class Ugh {
         packageGroups,
         (tasks: Array<Task>, gulpTaskName: string): void => {
           if (tasks.length > 0) {
-            this.createGulpTask(gulpTaskName, tasks);
+            this.setGulpTask(gulpTaskName, tasks);
           }
         }
       );
@@ -772,7 +817,7 @@ export class Ugh {
       //    ]
       // 
       if (!_.isEmpty(packageGroups)) {
-        this.createGulpTask(
+        this.setGulpTask(
           TaskName.format({
             typeName: taskClass.typeName,
           }),
@@ -805,7 +850,7 @@ export class Ugh {
             id
           });
           
-          this.createGulpTask(
+          this.setGulpTask(
             groupName,
             _.map(idTasks, (task): string => {
               return task.name.toString();
@@ -815,6 +860,6 @@ export class Ugh {
       ); // each group
       
     }); // each task class  
-  } // #createGulpTasks
+  } // #setGulpTasks
   
 } // Ugh

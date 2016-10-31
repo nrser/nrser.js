@@ -1,6 +1,7 @@
 // @flow
 
 export * from './Task';
+export * from './BuildTask';
 export * from './BabelTask';
 export * from './CleanTask';
 export * from './MochaTask';

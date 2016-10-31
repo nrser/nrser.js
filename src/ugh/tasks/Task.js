@@ -34,14 +34,42 @@ export class Task {
       typeName: this.constructor.typeName,
       packageName: this.ugh.packageName,
     });
-    
-    this.ugh.add(this);
   }
   
+  // public API
+  // ==========
+  
+  /**
+  * any tasks that this task depends on.
+  */
+  deps(): Array<Task> {
+    return [];
+  }
+  
+  /**
+  * run pipe on all source files
+  */
+  run(onDone?: DoneCallback): void {
+    throw new errors.NotImplementedError();
+  }
+  
+  // private API
+  // ===========
+  // 
+  // mostly just pass-through stuff for logging / notifications that adds
+  // the task information and calls up to the Ugh instance to execute.
+  // 
+  
+  /**
+  * log to gulp-util.log with the package name and task name.
+  */
   log(...messages: Array<*>): void {
     this.ugh.log(this.name, ...messages);
   }
   
+  /**
+  * logs an error to the console, including a notification by default.
+  */
   logError(
     error: Error,
     {
@@ -60,12 +88,5 @@ export class Task {
   */
   notify(status: string, message: string): void {
     this.ugh.notify(this.name, status, message);
-  }
-  
-  /**
-  * run pipe on all source files
-  */
-  run(onDone?: DoneCallback): void {
-    throw new errors.NotImplementedError();
   }
 }

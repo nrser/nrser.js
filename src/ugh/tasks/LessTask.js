@@ -3,7 +3,7 @@
 // package
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
-import { Task } from './Task';
+import { BuildTask } from './BuildTask';
 import { CleanTask } from './CleanTask';
 import * as errors from '../../errors';
 import { Scheduler } from '../util/Scheduler';
@@ -17,7 +17,7 @@ import type {
   DoneCallback,
 } from '../types';
 
-export class LessTask extends Task {
+export class LessTask extends BuildTask {
   /**
   * pattern for less files to source.
   */
@@ -33,18 +33,14 @@ export class LessTask extends Task {
   */
   scheduler: Scheduler;
   
-  /**
-  * optional associated clean task
-  */
-  cleanTask: ?CleanTask;
-  
-  constructor({ugh, id, src, dest}: {
+  constructor({ugh, id, src, dest, cleanTask}: {
     ugh: Ugh,
     id: TaskId,
     src: Pattern,
     dest: AbsDir,
+    cleanTask?: ?CleanTask,
   }) {
-    super({ugh, id});
+    super({ugh, id, cleanTask});
     
     this.src = src;
     this.dest = dest;

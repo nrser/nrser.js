@@ -2,14 +2,14 @@
 
 // package
 import { Pattern } from '../util';
-import { Task } from './Task';
+import { BuildTask } from './BuildTask';
 import { CleanTask } from './CleanTask';
 import { Ugh } from '../Ugh';
 
 // types
 import type { TaskId, TaskName, AbsDir, DoneCallback } from '../types';
 
-export class BabelTask extends Task {
+export class BabelTask extends BuildTask {
   /**
   * pattern to find source files.
   */
@@ -19,19 +19,15 @@ export class BabelTask extends Task {
   * directory to output them to.
   */
   dest: AbsDir;
-  
-  /**
-  * optional associated clean task
-  */
-  cleanTask: ?CleanTask;
-  
-  constructor({ugh, id, src, dest}: {
+    
+  constructor({ugh, id, src, dest, cleanTask}: {
     ugh: Ugh,
     id: TaskId,
     src: Pattern,
     dest: AbsDir,
+    cleanTask?: ?CleanTask,
   }) {
-    super({ugh, id});
+    super({ugh, id, cleanTask});
     
     this.src = src;
     this.dest = dest;

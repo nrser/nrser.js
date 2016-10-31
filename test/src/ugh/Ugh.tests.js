@@ -184,8 +184,6 @@ describe('ugh/Ugh.js', () => {
         });
         
         it(`adds babel and clean tasks to gulp`, () => {
-          ugh.createGulpTasks(new gulp.Gulp());
-          
           expect(_.keys(ugh.gulp.tasks))
             .to.include.members([
               'babel',
