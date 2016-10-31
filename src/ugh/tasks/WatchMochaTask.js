@@ -1,10 +1,17 @@
 // @flow
 
-// package
+// deps
+import _ from 'lodash';
+
+
+// nrser
 import * as errors from '../../errors';
+
+// ugh
 import { Pattern } from '../util';
 import { WatchTask } from './WatchTask';
 import { MochaTask } from './MochaTask';
+import { BuildTask } from './BuildTask';
 import { Ugh } from '../Ugh';
 
 // types
@@ -47,17 +54,41 @@ export class WatchMochaTask extends WatchTask {
     });
     
     this.mochaTask = mochaTask;
+    
   }
   
   start(onDone?: DoneCallback): void {
-    super.start(onDone);
+    // super.start(onDone);
+    
+    const buildTasks = this.ugh.getTasksForType(BuildTask);
+    
+    _.each(buildTasks, (buildTask): void => {
+      buildTask.emitter.on('done', () => {
+        this.log(
+          `build task ${ buildTask.name.toString() } completed.`
+        );
+        
+        const stillRunning = _.filter(buildTasks, (task) => task.running);
+        
+        if (stillRunning.length > 0) {
+          this.log(
+            `other build tasks are still running`,
+            _.map(stillRunning, (task) => task.name.toString())
+          );
+        } else {
+          this.log(`everything is done, running mocha.`);
+          
+          this.mochaTask.run();
+        }
+      })
+    });
     
     // kick off
     this.log("kicking off...");
     
     // NOTE `onDone` is for the *entire watch task* - we **don't** want to 
     //      provide it to the kick off task
-    this.mochaTask.run();
+    // this.mochaTask.run();
   }
   
   onAll(event: GazeEvent, filePattern: Pattern): void {

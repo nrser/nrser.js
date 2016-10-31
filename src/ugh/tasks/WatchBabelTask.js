@@ -34,39 +34,12 @@ export class WatchBabelTask extends WatchTask {
   }
   
   start(onDone?: DoneCallback): void {
-    const start = () => {
-      super.start.bind(onDone);
-    }
-    
+    super.start(onDone);
+        
     // kick off
     this.log("kicking off...");
     
-    // NOTE `onDone` is for the *entire watch task* - we **don't** want to 
-    //      provide it to the kick off task
-    if (this.babelTask.cleanTask) {
-      this.log("clean task present, running that first...");
-      
-      this.babelTask.cleanTask.run((error: ?Error) => {
-        if (error) {
-          this.log("clean task errored, starting watch now.");
-          start();
-          
-        } else {
-          this.log("done cleaning, running babel...");
-          this.babelTask.run((error: ?Error) => {
-            this.log("babel done, starting watch...");
-            start();
-          });
-        }
-      })
-    } else {
-      this.log("no clean task, running babel...");
-      
-      this.babelTask.run((error: ?Error) => {
-        this.log("babel done, starting watch...");
-        start();
-      });
-    }
+    this.babelTask.run();
   }
   
   onAddedOrChanged(filePattern: Pattern): void {

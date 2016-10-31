@@ -1,4 +1,7 @@
+// system
+import { EventEmitter } from 'events';
 
+// ugh
 import { Task } from './Task';
 import { CleanTask } from './CleanTask';
 
@@ -11,6 +14,11 @@ import { CleanTask } from './CleanTask';
 */
 export class BuildTask extends Task {
   /**
+  * flag set to true when running.
+  */
+  _running: boolean;
+  
+  /**
   * optional associated clean task to depend on
   */
   cleanTask: ?CleanTask;
@@ -22,15 +30,21 @@ export class BuildTask extends Task {
   }) {
     super({ugh, id});
     this.cleanTask = cleanTask;
+    this.emitter = new EventEmitter();
+    this._running = false;
+  }
+  
+  get running(): boolean {
+    return this._running;
   }
   
   /**
   * get any tasks that this task depends on.
   */
   deps(): Array<Task> {
-    if (this.cleanTask) {
-      return [this.cleanTask];
-    }
+    // if (this.cleanTask) {
+    //   return [this.cleanTask];
+    // }
     
     return super.deps();
   }

@@ -37,7 +37,21 @@ export class BabelTask extends BuildTask {
   * run pipe on all source files
   */
   run(onDone?: DoneCallback): void {
-    this.pipeline(this.src, onDone);
+    if (this.cleanTask) {
+      this.cleanTask.run((error?: Error) => {
+        if (error) {
+          if (onDone) {
+            onDone(error);
+          } else {
+            // pass
+          }
+        } else {
+          this.pipeline(this.src, onDone);
+        }
+      })
+    } else {
+      this.pipeline(this.src, onDone);
+    }
   }
   
   /**
@@ -64,12 +78,19 @@ export class BabelTask extends BuildTask {
     this.log("pipelining babel", details);
     
     const onError = (error: Error) => {
+      this._running = false;
+      
       this.logError(error, {details});
+      
+      // emit an error event
+      this.emitter.emit('error', error);
       
       if (onDone) {
         onDone(error);
       }
     };
+    
+    this._running = true;
     
     this.ugh.gulp
       .src(src.path, {base: src.base})
@@ -81,10 +102,15 @@ export class BabelTask extends BuildTask {
       .on('error', onError)
       
       .on('end', () => {
+        this._running = false;
+        
         this.notify(
           'COMPILED',
           `${ this.ugh.relative(src.path) } => ${ this.ugh.relative(this.dest) }`
         );
+        
+        // emit a done event so that listen tasks know that we built
+        this.emitter.emit('done');
         
         if (onDone) {
           onDone();
