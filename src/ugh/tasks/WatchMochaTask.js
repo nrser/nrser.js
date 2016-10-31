@@ -53,10 +53,10 @@ export class WatchMochaTask extends WatchTask {
     super.start(onDone);
     
     // kick off
-    this.log("kicking off mocha...");
+    this.log("kicking off...");
     
     // NOTE `onDone` is for the *entire watch task* - we **don't** want to 
-    //      provide it to the watched {MochaTask#run}
+    //      provide it to the kick off task
     this.mochaTask.run();
   }
   

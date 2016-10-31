@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
 import { Task } from './Task';
+import { BuildTask } from './BuildTask';
 import { Scheduler } from '../util/Scheduler';
 
 // types
@@ -46,6 +47,13 @@ export class MochaTask extends Task {
   
   run(onDone?: DoneCallback): void {
     this.scheduler.schedule(onDone);
+  }
+  
+  /**
+  * depend on a build.
+  */
+  deps(): Array<Task> {
+    return this.ugh.getTasksForType(BuildTask);
   }
   
   /**
