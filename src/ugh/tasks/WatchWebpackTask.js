@@ -11,7 +11,7 @@ import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { WatchTask } from './WatchTask';
 import { WatchFilesTask } from './WatchFilesTask';
-import { MochaTask } from './MochaTask';
+import { WebpackTest } from './WebpackTest';
 import { BuildTask } from './BuildTask';
 import { Ugh } from '../Ugh';
 
@@ -27,19 +27,24 @@ import type {
 /**
 * little struct that hold info about a watch mocha task that's been created.
 */
-export class WatchMochaTask extends WatchTask {
+export class WatchWebpackTask extends WatchTask {
   /**
   * associated mocha task
   */
-  mochaTask: MochaTask;
+  webpackTask: WebpackTest;
   
   deferred: Q.Defer;
   
-  constructor({ugh, mochaTask}: {
+  constructor({ugh, webpackTask}: {
     ugh: Ugh,
-    mochaTask: MochaTask,
+    webpackTask: WebpackTest,
+    watch: Array<Pattern>,
   }) {
-    super({ugh, id: mochaTask.name.id});
+    super({
+      ugh,
+      id: mochaTask.name.id,
+      watch
+    });
     
     this.mochaTask = mochaTask;
     
