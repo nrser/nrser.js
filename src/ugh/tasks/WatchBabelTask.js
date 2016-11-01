@@ -43,13 +43,13 @@ export class WatchBabelTask extends WatchFilesTask {
         
     // kick off
     this.log("kicking off...");
-    this.babelTask.run();
+    this.babelTask.runWithDeps();
     
     return promise;
   }
   
   onAddedOrChanged(filePattern: Pattern): void {
-    this.babelTask.runOne(filePattern);
+    this.babelTask.run(filePattern);
   }
   
   onAdded(filePattern: Pattern): void {

@@ -38,9 +38,9 @@ export class WatchTask extends Task {
   } // #start
   
   /**
-  * just runs `start()`.`
+  * just calls `start()`.`
   */
-  run(): Q.Promise<void> {
+  execute(): Q.Promise<void> {
     return this.start();
   }
   

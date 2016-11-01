@@ -136,10 +136,7 @@ export class WatchFilesTask extends WatchTask {
           this.deferred.reject(initError);
           
         } else {
-          this.log(`initialized, watching...`, {
-            absPaths: this.watchPaths,
-            relPaths: this.watchRelPaths,
-          });
+          this.log(`initialized, watching...`, this.watchPaths);
           
         }
         
@@ -165,13 +162,6 @@ export class WatchFilesTask extends WatchTask {
     
     return this.deferred.promise;
   } // #start
-  
-  /**
-  * alias for {#start}
-  */
-  run(): Q.Promise<void> {
-    return this.start();
-  }
   
   /**
   * stops watching and fires the onDone callback with no arguments if one was

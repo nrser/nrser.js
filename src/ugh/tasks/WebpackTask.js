@@ -58,16 +58,9 @@ export class WebpackTask extends BuildTask {
   }
   
   /**
-  * run pipe on all source files
-  */
-  run(): Promise<void> {
-    return this.clean().then(this.build.bind(this));
-  }
-  
-  /**
   * do the webpack build
   */
-  build(): Promise<void> {
+  execute(): Promise<void> {
     const webpack = require('webpack');
     
     return Q.ninvoke(this.compiler, 'run')

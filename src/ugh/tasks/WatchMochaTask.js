@@ -9,6 +9,7 @@ import * as errors from '../../errors';
 
 // ugh
 import { Pattern } from '../util';
+import { WatchTask } from './WatchTask';
 import { WatchFilesTask } from './WatchFilesTask';
 import { MochaTask } from './MochaTask';
 import { BuildTask } from './BuildTask';
@@ -26,7 +27,7 @@ import type {
 /**
 * little struct that hold info about a watch mocha task that's been created.
 */
-export class WatchMochaTask extends WatchFilesTask {
+export class WatchMochaTask extends WatchTask {
   /**
   * Pattern for the tests to run.
   */
@@ -36,6 +37,8 @@ export class WatchMochaTask extends WatchFilesTask {
   * associated mocha task
   */
   mochaTask: MochaTask;
+  
+  deferred: Q.Defer;
   
   constructor({ugh, mochaTask, watch}: {
     ugh: Ugh,
@@ -53,7 +56,7 @@ export class WatchMochaTask extends WatchFilesTask {
   }
   
   start(): Q.Promise<void> {
-    const promise = super.start();
+    this.deferred = Q.defer();
     
     const buildTasks = this.ugh.getTasksForType(BuildTask);
     
@@ -78,13 +81,11 @@ export class WatchMochaTask extends WatchFilesTask {
       })
     });
     
-    // kick off
-    // this.log("kicking off...");
+    // boot up the watch tasks for the builds
+    _.each(this.ugh.getTasksForType(WatchFilesTask), (task) => {
+      task.run();
+    });
     
-    // NOTE `onDone` is for the *entire watch task* - we **don't** want to 
-    //      provide it to the kick off task
-    // this.mochaTask.run();
-    
-    return promise;
+    return this.deferred.promise;
   }
 }

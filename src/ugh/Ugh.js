@@ -737,7 +737,11 @@ export class Ugh {
     });
     
     // set the task in gulp
-    this.gulp.task(gulpName, gulpDeps, function(){ return fn() });
+    if (fn) {
+      this.gulp.task(gulpName, gulpDeps, function(){ return fn() });
+    } else {
+      this.gulp.task(gulpName, gulpDeps);
+    }
   }
   
   /**
@@ -786,7 +790,7 @@ export class Ugh {
       //    'babel:nrser:src' => BabelTask {id='src', ugh.packageName='nrser'}
       // 
       _.each(tasks, (task: Task): void => {
-        this.setGulpTask(task.name, [], task.run.bind(task));
+        this.setGulpTask(task.name, task.deps(), task.run.bind(task));
       });
       
       // create the gulp tasks that run all of a type of Ugh task for each

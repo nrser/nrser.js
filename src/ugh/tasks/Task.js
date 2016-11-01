@@ -122,6 +122,13 @@ export class Task extends EventEmitter {
     return this.schedulers[argsKey].schedule();
   }
   
+  runWithDeps(): Q.Promise<void> {
+    return Q.all(_.map(this.deps(), task => task.runWithDeps()))
+      .then(() => {
+        this.run();
+      });
+  }
+  
   // private API
   // ===========
   // 
@@ -147,11 +154,9 @@ export class Task extends EventEmitter {
   _execute_wrapper(...args: Array<*>): Q.Promise<void> {
     this._running = true;
     
-    return Q.all(_.map(this.deps(), task => task.run()))
-      .then(() => {
-        this.log(chalk.yellow("executing..."));
-        return this.execute(...args)
-      })
+    this.log(chalk.yellow("executing..."));
+    
+    return this.execute(...args)
       .then(() => {
         this.log(chalk.green("success"));
         this.emit('success');

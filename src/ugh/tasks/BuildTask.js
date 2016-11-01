@@ -34,34 +34,6 @@ export class BuildTask extends Task {
   }) {
     super({ugh, id});
     this.cleanTask = cleanTask;
-    
-    // this._build_implementation = this.build.bind(this);
-    // 
-    // this.build = (...buildArgs: Array<*>): Q.Promise<void> => {
-    //   this._running = true;
-    //   
-    //   return Q.all(_.map(this.deps(), task => task.run()))
-    //     
-    //     .then(() => {
-    //       this.log("deps finished, building...");
-    //       
-    //       return this._build_implementation(...buildArgs);
-    //     })
-    //     
-    //     .catch((error: Error) => {
-    //       this.emit('error', error);
-    //       throw error;
-    //     })
-    //     
-    //     .then(() => {
-    //       this.emit('success');
-    //     })
-    //     
-    //     .catch((error: Error) => {
-    //       this.emit('error', error);
-    //       throw error;
-    //     });
-    // }
   }
   
   /**
