@@ -1,0 +1,4 @@
+---
+qb.nrser_js:
+  yarn: true
+  package-name: nrser_scratch_promises
