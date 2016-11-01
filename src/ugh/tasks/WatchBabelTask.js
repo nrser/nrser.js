@@ -7,7 +7,7 @@ import path from 'path';
 import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
-import { WatchTask } from './WatchTask';
+import { WatchFilesTask } from './WatchFilesTask';
 import { BabelTask } from './BabelTask';
 
 // types
@@ -16,7 +16,7 @@ import type { TaskId, TaskName, AbsPath } from '../types';
 /**
 * little struct that hold info about a watch babel task that's been created.
 */
-export class WatchBabelTask extends WatchTask {  
+export class WatchBabelTask extends WatchFilesTask {  
   babelTask: BabelTask;
   
   constructor({ugh, babelTask, watch}: {

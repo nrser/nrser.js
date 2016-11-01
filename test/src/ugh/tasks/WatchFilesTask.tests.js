@@ -2,16 +2,16 @@ import { chai, expect, resolve, itMaps } from '../../testHelpers';
 
 import path from 'path';
 import gulp from 'gulp';
-import { Ugh, Pattern, WatchTask } from '../../../../lib/ugh';
+import { Ugh, Pattern, WatchFilesTask } from '../../../../lib/ugh';
 
-describe('ugh/tasks/WatchTask.js', () => {
-  describe('WatchTask', () => {
+describe('ugh/tasks/WatchFilesTask.js', () => {
+  describe('WatchFilesTask', () => {
     const ugh = new Ugh({gulp, packageDir: process.cwd()});
     
     const src = ugh.toPattern('src/**/*.js');
     const test = ugh.toPattern('test/src/**/*.js');
     
-    const task = new WatchTask({
+    const task = new WatchFilesTask({
       ugh: ugh,
       id: 'testing',
       name: 'watch:testing',
@@ -55,7 +55,7 @@ describe('ugh/tasks/WatchTask.js', () => {
     });
     
     describe('.typeName', () => {
-      expect(WatchTask.typeName).to.eql(['watch']);
+      expect(WatchFilesTask.typeName).to.eql(['watch', 'files']);
     });
   }); // WatchTask
   

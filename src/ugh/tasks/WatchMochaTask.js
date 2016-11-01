@@ -9,7 +9,7 @@ import * as errors from '../../errors';
 
 // ugh
 import { Pattern } from '../util';
-import { WatchTask } from './WatchTask';
+import { WatchFilesTask } from './WatchFilesTask';
 import { MochaTask } from './MochaTask';
 import { BuildTask } from './BuildTask';
 import { Ugh } from '../Ugh';
@@ -26,16 +26,11 @@ import type {
 /**
 * little struct that hold info about a watch mocha task that's been created.
 */
-export class WatchMochaTask extends WatchTask {
+export class WatchMochaTask extends WatchFilesTask {
   /**
   * Pattern for the tests to run.
   */
   tests: Pattern;
-  
-  /**
-  * pattern for files to watch.
-  */
-  watch: Array<Pattern>;
   
   /**
   * associated mocha task
@@ -84,14 +79,10 @@ export class WatchMochaTask extends WatchTask {
     });
     
     // kick off
-    this.log("kicking off...");
+    // this.log("kicking off...");
     
     // NOTE `onDone` is for the *entire watch task* - we **don't** want to 
     //      provide it to the kick off task
     // this.mochaTask.run();
-  }
-  
-  onAll(event: GazeEvent, filePattern: Pattern): void {
-    this.mochaTask.run();
   }
 }

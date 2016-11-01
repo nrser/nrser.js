@@ -7,7 +7,7 @@ import path from 'path';
 import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
-import { WatchTask } from './WatchTask';
+import { WatchFilesTask } from './WatchFilesTask';
 import { LessTask } from './LessTask';
 
 // types
@@ -19,7 +19,7 @@ import type {
   DoneCallback,
 } from '../types';
 
-export class WatchLessTask extends WatchTask {
+export class WatchLessTask extends WatchFilesTask {
   /**
   * the corresponding less task
   */
