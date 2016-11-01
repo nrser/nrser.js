@@ -51,8 +51,10 @@ export class Task extends EventEmitter {
   * instantiating the class (since `super` must be the first call in
   * constructors, making it tricky to work with values before-hand).
   */
-  static create(kwds = {}): Task {
-    return new this(kwds);
+  static create({ugh, ...kwds}: {ugh: Ugh, kwds: Array<*>}): Task {
+    const task = new this({ugh, ...kwds});
+    ugh.add(task);
+    return task;
   }
   
   constructor({ugh, id} : {

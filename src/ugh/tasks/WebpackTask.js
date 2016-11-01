@@ -9,6 +9,7 @@ import { Pattern } from '../util';
 import { Task } from './Task';
 import { BuildTask } from './BuildTask';
 import { CleanTask } from './CleanTask';
+import { WatchWebpackTask } from './WatchWebpackTask';
 import { Ugh } from '../Ugh';
 
 // types
@@ -31,6 +32,26 @@ export class WebpackTask extends BuildTask {
   * the compiler instance
   */
   compiler: WebpackCompiler;
+  
+  static create({ugh, id, config, watch = true}: {
+    ugh: Ugh,
+    id: TaskId,
+    config: WebpackConfig,
+    watch: boolean,
+  }): WebpackTest {
+    const webpackTask = new this({ugh, id, config});
+    
+    ugh.add(webpackTask);
+    
+    if (watch) {
+      WatchWebpackTask.create({
+        ugh,
+        webpackTask,
+      });
+    }
+    
+    return webpackTask;
+  }
   
   constructor({ugh, id, config}: {
     ugh: Ugh,

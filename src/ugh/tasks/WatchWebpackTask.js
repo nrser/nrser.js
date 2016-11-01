@@ -11,7 +11,7 @@ import * as errors from '../../errors';
 import { Pattern } from '../util';
 import { WatchTask } from './WatchTask';
 import { WatchFilesTask } from './WatchFilesTask';
-import { WebpackTest } from './WebpackTest';
+import { WebpackTask } from './WebpackTask';
 import { BuildTask } from './BuildTask';
 import { Ugh } from '../Ugh';
 
@@ -31,23 +31,17 @@ export class WatchWebpackTask extends WatchTask {
   /**
   * associated mocha task
   */
-  webpackTask: WebpackTest;
+  webpackTask: WebpackTask;
   
   deferred: Q.Defer;
   
   constructor({ugh, webpackTask}: {
     ugh: Ugh,
-    webpackTask: WebpackTest,
-    watch: Array<Pattern>,
+    webpackTask: WebpackTask,
   }) {
-    super({
-      ugh,
-      id: mochaTask.name.id,
-      watch
-    });
+    super({ugh, id: webpackTask.name.id});
     
-    this.mochaTask = mochaTask;
-    
+    this.webpackTask = webpackTask;
   }
   
   start(): Q.Promise<void> {
@@ -71,7 +65,7 @@ export class WatchWebpackTask extends WatchTask {
         } else {
           this.log(`everything is done, running mocha.`);
           
-          this.mochaTask.run();
+          this.webpackTask.run();
         }
       })
     });

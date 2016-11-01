@@ -216,9 +216,7 @@ export class Ugh {
   * create a task
   */
   task<T>(taskClass: Class<T>, kwds: Object = {}): T {
-    const task: T = new taskClass({ugh: this, ...kwds});
-    this.add(task);
-    return task;
+    return taskClass.create({ugh: this, ...kwds});
   }
   
   /**
