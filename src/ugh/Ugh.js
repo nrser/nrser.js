@@ -9,6 +9,7 @@ import os from 'os';
 
 import _ from 'lodash';
 import t from 'tcomb';
+import chalk from 'chalk';
 
 // ugh-specific deps that need to be co-installed
 // 
@@ -528,7 +529,7 @@ export class Ugh {
   */
   log(taskName: string | TaskName, ...messages: Array<*>): void {
     gutil.log(
-      `${ this.packageName } [${ taskName.toString() }]`,
+      `${ chalk.underline(this.packageName) } [${ chalk.cyan(taskName.toString()) }]`,
       ..._.map(messages, (message: *): string => {
         if (typeof message === 'string') {
           return message;
@@ -564,7 +565,7 @@ export class Ugh {
   ): void {
     const log = this.logger(taskName);
     
-    log('ERROR');
+    log(chalk.red('ERROR'));
     
     if (error.stack) {
       log(error.stack.toString());
@@ -736,7 +737,7 @@ export class Ugh {
     });
     
     // set the task in gulp
-    this.gulp.task(gulpName, gulpDeps, fn);
+    this.gulp.task(gulpName, gulpDeps, function(){ return fn() });
   }
   
   /**

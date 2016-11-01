@@ -37,21 +37,15 @@ export class CleanTask extends Task {
     this.dest = dest;
   }
   
-  run(): Promise<void> {
-    return this.execute(this.dest);
-  }
-  
-  runOne(dest: string): Promise<void> {
-    return this.execute(dest);
-  }
-  
   /**
   * run the clean pipeline (which is just a `git clean` command).
   */
-  execute(dest: string): Promise<void> {
+  execute(dest: string = this.dest): Promise<void> {
     // for `git clean` to work the way we want it - removing all files from
     // a directory that are ignored by git - even if that directory has
     // checked-in files in it, we want it to end with a slash
+    
+    const details = {dest};
     
     return Q.nfcall(fs.isDir, dest)
       

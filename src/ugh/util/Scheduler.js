@@ -53,7 +53,7 @@ export class Scheduler {
     name: string,
     run: () => Promise<void>,
     {
-      timeout = 300,
+      timeout = 0,
       log,
     } : {
       timeout?: number,

@@ -6,20 +6,36 @@ import { EventEmitter } from 'events';
 // deps
 import _ from 'lodash';
 import Q from 'q';
+import chalk from 'chalk';
 
 // nrser
 import * as errors from '../../errors';
+import { squish, I } from '../../string';
 
 // ugh
 import { Ugh } from '../Ugh';
 import { TaskName } from '../util/TaskName';
+import { Scheduler } from '../util/Scheduler';
 
 // types
 import type { TaskId, TaskTypeName, DoneCallback } from '../types';
 
 export class Task extends EventEmitter {
+  static WAIT_MS = 0;
+  
+  /**
+  * flag set to true when running.
+  */
+  _running: boolean;
+  
   ugh: Ugh;
   name: TaskName;
+  
+  /**
+  * schedulers to run execute keyed by the JSON serialization of the
+  * arguments to run().
+  */
+  schedulers: {[key: string]: Scheduler};
   
   static get typeName(): TaskTypeName {
     return _.map(
@@ -50,10 +66,17 @@ export class Task extends EventEmitter {
       typeName: this.constructor.typeName,
       packageName: this.ugh.packageName,
     });
+    
+    this._running = false;
+    this.schedulers = {};
   }
   
   // public API
   // ==========
+  
+  get running(): boolean {
+    return this._running;
+  }
   
   /**
   * any tasks that this task depends on.
@@ -65,8 +88,38 @@ export class Task extends EventEmitter {
   /**
   * run pipe on all source files
   */
-  run(): Q.Promise<void> {
-    throw new errors.NotImplementedError();
+  run(...args: Array<*>): Q.Promise<void> {
+    this.log(chalk.yellow("running..."), {args});
+    
+    let argsKey: string;
+    
+    try {
+      argsKey = JSON.stringify(args);
+    } catch(error) {
+      return Q.reject(
+        new TypeError(squish(I`
+          args must be JSON serializable to form key, found #{ args }.
+          error: ${ error.toString() }
+        `))
+      );
+    }
+    
+    if (!_.has(this.schedulers, argsKey)) {
+      this.schedulers[argsKey] = new Scheduler(
+        `${ this.name.toString() } ${ argsKey }`,
+        () => {
+          return this._execute_wrapper(...args);
+        },
+        {
+          timeout: this.constructor.WAIT_MS,
+          log: (...messages) => {
+            this.log(..._.map(messages, m => chalk.gray(m)))
+          },
+        },
+      )
+    }
+    
+    return this.schedulers[argsKey].schedule();
   }
   
   // private API
@@ -75,6 +128,43 @@ export class Task extends EventEmitter {
   // mostly just pass-through stuff for logging / notifications that adds
   // the task information and calls up to the Ugh instance to execute.
   // 
+  
+  /**
+  * function subclasses override to get work done. this is scheduled by
+  * run().
+  */
+  execute(...args: Array<*>): Q.Promise<void> {
+    throw new errors.NotImplementedError();
+  }
+  
+  /**
+  * internal API that
+  * 
+  * -   runs all dependent tasks returned by {#deps}
+  * -   wraps `execute` in setting and unsetting the `_running` flag
+  * -   emits 'success' or 'error' events after it's done.
+  */
+  _execute_wrapper(...args: Array<*>): Q.Promise<void> {
+    this._running = true;
+    
+    return Q.all(_.map(this.deps(), task => task.run()))
+      .then(() => {
+        this.log(chalk.yellow("executing..."));
+        return this.execute(...args)
+      })
+      .then(() => {
+        this.log(chalk.green("success"));
+        this.emit('success');
+      })
+      .catch((error: Error) => {
+        this.logError(error);
+        this.emit('error', error);
+        throw error;
+      })
+      .fin(() => {
+        this._running = false;
+      });
+  }
   
   /**
   * log to gulp-util.log with the package name and task name.

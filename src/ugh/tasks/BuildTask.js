@@ -34,56 +34,34 @@ export class BuildTask extends Task {
   }) {
     super({ugh, id});
     this.cleanTask = cleanTask;
-    this._running = false;
     
-    this._build_implementation = this.build.bind(this);
-    
-    this.build = (...buildArgs: Array<*>): Q.Promise<void> => {
-      this._running = true;
-      
-      return Q.all(_.map(this.deps(), task => task.run()))
-        
-        .then(() => {
-          this.log("deps finished, building...");
-          
-          return this._build_implementation(...buildArgs);
-        })
-        
-        .catch((error: Error) => {
-          this.emit('error', error);
-          throw error;
-        })
-        
-        .then(() => {
-          this.emit('success');
-        })
-        
-        .catch((error: Error) => {
-          this.emit('error', error);
-          throw error;
-        });
-    }
-  }
-  
-  get running(): boolean {
-    return this._running;
-  }
-  
-  clean(): Q.Promise<void> {
-    this.log("cleaning...");
-    
-    if (this.cleanTask) {
-      this.log("clean task present, running...");
-      
-      return this.cleanTask.run();
-    }
-    
-    this.log("no clean task present.")
-    return Q.resolve();
-  }
-  
-  build(...args: Array<*>): Q.Promise<void> {
-    throw new errors.NotImplementedError();
+    // this._build_implementation = this.build.bind(this);
+    // 
+    // this.build = (...buildArgs: Array<*>): Q.Promise<void> => {
+    //   this._running = true;
+    //   
+    //   return Q.all(_.map(this.deps(), task => task.run()))
+    //     
+    //     .then(() => {
+    //       this.log("deps finished, building...");
+    //       
+    //       return this._build_implementation(...buildArgs);
+    //     })
+    //     
+    //     .catch((error: Error) => {
+    //       this.emit('error', error);
+    //       throw error;
+    //     })
+    //     
+    //     .then(() => {
+    //       this.emit('success');
+    //     })
+    //     
+    //     .catch((error: Error) => {
+    //       this.emit('error', error);
+    //       throw error;
+    //     });
+    // }
   }
   
   /**

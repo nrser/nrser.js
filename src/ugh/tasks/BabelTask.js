@@ -37,26 +37,12 @@ export class BabelTask extends BuildTask {
   }
   
   /**
-  * run pipe on all source files
-  */
-  run(): Q.Promise<void> {
-    return this.build(this.src);
-  }
-  
-  /**
-  * run the pipeline on a single source file
-  */
-  runOne(filePattern: Pattern): Q.Promise<void> {
-    return this.build(filePattern);
-  }
-  
-  /**
   * runs the babel gulp pipeline.
   * 
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  build(src: Pattern): Q.Promise<void> {
+  execute(src: Pattern = this.src): Q.Promise<void> {
     const babel = require('gulp-babel');
     
     const details = {src, dest: this.dest};

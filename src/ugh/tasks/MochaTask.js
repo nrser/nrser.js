@@ -15,16 +15,12 @@ import { Scheduler } from '../util/Scheduler';
 import type { TaskId, TaskName, DoneCallback } from '../types';
 
 export class MochaTask extends Task {
+  static WAIT_MS = 300;
+  
   /**
   * pattern for the test files to run.
   */
   tests: Pattern;
-  
-  /**
-  * scheduler to spawn mocha. since mocha collects many files it is managed
-  * by a scheduler so that it doesn't step on itself.
-  */
-  scheduler: Scheduler;
   
   constructor({ugh, id, tests}: {
     ugh: Ugh,
@@ -34,16 +30,6 @@ export class MochaTask extends Task {
     super({ugh, id});
     
     this.tests = tests;
-    
-    this.scheduler = new Scheduler(
-      this.name.toString(),
-      this.execute.bind(this),
-      {log: this.log.bind(this)},
-    );
-  }
-  
-  run(): Q.Promise<void> {
-    return this.scheduler.schedule();
   }
   
   /**
