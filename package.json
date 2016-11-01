@@ -9,6 +9,7 @@
     "lodash": "^4.16.2",
     "minimatch": "^3.0.3",
     "promise": "^7.1.1",
+    "q": "^1.4.1",
     "sprintf-js": "^1.0.3",
     "tcomb": "^3.2.15",
     "untildify": "^3.0.2"

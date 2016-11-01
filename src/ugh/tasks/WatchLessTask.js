@@ -3,8 +3,14 @@
 // system
 import path from 'path';
 
-// package
+// deps
+import _ from 'lodash';
+import Q from 'q';
+
+// nrser
 import * as errors from '../../errors';
+
+// ugh
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
 import { WatchFilesTask } from './WatchFilesTask';
@@ -44,14 +50,16 @@ export class WatchLessTask extends WatchFilesTask {
     this.lessTask = lessTask;
   }
   
-  start(onDone?: DoneCallback): void {
-    super.start(onDone);
+  start(): Q.Promise<void> {
+    const promise = super.start();
     
     // kick off
     // TOOD this will still run if gaze errors on init... that's generally not
     //      handled well at all.
     this.log("kicking off...");
     this.lessTask.run();
+    
+    return promise;
   }
   
   onAddedOrChanged(filePattern: Pattern): void {

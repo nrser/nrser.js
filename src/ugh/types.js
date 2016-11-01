@@ -38,14 +38,6 @@ function isTaskId(string: string): boolean {
 
 export type TaskId = string & $Refinement<typeof isTaskId>;
 
-function isTaskName(string: string): boolean {
-  return string.length > 0 && _.every(
-    string.split(':'),
-    (part: string): boolean => string.length > 0
-  )
-}
-export type TaskName = string & $Refinement<typeof isTaskName>;
-
 export type TaskTypeName = Array<string>;
 
 export interface IGulpTask {
@@ -66,3 +58,11 @@ export const ReifiedIGulp = (({}: any): $Reify<IGulp>);
 export type DoneCallback = (error?: Error) => void;
 
 export type GazeEvent = 'added' | 'changed' | 'deleted';
+
+export type WebpackConfig = Object;
+
+export type WebpackStats = Object;
+
+export type WebpackCompiler = {
+  run: (callback: (error?: Error, stats?: WebpackStats) => void) => void,
+}

@@ -3,8 +3,13 @@
 // system
 import path from 'path';
 
-// package
+// deps
+import Q from 'q';
+
+// nrser
 import * as errors from '../../errors';
+
+// ugh
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
 import { WatchFilesTask } from './WatchFilesTask';
@@ -33,13 +38,14 @@ export class WatchBabelTask extends WatchFilesTask {
     this.babelTask = babelTask;
   }
   
-  start(onDone?: DoneCallback): void {
-    super.start(onDone);
+  start(): Q.Promise<void> {
+    const promise = super.start();
         
     // kick off
     this.log("kicking off...");
-    
     this.babelTask.run();
+    
+    return promise;
   }
   
   onAddedOrChanged(filePattern: Pattern): void {

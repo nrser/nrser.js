@@ -2,7 +2,7 @@
 
 // deps
 import _ from 'lodash';
-
+import Q from 'q';
 
 // nrser
 import * as errors from '../../errors';
@@ -52,13 +52,13 @@ export class WatchMochaTask extends WatchFilesTask {
     
   }
   
-  start(onDone?: DoneCallback): void {
-    // super.start(onDone);
+  start(): Q.Promise<void> {
+    const promise = super.start();
     
     const buildTasks = this.ugh.getTasksForType(BuildTask);
     
     _.each(buildTasks, (buildTask): void => {
-      buildTask.emitter.on('done', () => {
+      buildTask.on('success', () => {
         this.log(
           `build task ${ buildTask.name.toString() } completed.`
         );
@@ -84,5 +84,7 @@ export class WatchMochaTask extends WatchFilesTask {
     // NOTE `onDone` is for the *entire watch task* - we **don't** want to 
     //      provide it to the kick off task
     // this.mochaTask.run();
+    
+    return promise;
   }
 }

@@ -1,5 +1,8 @@
 // @flow
 
+// deps
+import Q from 'q';
+
 // package
 import { Pattern } from '../util';
 import { BuildTask } from './BuildTask';
@@ -36,29 +39,15 @@ export class BabelTask extends BuildTask {
   /**
   * run pipe on all source files
   */
-  run(onDone?: DoneCallback): void {
-    if (this.cleanTask) {
-      this.cleanTask.run((error?: Error) => {
-        if (error) {
-          if (onDone) {
-            onDone(error);
-          } else {
-            // pass
-          }
-        } else {
-          this.pipeline(this.src, onDone);
-        }
-      })
-    } else {
-      this.pipeline(this.src, onDone);
-    }
+  run(): Q.Promise<void> {
+    return this.build(this.src);
   }
   
   /**
   * run the pipeline on a single source file
   */
-  runOne(filePattern: Pattern, onDone?: DoneCallback): void {
-    this.pipeline(filePattern, onDone);
+  runOne(filePattern: Pattern): Q.Promise<void> {
+    return this.build(filePattern);
   }
   
   /**
@@ -67,54 +56,42 @@ export class BabelTask extends BuildTask {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  pipeline(
-    src: Pattern,
-    onDone?: DoneCallback,
-  ): void {
+  build(src: Pattern): Q.Promise<void> {
     const babel = require('gulp-babel');
     
     const details = {src, dest: this.dest};
     
-    this.log("pipelining babel", details);
-    
-    const onError = (error: Error) => {
-      this._running = false;
+    return new Q.Promise((resolve, reject) => {
       
-      this.logError(error, {details});
-      
-      // emit an error event
-      this.emitter.emit('error', error);
-      
-      if (onDone) {
-        onDone(error);
-      }
-    };
-    
-    this._running = true;
-    
-    this.ugh.gulp
-      .src(src.path, {base: src.base})
-      
-      .pipe(babel())
-      .on('error', onError)
-      
-      .pipe(this.ugh.gulp.dest(this.dest))
-      .on('error', onError)
-      
-      .on('end', () => {
+      const onError = (error: Error) => {
         this._running = false;
         
-        this.notify(
-          'COMPILED',
-          `${ this.ugh.relative(src.path) } => ${ this.ugh.relative(this.dest) }`
-        );
+        this.logError(error, {details});
         
-        // emit a done event so that listen tasks know that we built
-        this.emitter.emit('done');
+        reject(error);
+      };
+      
+      this._running = true;
+      
+      this.ugh.gulp
+        .src(src.path, {base: src.base})
         
-        if (onDone) {
-          onDone();
-        }
-      });
+        .pipe(babel())
+        .on('error', onError)
+        
+        .pipe(this.ugh.gulp.dest(this.dest))
+        .on('error', onError)
+        
+        .on('end', () => {
+          this._running = false;
+          
+          this.notify(
+            'COMPILED',
+            `${ this.ugh.relative(src.path) } => ${ this.ugh.relative(this.dest) }`
+          );
+          
+          resolve();
+        });
+    });
   }
 }

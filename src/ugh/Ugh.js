@@ -59,6 +59,7 @@ import type {
   DoneCallback,
   PackageJson,
   IGulp,
+  WebpackConfig,
 } from './types';
 
 import { ReifiedIGulp, ReifiedAbsPath } from './types';
@@ -209,6 +210,15 @@ export class Ugh {
   
   // creating tasks
   // -------------------------------------------------------------------------
+  
+  /**
+  * create a task
+  */
+  task<T>(taskClass: Class<T>, kwds: Object = {}): T {
+    const task: T = new taskClass({ugh: this, ...kwds});
+    this.add(task);
+    return task;
+  }
   
   /**
   * create a clean task with the provided name that cleans the dest directory.
@@ -491,10 +501,14 @@ export class Ugh {
   /**
   * dispatches a notification.
   */
-  notify(taskName: TaskName, status: string, message: string): void {
+  notify(
+    taskName: TaskName,
+    status: string,
+    message: string = ''
+  ): void {
     notifier.notify({
-      title: `${ this.packageName } [${ taskName.toString() }] ${ status }`,
-      message,
+      title: `${ this.packageName } [${ taskName.toString() }]`,
+      message: `${ status } ${ message}`,
     });
   }
   
@@ -755,19 +769,13 @@ export class Ugh {
       }
     );
     
-    const taskClasses: Array<Class<Task>> = [
-      BuildTask,
-      CleanTask,
-      BabelTask,
-      MochaTask,
-      LessTask,
-      WatchTask,
-      WatchBabelTask,
-      WatchMochaTask,
-      WatchLessTask,
-    ];
+    const taskClasses: Set<Class<Task>> = new Set([BuildTask, WatchTask]);
     
-    _.each(taskClasses, (taskClass: Class<Task>): void => {
+    _.each(this.tasks, (task) => {
+      taskClasses.add(task.constructor);
+    });
+    
+    _.each(Array.from(taskClasses), (taskClass: Class<Task>): void => {
       const tasks: Array<Task> = this.getTasksForType(taskClass);
       
       // create the direct gulp task -> ugh task maps
@@ -777,7 +785,7 @@ export class Ugh {
       //    'babel:nrser:src' => BabelTask {id='src', ugh.packageName='nrser'}
       // 
       _.each(tasks, (task: Task): void => {
-        this.setGulpTask(task.name, task.deps(), task.run.bind(task));
+        this.setGulpTask(task.name, [], task.run.bind(task));
       });
       
       // create the gulp tasks that run all of a type of Ugh task for each

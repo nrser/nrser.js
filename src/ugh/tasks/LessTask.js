@@ -1,5 +1,8 @@
 // @flow
 
+// deps
+import Q from 'q';
+
 // package
 import { Pattern } from '../util';
 import { Ugh } from '../Ugh';
@@ -47,64 +50,58 @@ export class LessTask extends BuildTask {
     
     this.scheduler = new Scheduler(
       this.name.toString(),
-      (onDone: DoneCallback) => {
-        this.pipeline(this.src, onDone);
-      },
-      {
-        log: this.log.bind(this),
-      },
+      this.build.bind(this, this.src),
+      {log: this.log.bind(this)},
     );
   }
   
   /**
   * run pipe on all source files
   */
-  run(onDone?: DoneCallback): void {
-    this.scheduler.schedule(onDone);
+  run(): Q.Promise<void> {
+    return this.scheduler.schedule();
   }
   
   /**
-  * run the pipeline on a single source file
+  * run the execute on a single source file
   */
-  runOne(filePattern: Pattern, onDone?: DoneCallback): void {
-    this.pipeline(filePattern, onDone);
+  runOne(filePattern: Pattern): Q.Promise<void> {
+    return this.build(filePattern);
   }
   
   /**
-  * run the gulp less pipeline.
+  * run the gulp less execute.
   * 
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  pipeline(src: Pattern, onDone?: DoneCallback): void{
+  build(src: Pattern): Q.Promise<void> {
     const less = require('gulp-less');
     
     const details = {src, dest: this.dest};
     
-    this.log(`pipelining less`, details);
+    this.log(`executing less`, details);
     
-    const onError = (error: Error) => {
-      this.logError(error, {details});
+    return new Q.Promise((resolve, reject) => {
+    
+      const onError = (error: Error) => {
+        this.logError(error, {details});
+        reject(error);
+      };
       
-      if (onDone) {
-        onDone(error);
-      }
-    };
-    
-    this.ugh.gulp.src(src.path, {base: src.base})
-      .pipe(less())
-      .on('error', onError)
-      .pipe(this.ugh.gulp.dest(this.dest))
-      .on('error', onError)
-      .on('end', () => {
-        this.notify(
-          'COMPILED',
-          `${ this.ugh.relative(src.path) } => ${ this.ugh.relative(this.dest) }`
-        );
-        
-        if (onDone) {
-          onDone();
-        }
-      });
-  } // #pipeline
+      this.ugh.gulp.src(src.path, {base: src.base})
+        .pipe(less())
+        .on('error', onError)
+        .pipe(this.ugh.gulp.dest(this.dest))
+        .on('error', onError)
+        .on('end', () => {
+          this.notify(
+            'COMPILED',
+            `${ this.ugh.relative(src.path) } => ${ this.ugh.relative(this.dest) }`
+          );
+          
+          resolve();
+        });
+    });
+  } // #execute
 }

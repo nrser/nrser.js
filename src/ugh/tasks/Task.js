@@ -1,7 +1,11 @@
 // @flow
 
+// system
+import { EventEmitter } from 'events';
+
 // deps
 import _ from 'lodash';
+import Q from 'q';
 
 // nrser
 import * as errors from '../../errors';
@@ -13,7 +17,7 @@ import { TaskName } from '../util/TaskName';
 // types
 import type { TaskId, TaskTypeName, DoneCallback } from '../types';
 
-export class Task {
+export class Task extends EventEmitter {
   ugh: Ugh;
   name: TaskName;
   
@@ -26,10 +30,20 @@ export class Task {
     );
   }
   
+  /**
+  * static method called by {Ugh.task} so that work can be done *before*
+  * instantiating the class (since `super` must be the first call in
+  * constructors, making it tricky to work with values before-hand).
+  */
+  static create(kwds = {}): Task {
+    return new this(kwds);
+  }
+  
   constructor({ugh, id} : {
     ugh: Ugh,
     id: TaskId,
   }) {
+    super();
     this.ugh = ugh;
     this.name = new TaskName({
       id,
@@ -51,7 +65,7 @@ export class Task {
   /**
   * run pipe on all source files
   */
-  run(onDone?: DoneCallback): void {
+  run(): Q.Promise<void> {
     throw new errors.NotImplementedError();
   }
   

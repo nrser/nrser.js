@@ -5,6 +5,7 @@ import { exec } from 'child_process';
 
 // deps
 import _ from 'lodash';
+import Q from 'q';
 
 // package
 import fs from '../../fs';
@@ -36,63 +37,54 @@ export class CleanTask extends Task {
     this.dest = dest;
   }
   
-  run(onDone?: DoneCallback): void {
-    this.pipeline(this.dest, onDone);
+  run(): Promise<void> {
+    return this.execute(this.dest);
   }
   
-  runOne(dest: string, onDone?: DoneCallback): void {
-    this.pipeline(dest, onDone);
+  runOne(dest: string): Promise<void> {
+    return this.execute(dest);
   }
   
   /**
   * run the clean pipeline (which is just a `git clean` command).
   */
-  pipeline(
-    dest: string,
-    onDone: ?DoneCallback
-  ): void {
+  execute(dest: string): Promise<void> {
     // for `git clean` to work the way we want it - removing all files from
     // a directory that are ignored by git - even if that directory has
     // checked-in files in it, we want it to end with a slash
-    fs.isDir(dest, (null_: null, isDir: boolean): void => {
-      if (isDir && !dest.endsWith('/')) {
-        dest += '/';
-      }
+    
+    return Q.nfcall(fs.isDir, dest)
       
-      let relDest = this.ugh.relative(dest);
-
-      const cmd = `git clean -fdX ${ relDest }`;
-      
-      const details = {dest, relDest, cmd};
-
-      this.log("pipelining clean", details);
-
-      exec(cmd, {cwd: this.ugh.packageDir}, (error, stdout, stderr) => {
-        if (error) {
-          this.logError(error, {details});
-          
-          // let caller know there was a problem if needed
-          if (onDone) {
-            onDone(error);
-          }
-          
-        } else {
-          // log any outputs
-          _.each({stdout, stderr}, (output, name) => {
-            if (output) {
-              this.log(`${ name }: \n${ output }`);
-            }
-          });
-          
-          // notify the user
-          this.notify('CLEANED', this.ugh.relative(dest));
-          
-          // let caller know we're done here if needed
-          if (onDone) {
-            onDone();
-          }
+      .then((isDir) => {
+        if (isDir && !dest.endsWith('/')) {
+          dest += '/';
         }
-      }); // exec
-    }); // fs.isDir
+          
+        let relDest = this.ugh.relative(dest);
+
+        const cmd = `git clean -fdX ${ relDest }`;
+        
+        const details = {dest, relDest, cmd};
+
+        this.log("executing clean", details);
+
+        return Q.nfcall(exec, cmd, {cwd: this.ugh.packageDir})
+          .then((stdout, stderr) => {
+            // log any outputs
+            _.each({stdout, stderr}, (output, name) => {
+              if (output) {
+                this.log(`${ name }: \n${ output }`);
+              }
+            });
+            
+            // notify the user
+            this.notify('CLEANED', this.ugh.relative(dest));
+          });
+      })
+      
+      .catch((error: Error) => {
+        this.logError(error, {details});
+        throw error;
+      });
   } // # pipeline
 }

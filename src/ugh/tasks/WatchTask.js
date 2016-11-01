@@ -5,7 +5,7 @@ import path from 'path';
 
 // deps
 import _ from 'lodash';
-import gaze, { Gaze } from 'gaze';
+import Q from 'q';
 
 // nrser
 import * as errors from '../../errors';
@@ -33,15 +33,15 @@ export class WatchTask extends Task {
   /**
   * starts watching.
   */
-  start(onDone?: DoneCallback) {
+  start(): Q.Promise<void> {
     throw new errors.NotImplementedError();
   } // #start
   
   /**
   * just runs `start()`.`
   */
-  run(onDone?: DoneCallback): void {
-    this.start(onDone);
+  run(): Q.Promise<void> {
+    return this.start();
   }
   
   /**

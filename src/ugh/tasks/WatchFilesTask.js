@@ -5,6 +5,7 @@ import path from 'path';
 
 // deps
 import _ from 'lodash';
+import Q from 'q';
 import gaze, { Gaze } from 'gaze';
 
 // package
@@ -40,12 +41,9 @@ export class WatchFilesTask extends WatchTask {
   _watcher: ?Gaze;
   
   /**
-  * callback optionally provided to {#start} to fire when done (either with
-  * an error when initialization fails, or with no args when {#stop} is
-  * called - errors occurring in the triggered operations are reported 
-  * but the task continues to run).
+  * deferred from start() to resolve or reject when we're done watching.
   */
-  onDone: ?DoneCallback;
+  deferred: Q.defer;
   
   constructor({ugh, id, watch}: {
     ugh: Ugh,
@@ -117,14 +115,14 @@ export class WatchFilesTask extends WatchTask {
   * `onDone` will fire when the task is completely done, not after each
   * run.
   */
-  start(onDone?: DoneCallback) {
+  start(): Q.Promise<void> {
     if (this.watcher !== undefined) {
       throw new errors.StateError(`already watching`);
     }
     
-    this.log(`initializing...`, {
-      paths: this.watchPaths,
-    });
+    this.deferred = Q.defer();
+    
+    this.log(`initializing, paths: `, this.watchPaths);
     
     gaze(
       this.watchRelPaths,
@@ -134,15 +132,8 @@ export class WatchFilesTask extends WatchTask {
           // this is the only time we callback and end the task
           this.logError(initError);
           
-          // if we received a DoneCallback, fire that with the error.
-          if (onDone) {
-            onDone(initError);
-            return;
-          }
-          
-          // otherwise it's not handled, so throw it (better than just
-          // swallowing it i guess)
-          throw initError;
+          // reject the promise we returned when started
+          this.deferred.reject(initError);
           
         } else {
           this.log(`initialized, watching...`, {
@@ -172,14 +163,14 @@ export class WatchFilesTask extends WatchTask {
       } // gaze init
     ); // gaze()
     
-    this.onDone = onDone;
+    return this.deferred.promise;
   } // #start
   
   /**
   * alias for {#start}
   */
-  run(onDone?: DoneCallback): void {
-    this.start(onDone);
+  run(): Q.Promise<void> {
+    return this.start();
   }
   
   /**
@@ -192,15 +183,11 @@ export class WatchFilesTask extends WatchTask {
       delete this._watcher;
     }
     
-    // if we received an onDone callback, fire it.
-    // we don't use this but it seems good to have in there for completeness /
-    // consistency's sake, rather than just never firing unless there was an
-    // init error.
-    if (this.onDone) {
-      this.onDone();
-    }
+    // resolve the deferred
+    this.deferred.resolve();
     
-    delete this.onDone;
+    // clear the deferred
+    delete this.deferred;
   } // #stop
   
   // handlers

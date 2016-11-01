@@ -1,8 +1,8 @@
 // @flow
 
+// deps
 import _ from 'lodash';
-
-import type { DoneCallback } from '../types';
+import Q from 'q';
 
 type Log = boolean | Function;
 
@@ -10,12 +10,12 @@ export class Scheduler {
   /**
   * flag set to true when scheduled to run.
   */
-  scheduled: boolean;
+  _scheduled: boolean;
   
   /**
   * flag set to true when the operation is running
   */
-  running: boolean;
+  _running: boolean;
   
   /**
   * name used when logging
@@ -39,13 +39,19 @@ export class Scheduler {
   log: ?Log;
   
   /**
-  * callback to fire with no args on success or with an error on failure.
+  * deferreds to resolve when the current run completes. this is empty unless
+  * we are running.
   */
-  onDones: Array<DoneCallback>;
+  _currentRunDeferreds: Array<Q.defer>;
+  
+  /**
+  *  deferreds to resolve when the next run completes.
+  */
+  _nextRunDeferreds: Array<Q.defer>;
   
   constructor(
     name: string,
-    run: (onDone: DoneCallback) => void,
+    run: () => Promise<void>,
     {
       timeout = 300,
       log,
@@ -55,47 +61,60 @@ export class Scheduler {
     } = {}
   ) {
     this.name = name;
-    this.scheduled = false;
-    this.running = false;
     this.timeout = timeout;
-    this.log = log;
     this.run = run;
-    this.onDones = [];
+    this.log = log;
+    
+    // internal state - **DO NOT TOUCH**
+    this._scheduled = false;
+    this._running = false;
+    this._currentRunDeferreds = [];
+    this._nextRunDeferreds = []
   }
   
   // public API
   // ==========
   
+  // accessors
+  // ---------
+  
+  get scheduled(): boolean {
+    return this._scheduled;
+  }
+  
+  get running(): boolean {
+    return this._running;
+  }
+  
   /**
   * call to schedule a run.
   */
-  schedule(onDone?: DoneCallback): boolean {
+  schedule(): Promise<void> {
     this._log("scheduling...");
     
-    // add the callback to list to fire when run completes
-    if (onDone) {
-      this.onDones.push(onDone);
-    }
+    // create a deferred to resolve when next run completes
+    const deferred = Q.defer();
+    this._nextRunDeferreds.push(deferred);
     
-    // don't do anything if it's already scheduled
     if (this.scheduled) {
+      // it's already scheduled, so we don't need to do anything
       this._log("already scheduled.");
       
-      return false;
+    } else {
+      // flag as scheduled
+      this._scheduled = true;
+      
+      if (this.running) {
+        this._log("already running, will re-schedule when done.");
+        
+      } else {
+        this._log(`scheduling run in ${ this.timeout }ms.`);
+        setTimeout(this._start.bind(this), this.timeout);
+        
+      }
     }
     
-    // flag as scheduled
-    this.scheduled = true;
-    
-    if (this.running) {
-      this._log("already running, will re-schedule when done.");
-      return false;
-    }
-    
-    this._log(`scheduling run in ${ this.timeout }ms.`);
-    setTimeout(this._start.bind(this), this.timeout);
-    
-    return true;
+    return deferred.promise;
   }
   
   // private API
@@ -125,42 +144,54 @@ export class Scheduler {
     this._log("starting run.");
     
     // flag as running
-    this.running = true;
+    this._running = true;
     
     // unset the scheduled flag
-    this.scheduled = false;
+    this._scheduled = false;
     
-    // start the operation, providing {#_done} as a callback for it to fire
-    // when it's complete
-    this.run(this._done.bind(this));
-  }
-  
-  /**
-  * called by the task when it's done, firing any onDone callbacks that
-  * were scheduled.
-  */
-  _done(error?: Error): void {
-    this._log("run complete.");
+    // swap the next run deferreds into the current one
+    this._currentRunDeferreds = this._nextRunDeferreds;
     
-    // unset the running flag
-    this.running = false;
+    // and empty the next run deferreds
+    this._nextRunDeferreds = [];
     
-    // fire the callbacks
-    _.each(this.onDones, (onDone: DoneCallback): void => {
-      // this.log('firing callback', {error});
+    // start the operation
+    this.run()
+    
+      .then(() => {
+        this._log("run succeeded, resolving deferreds.");
+        
+        _.each(this._currentRunDeferreds, (deferred) => {
+          deferred.resolve();
+        });
+      })
       
-      onDone(error);
-    });
-    
-    // clear the callbacks
-    this.onDones = [];
-    
-    // if we're scheduled, the scheduling happen while we were running
-    if (this.scheduled) {
-      this._log(`scheduled to run again, will run in ${ this.timeout }ms.`);
+      .catch((error: Error) => {
+        this._log("run failed, rejecting deferreds.");
+        
+        _.each(this._currentRunDeferreds, (deferred) => {
+          deferred.resolve();
+        });
+      })
       
-      // in that case, schedule another run after the timeout
-      setTimeout(this._start.bind(this), this.timeout);
-    }
-  }
+      .fin(() => {
+        this._log("run complete.");
+        
+        // unset the running flag
+        this._running = false;
+        
+        // clear the current deferreds to prevent confusion
+        this._currentRunDeferreds = [];
+        
+        // re-schedule if we got a schedule call when we were running
+        if (this.scheduled) {
+          this._log(
+            `scheduled to run again, will run in ${ this.timeout }ms.`
+          );
+          
+          // in that case, schedule another run after the timeout
+          setTimeout(this._start.bind(this), this.timeout);
+        }
+      });
+  } // #_start
 } // Scheduler

@@ -2,6 +2,7 @@
 
 // deps
 import _ from 'lodash';
+import Q from 'q';
 
 // package
 import { Pattern } from '../util';
@@ -36,17 +37,13 @@ export class MochaTask extends Task {
     
     this.scheduler = new Scheduler(
       this.name.toString(),
-      (onDone: DoneCallback) => {
-        this.pipeline(onDone);
-      },
-      {
-        log: this.log.bind(this),
-      },
+      this.execute.bind(this),
+      {log: this.log.bind(this)},
     );
   }
   
-  run(onDone?: DoneCallback): void {
-    this.scheduler.schedule(onDone);
+  run(): Q.Promise<void> {
+    return this.scheduler.schedule();
   }
   
   /**
@@ -57,43 +54,42 @@ export class MochaTask extends Task {
   }
   
   /**
-  * run the mocha gulp pipeline.
+  * run the mocha gulp execute.
   * 
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  pipeline(onDone?: DoneCallback): void {
+  execute(): Q.Promise<void> {
     const spawnMocha = require('gulp-spawn-mocha');
     
     const details = {tests: this.tests};
     
-    this.log(`pipelining mocha`, details);
+    this.log(`executing mocha`, details);
     
-    // fucking 'end' gets emitted after error?!
-    const onceOnDone = _.once(onDone);
-    
-    this.ugh.gulp
-      .src(this.tests.path, {read: false})
-      .pipe(spawnMocha({
-        growl: true,
-        reporter: 'min',
-        env: {
-          NODE_ENV: 'test',
-          // NODE_PATH: `${ process.env.NODE_PATH }:${ tempPath }`,
-        },
-      }))
-      .on('error', (error) => {
-        // mocha takes care of it's own logging and notifs
-        this.logError(error, {details});
-        
-        if (onDone) {
-          onceOnDone(error);
-        }
-      })
-      .on('end', () => {
-        if (onDone) {
-          onceOnDone();
-        }
-      });
-  } // #pipeline
+    return new Q.Promise((resolve, reject) => {
+      
+      // fucking 'end' gets emitted after error?!
+      const resolveOnce = _.once(resolve);
+      
+      this.ugh.gulp
+        .src(this.tests.path, {read: false})
+        .pipe(spawnMocha({
+          growl: true,
+          reporter: 'min',
+          env: {
+            NODE_ENV: 'test',
+            // NODE_PATH: `${ process.env.NODE_PATH }:${ tempPath }`,
+          },
+        }))
+        .on('error', (error) => {
+          // mocha takes care of it's own logging and notifs
+          this.logError(error, {details});
+          
+          reject(error);
+        })
+        .on('end', () => {
+          resolveOnce();
+        });
+    });
+  } // #execute
 }
