@@ -31,11 +31,6 @@ export class LessTask extends BuildTask {
   */
   dest: AbsDir;
   
-  /**
-  * scheduler to build less
-  */
-  scheduler: Scheduler;
-  
   constructor({ugh, id, src, dest, cleanTask}: {
     ugh: Ugh,
     id: TaskId,
@@ -47,26 +42,6 @@ export class LessTask extends BuildTask {
     
     this.src = src;
     this.dest = dest;
-    
-    this.scheduler = new Scheduler(
-      this.name.toString(),
-      this.build.bind(this, this.src),
-      {log: this.log.bind(this)},
-    );
-  }
-  
-  /**
-  * run pipe on all source files
-  */
-  run(): Q.Promise<void> {
-    return this.scheduler.schedule();
-  }
-  
-  /**
-  * run the execute on a single source file
-  */
-  runOne(filePattern: Pattern): Q.Promise<void> {
-    return this.build(filePattern);
   }
   
   /**
@@ -75,7 +50,7 @@ export class LessTask extends BuildTask {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  build(src: Pattern): Q.Promise<void> {
+  execute(src: Pattern = this.src): Q.Promise<void> {
     const less = require('gulp-less');
     
     const details = {src, dest: this.dest};

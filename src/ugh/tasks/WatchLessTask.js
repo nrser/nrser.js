@@ -66,7 +66,7 @@ export class WatchLessTask extends WatchFilesTask {
     if (this.lessTask.src.match(filePattern)) {
       // if the watched file is in the source pattern run individually on that
       // file
-      this.lessTask.runOne(filePattern);
+      this.lessTask.run(filePattern);
       
     } else {
       // run the whole thing
@@ -86,7 +86,7 @@ export class WatchLessTask extends WatchFilesTask {
     if (this.lessTask.src.match(filePattern) && this.lessTask.cleanTask) {
       // if the watched file is in the source pattern remove that destination
       // (if there is an associated clean task)
-      this.lessTask.cleanTask.runOne(
+      this.lessTask.cleanTask.run(
         path.join(this.lessTask.dest, filePattern.pattern)
       );
       

@@ -62,7 +62,7 @@ export class WatchBabelTask extends WatchFilesTask {
   
   onDeleted(filePattern: Pattern): void {
     if (this.babelTask.cleanTask) {
-      this.babelTask.cleanTask.runOne(
+      this.babelTask.cleanTask.run(
         path.join(this.babelTask.dest, filePattern.pattern)
       );
     }
