@@ -113,6 +113,9 @@ function print(input, options = {}, /*…Internal:*/ name = "", refs = null){
 			
 			return `"${input}"`;
 		}
+		case "[object Date]": {
+			return `Date("${ input }")`;
+		}
 	}
 	
 	/** omit references in omit option */
