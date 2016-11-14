@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 import chalk from 'chalk';
 
 // nrser
@@ -18,7 +18,7 @@ import { TaskName } from '../util/TaskName';
 import { Scheduler } from '../util/Scheduler';
 
 // types
-import type { TaskId, TaskTypeName, DoneCallback } from '../types';
+import type { TaskId, TaskTypeName } from '../types';
 
 export class Task extends EventEmitter {
   static WAIT_MS = 0;
@@ -90,7 +90,7 @@ export class Task extends EventEmitter {
   /**
   * run pipe on all source files
   */
-  run(...args: Array<*>): Q.Promise<void> {
+  run(...args: Array<*>): Promise<void> {
     this.log(chalk.yellow("running..."), {args});
     
     let argsKey: string;
@@ -98,7 +98,7 @@ export class Task extends EventEmitter {
     try {
       argsKey = JSON.stringify(args);
     } catch(error) {
-      return Q.reject(
+      return Promise.reject(
         new TypeError(squish(I`
           args must be JSON serializable to form key, found #{ args }.
           error: ${ error.toString() }
@@ -124,8 +124,8 @@ export class Task extends EventEmitter {
     return this.schedulers[argsKey].schedule();
   }
   
-  runWithDeps(): Q.Promise<void> {
-    return Q.all(_.map(this.deps(), task => task.runWithDeps()))
+  runWithDeps(): Promise<void> {
+    return Promise.all(_.map(this.deps(), task => task.runWithDeps()))
       .then(() => {
         this.run();
       });
@@ -142,7 +142,7 @@ export class Task extends EventEmitter {
   * function subclasses override to get work done. this is scheduled by
   * run().
   */
-  execute(...args: Array<*>): Q.Promise<void> {
+  execute(...args: Array<*>): Promise<void> {
     throw new errors.NotImplementedError();
   }
   
@@ -153,7 +153,7 @@ export class Task extends EventEmitter {
   * -   wraps `execute` in setting and unsetting the `_running` flag
   * -   emits 'success' or 'error' events after it's done.
   */
-  _execute_wrapper(...args: Array<*>): Q.Promise<void> {
+  _execute_wrapper(...args: Array<*>): Promise<void> {
     this._running = true;
     
     this.log(chalk.yellow("executing..."));
@@ -168,7 +168,7 @@ export class Task extends EventEmitter {
         this.emit('error', error);
         throw error;
       })
-      .fin(() => {
+      .finally(() => {
         this._running = false;
       });
   }

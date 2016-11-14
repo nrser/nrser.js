@@ -6,6 +6,7 @@
 
 import _ from 'lodash';
 import fsExtra from 'fs-extra';
+import Promise from 'bluebird';
 
 type Stats = {
   isDirectory: () => boolean,
@@ -16,18 +17,20 @@ type Stats = {
 */
 export const fs = _.clone(fsExtra);
 
+fs.statPromise = Promise.promisify(fs.stat);
+
 /**
 * async check if a path is a directory. accepts a callback that is fired 
 * with `null` followed by `true` or `false` (never errors back).
 */
-export function isDir(path: string, callback: Function): void {
-  fs.stat(path, (error: ?Error, stats: ?Stats) => {
-    if (error) {
-      callback(null, false);
-    } else {
-      callback(null, stats.isDirectory());
-    }
-  });
+export function isDir(path: string): Promise<boolean> {
+  return fs.statPromise(path)
+    .then((stats: Stats) => {
+      return stats.isDirectory();
+    })
+    .catch((error: Error) => {
+      return false;
+    });
 }
 fs.isDir = isDir;
 

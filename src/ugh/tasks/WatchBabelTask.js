@@ -4,7 +4,7 @@
 import path from 'path';
 
 // deps
-import Q from 'q';
+import Promise from 'bluebird';
 
 // nrser
 import * as errors from '../../errors';
@@ -38,7 +38,7 @@ export class WatchBabelTask extends WatchFilesTask {
     this.babelTask = babelTask;
   }
   
-  start(): Q.Promise<void> {
+  start(): Promise<void> {
     const promise = super.start();
         
     // kick off

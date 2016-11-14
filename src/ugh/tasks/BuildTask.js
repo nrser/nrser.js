@@ -1,6 +1,5 @@
 // deps
 import _ from 'lodash';
-import Q from 'q';
 
 // nrser
 import * as errors from '../../errors';

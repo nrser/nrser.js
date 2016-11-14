@@ -2,7 +2,7 @@
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 
 // package
 import { Pattern } from '../util';
@@ -45,14 +45,14 @@ export class MochaTask extends Task {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  execute(): Q.Promise<void> {
+  execute(): Promise<void> {
     const spawnMocha = require('gulp-spawn-mocha');
     
     const details = {tests: this.tests};
     
     this.log(`executing mocha`, details);
     
-    return new Q.Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       
       // fucking 'end' gets emitted after error?!
       const resolveOnce = _.once(resolve);

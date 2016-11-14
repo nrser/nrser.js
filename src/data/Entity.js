@@ -101,8 +101,6 @@ export class Entity {
     }
     
     this._values = _.mapValues(meta.props, (expected, key) => {
-      debug: `processing`, {key};
-      
       const actual = _.has(values, key) ? (
         values[key]
       ) : (

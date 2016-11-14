@@ -5,7 +5,7 @@ import path from 'path';
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 
 // nrser
 import * as errors from '../../errors';
@@ -33,14 +33,14 @@ export class WatchTask extends Task {
   /**
   * starts watching.
   */
-  start(): Q.Promise<void> {
+  start(): Promise<void> {
     throw new errors.NotImplementedError();
   } // #start
   
   /**
   * just calls `start()`.`
   */
-  execute(): Q.Promise<void> {
+  execute(): Promise<void> {
     return this.start();
   }
   

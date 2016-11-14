@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 
 // package
 import fs from '../../fs';
@@ -16,7 +16,7 @@ import { Task } from './Task';
 import { Ugh } from '../Ugh';
 
 // types
-import type { TaskId, TaskName, DoneCallback } from '../types';
+import type { TaskId, TaskName } from '../types';
 
 /**
 * little struct that hold info about a babel task that's been created.
@@ -47,7 +47,7 @@ export class CleanTask extends Task {
     
     const details = {dest};
     
-    return Q.nfcall(fs.isDir, dest)
+    return fs.isDir(dest)
       
       .then((isDir) => {
         if (isDir && !dest.endsWith('/')) {
@@ -62,7 +62,7 @@ export class CleanTask extends Task {
 
         this.log("executing clean", details);
 
-        return Q.nfcall(exec, cmd, {cwd: this.ugh.packageDir})
+        return Promise.promisify(exec)(cmd, {cwd: this.ugh.packageDir})
           .then((stdout, stderr) => {
             // log any outputs
             _.each({stdout, stderr}, (output, name) => {

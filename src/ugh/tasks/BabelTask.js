@@ -1,7 +1,7 @@
 // @flow
 
 // deps
-import Q from 'q';
+import Promise from 'bluebird';
 
 // package
 import { Pattern } from '../util';
@@ -42,12 +42,12 @@ export class BabelTask extends BuildTask {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  execute(src: Pattern = this.src): Q.Promise<void> {
+  execute(src: Pattern = this.src): Promise<void> {
     const babel = require('gulp-babel');
     
     const details = {src, dest: this.dest};
     
-    return new Q.Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       
       const onError = (error: Error) => {
         this._running = false;

@@ -1,7 +1,7 @@
 // @flow
 
 // deps
-import Q from 'q';
+import Promise from 'bluebird';
 
 // package
 import { Pattern } from '../util';
@@ -50,14 +50,14 @@ export class LessTask extends BuildTask {
   * if `onDone` is provided, calls with an error if one occurs or
   * with no arguments when done.
   */
-  execute(src: Pattern = this.src): Q.Promise<void> {
+  execute(src: Pattern = this.src): Promise<void> {
     const less = require('gulp-less');
     
     const details = {src, dest: this.dest};
     
     this.log(`executing less`, details);
     
-    return new Q.Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
     
       const onError = (error: Error) => {
         this.logError(error, {details});

@@ -2,10 +2,11 @@
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 
 // nrser
 import * as errors from '../../errors';
+import { Deferred } from '../../Deferred';
 
 // ugh
 import { Pattern } from '../util';
@@ -33,7 +34,7 @@ export class WatchMochaTask extends WatchTask {
   */
   mochaTask: MochaTask;
   
-  deferred: Q.Defer;
+  deferred: Deferred<void>;
   
   constructor({ugh, mochaTask}: {
     ugh: Ugh,
@@ -45,8 +46,8 @@ export class WatchMochaTask extends WatchTask {
     
   }
   
-  start(): Q.Promise<void> {
-    this.deferred = Q.defer();
+  start(): Promise<void> {
+    this.deferred = new Deferred();
     
     const buildTasks = this.ugh.getTasksForType(BuildTask);
     

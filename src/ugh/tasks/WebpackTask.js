@@ -2,7 +2,7 @@
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 
 // package
 import { Pattern } from '../util';
@@ -84,7 +84,7 @@ export class WebpackTask extends BuildTask {
   execute(): Promise<void> {
     const webpack = require('webpack');
     
-    return Q.ninvoke(this.compiler, 'run')
+    return Promise.promisify(this.compiler).run()
       .then((stats: WebpackStats) => {
         this.log("successfully bundled\n", stats.toString({
           colors: true,

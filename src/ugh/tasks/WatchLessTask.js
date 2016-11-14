@@ -5,7 +5,7 @@ import path from 'path';
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 
 // nrser
 import * as errors from '../../errors';
@@ -50,7 +50,7 @@ export class WatchLessTask extends WatchFilesTask {
     this.lessTask = lessTask;
   }
   
-  start(): Q.Promise<void> {
+  start(): Promise<void> {
     const promise = super.start();
     
     // kick off

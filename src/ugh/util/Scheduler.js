@@ -2,7 +2,10 @@
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
+
+// nrser
+import { Deferred } from '../../Deferred';
 
 type Log = boolean | Function;
 
@@ -42,12 +45,12 @@ export class Scheduler {
   * deferreds to resolve when the current run completes. this is empty unless
   * we are running.
   */
-  _currentRunDeferreds: Array<Q.defer>;
+  _currentRunDeferreds: Array<Deferred<void>>;
   
   /**
   *  deferreds to resolve when the next run completes.
   */
-  _nextRunDeferreds: Array<Q.defer>;
+  _nextRunDeferreds: Array<Deferred<void>>;
   
   constructor(
     name: string,
@@ -93,7 +96,7 @@ export class Scheduler {
     this._log("scheduling...");
     
     // create a deferred to resolve when next run completes
-    const deferred = Q.defer();
+    const deferred = new Deferred();
     this._nextRunDeferreds.push(deferred);
     
     if (this.scheduled) {
@@ -174,7 +177,7 @@ export class Scheduler {
         });
       })
       
-      .fin(() => {
+      .finally(() => {
         this._log("run complete.");
         
         // unset the running flag

@@ -5,11 +5,12 @@ import path from 'path';
 
 // deps
 import _ from 'lodash';
-import Q from 'q';
+import Promise from 'bluebird';
 import gaze, { Gaze } from 'gaze';
 
 // package
 import * as errors from '../../errors';
+import { Deferred } from '../../Deferred';
 import { Ugh } from '../Ugh';
 import { WatchTask } from './WatchTask';
 import { findOnly } from '../../collection';
@@ -43,7 +44,7 @@ export class WatchFilesTask extends WatchTask {
   /**
   * deferred from start() to resolve or reject when we're done watching.
   */
-  deferred: Q.defer;
+  deferred: Deferred<void>;
   
   constructor({ugh, id, watch}: {
     ugh: Ugh,
@@ -115,12 +116,12 @@ export class WatchFilesTask extends WatchTask {
   * `onDone` will fire when the task is completely done, not after each
   * run.
   */
-  start(): Q.Promise<void> {
+  start(): Promise<void> {
     if (this.watcher !== undefined) {
       throw new errors.StateError(`already watching`);
     }
     
-    this.deferred = Q.defer();
+    this.deferred = new Deferred();
     
     this.log(`initializing, paths: `, this.watchPaths);
     
