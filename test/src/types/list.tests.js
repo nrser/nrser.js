@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { itMaps } from '../../../lib/testing.js';
 import * as nrser from '../../../lib/index.js';
 import t from 'tcomb';
-import Promise from 'promise';
 
 describe('types/index.js', () => {
   describe('nonEmptyList()', () => {

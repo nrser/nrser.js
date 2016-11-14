@@ -2,7 +2,7 @@
 
 import _ from 'lodash';
 import t from 'tcomb';
-import Promise from 'promise';
+import Promise from 'bluebird';
 
 export const Undefined = t.irreducible('Undefined', (v) => _.isUndefined(v));
 
