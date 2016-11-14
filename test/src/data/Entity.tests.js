@@ -10,11 +10,11 @@ describe("data/Entity.js", () => {
   describe("Entity", () => {
     context("basic inheritance and type checking", () => {
       class Base extends nrser.d.Entity {
-        static meta = nrser.d.Entity.extendMeta({
+        static meta = {
           props: {
             x: t.String,
           },
-        });
+        };
       }
       
       context("Base class", () => {
@@ -56,14 +56,18 @@ describe("data/Entity.js", () => {
         it("creates instances that pass Base.is()", () => {
           expect(Base.is(new Base({x: 'ex'}))).to.be.true;
         });
+        
+        it(`has meta.name == 'Base'`, () => {
+          expect(Base.meta.name).to.equal('Base');
+        });
       }); // Base class
       
       class Sub extends Base {
-        static meta = Base.extendMeta({
+        static meta = {
           props: {
             y: t.String,
           },
-        });
+        };
       }
       
       context("Sub class", () => {
@@ -122,19 +126,19 @@ describe("data/Entity.js", () => {
     
     context("extend via intersection", () => {
       class Base extends Entity {
-        static meta = Entity.extendMeta({
+        static meta = {
           props: {
             x: t.Number,
           },
-        });
+        };
       }
       
       class Sub extends Base {
-        static meta = Base.extendMeta({
+        static meta = {
           props: {
             x: nrser.t.Integer,
           },
-        });
+        };
       }
       
       it("created an intersection type for x", () => {
@@ -169,19 +173,19 @@ describe("data/Entity.js", () => {
     
     context("extend via refinement", () => {
       class Base extends Entity {
-        static meta = Entity.extendMeta({
+        static meta = {
           props: {
             x: t.Number,
           },
-        });
+        };
       }
       
       class Sub extends Base {
-        static meta = Base.extendMeta({
+        static meta = {
           props: {
             x: number => number % 2 === 0,
           },
-        });
+        };
       }
       
       it("created an intersection type for x", () => {
@@ -215,20 +219,20 @@ describe("data/Entity.js", () => {
     
     context("extend via value specification", () => {
       class Base extends Entity {
-        static meta = Entity.extendMeta({
+        static meta = {
           props: {
             x: t.String,
           },
-        });
+        };
       }
       
       context("value is of super type", () => {
         class Sub extends Base {
-          static meta = Base.extendMeta({
+          static meta = {
             props: {
               x: 'ex',
             },
-          });
+          };
         }
         
         it("created a irreducible type for x", () => {
@@ -249,11 +253,11 @@ describe("data/Entity.js", () => {
         it("fails to create sub-struct", () => {
           expect(() => {
             class Sub extends Base {
-              static meta = Base.extendMeta({
+              static meta = {
                 props: {
                   x: 3,
                 }
-              });
+              };
             }
           }).to.throw(TypeError);
         })
@@ -262,12 +266,12 @@ describe("data/Entity.js", () => {
     
     context("extending a strict Entity", () => {
       class Base extends Entity {
-        static meta = Entity.extendMeta({
+        static meta = {
           props: {
             x: t.String,
           },
           strict: true,
-        });
+        };
       }
       
       it("is strict", () => {
@@ -277,11 +281,11 @@ describe("data/Entity.js", () => {
       it("fails to extend with additional props", () => {
         expect(() => {
           class Sub extends Base {
-            static meta = Base.extendMeta({
+            static meta = {
               props: {
                 y: t.String,
               },
-            });
+            };
           }
         }).to.throw(TypeError);
       });
@@ -289,23 +293,23 @@ describe("data/Entity.js", () => {
       it("fails to extend with a non-strict struct", () => {
         expect(() => {
           class Sub extends Base {
-            static meta = Base.extendMeta({
+            static meta = {
               props: {
                 x: nrser.t.NonEmptyString,
               },
               strict: false,
-            });
+            };
           }
         }).to.throw(TypeError);
       });
       
       context("extend with an intersection", () => {
         class Sub extends Base {
-          static meta = Base.extendMeta({
+          static meta = {
             props: {
               x: nrser.t.NonEmptyString,
             },
-          });
+          };
         }
         
         it("is strict", () => {
@@ -329,19 +333,19 @@ describe("data/Entity.js", () => {
     
     context("nested entities", () => {
       class Model extends Entity {
-        static meta = Entity.extendMeta({
+        static meta = {
           props: {
             _id: t.String,
           }
-        });
+        };
       }
       
       class Post extends Model {
-        static meta = Model.extendMeta({
+        static meta = {
           props: {
             body: t.String,
           }
-        })
+        };
       }
       
       

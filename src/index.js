@@ -1,9 +1,5 @@
 // @flow
 
-import lodash from 'lodash';
-
-export const _ = lodash;
-
 import { IS_NODE, IS_BROWSER } from './env';
 
 export * from './env.js';
@@ -15,8 +11,15 @@ export * from './string';
 export * from './collection';
 export * from './match';
 
-export * as types from './types';
-export * as t from './types';
+// our types extend tcomb's
+import tcomb from 'tcomb';
+import * as nrserTypes from './types';
+
+export const types = {
+  ...tcomb,
+  ...nrserTypes,
+}
+export const t = types;
 
 export * as data from './data';
 export * as d  from './data';

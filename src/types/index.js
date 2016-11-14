@@ -32,17 +32,9 @@ export const ErrorType = instanceOf(Error);
 
 export const PromiseType = instanceOf(Promise);
 
-/**
-* @typedef {string | Array<string|number>} KeyPath
-*/
-export type KeyPath = string | Array<string|number>;
-
-
 export * from './number';
-// import type { Integer as _Integer } from './number';
-// export type Integer = _Integer;
-
-export * from './string.js';
-export * from './value.js';
-export * from './list.js';
-export * from './struct.js';
+export * from './string';
+export * from './value';
+export * from './list';
+export * from './struct';
+export * from './collection';

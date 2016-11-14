@@ -7,7 +7,7 @@ import { match } from '../match';
 import * as types from '../types';
 
 export class Entity {
-  static meta = {
+  static _meta = {
     kind: 'Entity',
     // name is kinda tricky...
     // it's part of the tcomb API (though not sure how essential)
@@ -24,19 +24,25 @@ export class Entity {
     strict: false,
   }
   
-  static extendMeta({name, props, defaultProps, strict}) {
+  static get meta() {
+    return this._meta;
+  }
+  
+  static set meta({props, strict, defaultProps}) {
+    const superClass = Object.getPrototypeOf(this);
+    
     // handle strictness
     strict = match(strict,
       // if strict was not supplied (or was null) then inherit
-      t.Nil, this.meta.strict,
+      t.Nil, superClass.meta.strict,
       
       // otherwise it must be a boolean
       t.Boolean, strict => {
         // if the super Entity is strict then this one must be too
-        if (!strict && this.meta.strict) {
+        if (!strict && superClass.meta.strict) {
           throw new TypeError(squish(`
             can't create a non-strict sub-entity of strict entity
-            ${ this.name }
+            ${ superClass.name }
           `));
         }
         
@@ -44,15 +50,18 @@ export class Entity {
       },
     );
     
-    return {
-      ...this.meta,
-      name,
+    this._meta = {
+      ...superClass.meta,
+      name: this.name,
       props: types.extendProps(
-        this.meta.props,
+        superClass.meta.props,
         props,
-        this.meta.strict,
+        superClass.meta.strict,
       ),
-      defaultProps: {...this.meta.defaultProps, ...defaultProps},
+      defaultProps: {
+        ...superClass.meta.defaultProps,
+        ...defaultProps
+      },
       strict,
     };
   }
@@ -76,13 +85,13 @@ export class Entity {
   }
   
   constructor(values = {}, path = [this.constructor.getDisplayName()]) {
-    const meta = this.constructor.meta
+    const meta = this.constructor.meta;
     
     // check for extraneous values if the Entity is strict 
     if (meta.strict) {
       const extraneous = _.difference(
         _.keys(values),
-        _.keys(this.constructor.meta.props)
+        _.keys(meta.props)
       );
       
       t.assert(_.isEmpty(extraneous), () => squish(`
@@ -92,6 +101,8 @@ export class Entity {
     }
     
     this._values = _.mapValues(meta.props, (expected, key) => {
+      debug: `processing`, {key};
+      
       const actual = _.has(values, key) ? (
         values[key]
       ) : (
