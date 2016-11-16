@@ -6,13 +6,15 @@ my js utils. pretty big mess right now. don't recommend other people using it qu
 version
 -------
 
+### 0.4.X
+
+current version.
+
+`ugh` is broken out into the [@nrser/ugh][ugh] package. other than that no major changes. not creating a `v0.3` branch because there shouldn't be anything stuck on `0.3.X`.
+
+[ugh]: https://github.com/nrser/ugh
+
 ### 0.3.X
-
-this is `0.3.X` branch (developed as [master][] while it's the head). unless i forget to update the readme again when we move past that (again). so check `package.json` to be sure.
-
-[master]: https://github.com/nrser/nrser.js/tree/master
-
-it's still in heavy development.
 
 `0.3.0` happen when i switched `Ugh` (wrapper around [gulp][] to improve incremental build reliability) to be better able to include tasks from submodules. this is important because i often have stuff split out into separate repos and want one process to be able to manage all of them. this change also moved `Ugh` to a tiered watching system where build tasks watch files, and higher-level tasks watch build tasks - so Mocha listens for builds to start and runs when they're all complete, instead of watching files in `lib` and reacting when they change.
 
