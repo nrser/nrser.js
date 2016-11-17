@@ -101,6 +101,8 @@ export class Entity {
     }
     
     this._values = _.mapValues(meta.props, (expected, key) => {
+      const valuePath = path.concat(key + ': ' + t.getTypeName(expected));
+      
       const actual = _.has(values, key) ? (
         values[key]
       ) : (
@@ -115,11 +117,11 @@ export class Entity {
         });
       }
       
-      return create(
-        expected,
-        actual,
-        path.concat(key + ': ' + t.getTypeName(expected))
-      );
+      if (t.isType(expected) && expected.meta.kind === 'Entity') {
+        return expected(values, path);
+      } else {      
+        return create(expected, actual, valuePath);
+      }
     });
   }
 }
