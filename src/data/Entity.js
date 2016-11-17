@@ -118,7 +118,7 @@ export class Entity {
       }
       
       if (t.isType(expected) && expected.meta.kind === 'Entity') {
-        return expected(values, path);
+        return new expected(actual, path);
       } else {      
         return create(expected, actual, valuePath);
       }
