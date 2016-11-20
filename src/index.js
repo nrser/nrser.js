@@ -33,5 +33,5 @@ export * as path from './path';
 export let fs;
 
 if (IS_NODE) {
-  fs = require('./fs');
+  fs = require('./fs').default;
 }
