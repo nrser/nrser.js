@@ -481,7 +481,13 @@ export class Logger {
       )
     );
     
-    const dumps: Array<string> = _.map(message.content, print);
+    const dumps: Array<string> = _.map(message.content, (value: *): string => {
+      if (typeof value === 'string') {
+        return value;
+      } else {
+        return print(value);
+      }
+    });
     
     this.getConsoleFunction(message.level).call(console, header, ...dumps);
     
