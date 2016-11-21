@@ -119,3 +119,22 @@ export function need(
   
   return result;
 }
+
+/**
+* map values but drop keys where the mapped value is undefined.
+*/
+export function mapDefinedValues<DOMAIN, CODOMAIN>(
+  obj: {[key: string]: DOMAIN},
+  iteratee: (value: DOMAIN, key: string) => CODOMAIN
+): {[key: string]: CODOMAIN} {
+  const results: {[key: string]: CODOMAIN} = {};
+  
+  _.each(obj, (value: DOMAIN, key: string): void => {
+    const result = iteratee(value, key);
+    if (result !== undefined) {
+      results[key] = result;
+    }
+  });
+  
+  return results;
+}

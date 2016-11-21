@@ -5,6 +5,9 @@ import create from 'tcomb/lib/create';
 import { squish } from '../string';
 import { match } from '../match';
 import * as types from '../types';
+import { mapDefinedValues } from '../object';
+
+import type { Type } from '../types';
 
 export class Entity {
   static _meta = {
@@ -73,15 +76,60 @@ export class Entity {
   * since property values are validated in construction, this provides an
   * efficient way to check class membership at runtime.
   */
-  static is(value) {
+  static is(value): boolean {
     return value instanceof this;
   }
   
   /**
   * what the getter for `displayName` calls for the tcomb API.
   */
-  static getDisplayName() {
+  static getDisplayName(): string {
     return this.name;
+  }
+  
+  static toNative(type: Type, value: any): any {
+    // short circuit undefined and null values up front to simplify 
+    // the proceeding logic
+    if (value === undefined || value === null) {
+      // just return that value
+      return value;
+    }
+    
+    if (type.meta.kind === 'Entity') {
+      return mapDefinedValues(
+        type.meta.props,
+        (propType: Type, key: string): any => {
+          return this.toNative(propType, value._values[key]);
+        }
+      );
+    }
+    
+    if (type.meta.kind === 'dict') {
+      return mapDefinedValues(
+        value,
+        (dictValue: any, dictKey: string): any => {
+          return this.toNative(type.meta.codomain, dictValue);
+        }
+      );
+    }
+    
+    if (type.meta.kind === 'list') {
+      // NOTE if the list has undefined value in it rethink will error when
+      //      you try to persist.
+      //      
+      //      unlike objects, where we can drop keys with undefined values,
+      //      it's not clear what we should do with undefined values in
+      //      arrays - dropping them would not preserve length or index
+      //      value corespondence, which can be important in arrays.
+      //      
+      //      the moral of the story is DON'T PUT UNDEFINED VALUES IN ARRAYS.
+      //      
+      return _.map(value, (listValue: any) => {
+        return this.toNative(type.meta.type, listValue);
+      });
+    }
+    
+    return value;
   }
   
   constructor(values = {}, path = [this.constructor.getDisplayName()]) {
@@ -107,7 +155,7 @@ export class Entity {
         values[key]
       ) : (
         meta.defaultProps[key]
-      )
+      );
       
       if (!_.has(this, key)) {
         Object.defineProperty(this, key, {
@@ -123,6 +171,10 @@ export class Entity {
         return create(expected, actual, valuePath);
       }
     });
+  }
+  
+  toNativeObject(): Object {
+    return this.constructor.toNative(this.constructor, this);
   }
 }
 

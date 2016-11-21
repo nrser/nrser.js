@@ -30,3 +30,23 @@ export function findOnly<V>(
   
   return results[0];
 }
+
+/**
+* map values but drop keys where the mapped value is undefined.
+*/
+export function mapDefined<DOMAIN, CODOMAIN>(
+  collection: Collection<DOMAIN>,
+  iteratee: (value: DOMAIN) => CODOMAIN
+): Array<CODOMAIN> {
+  const results: Array<CODOMAIN> = [];
+  
+  _.each(collection, (value: DOMAIN): void => {
+    const result = iteratee(value);
+    
+    if (result !== undefined) {
+      results.push(result);
+    }
+  });
+  
+  return results;
+}
