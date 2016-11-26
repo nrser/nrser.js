@@ -31,14 +31,14 @@ export class Entity {
     return this._meta;
   }
   
-  static set meta(extension) {
-    this._meta = this.extendMeta({name: this.name, ...extension});
+  static set meta(extension: Object): void {
+    this._meta = this.extendMeta(this, extension);
   }
   
-  static extendMeta({name, props, strict, defaultProps}) {
+  static extendMeta(forClass, {props, strict, defaultProps}) {
     // when called on Entity itself we don't want to walk up the chain
     // further, we want to get the meta from Entity itself.
-    const superClass = this === Entity ? this : Object.getPrototypeOf(this);
+    const superClass = Object.getPrototypeOf(forClass);
     
     // handle strictness
     strict = match(strict,
@@ -61,7 +61,7 @@ export class Entity {
     
     return {
       ...superClass.meta,
-      name,
+      name: forClass.name,
       props: types.extendProps(
         superClass.meta.props,
         props,
