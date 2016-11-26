@@ -4,12 +4,12 @@ import * as nrser from '../../../lib';
 import t from 'tcomb';
 import _ from 'lodash';
 
-const Entity = nrser.d.Entity;
+const Model = nrser.t.Model;
 
-describe("data/Entity.js", () => {
-  describe("Entity", () => {
+describe("data/Model.js", () => {
+  describe("Model", () => {
     context("basic inheritance and type checking", () => {
-      class Base extends nrser.d.Entity {
+      class Base extends Model {
         static meta = {
           props: {
             x: t.String,
@@ -37,8 +37,8 @@ describe("data/Entity.js", () => {
           expect(() => base.x = 'hey!').to.throw(TypeError);
         });
         
-        it("creates Entity instances", () => {
-          expect(new Base({x: 'ex'}) instanceof nrser.d.Entity).to.be.true;
+        it("creates Model instances", () => {
+          expect(new Base({x: 'ex'}) instanceof Model).to.be.true;
         });
         
         it("creates Base instances", () => {
@@ -49,8 +49,8 @@ describe("data/Entity.js", () => {
           expect(t.isType(Base)).to.be.true;
         });
         
-        it("creates instances that pass Entity.is()", () => {
-          expect(nrser.d.Entity.is(new Base({x: 'ex'}))).to.be.true;
+        it("creates instances that pass Model.is()", () => {
+          expect(Model.is(new Base({x: 'ex'}))).to.be.true;
         });
         
         it("creates instances that pass Base.is()", () => {
@@ -93,8 +93,8 @@ describe("data/Entity.js", () => {
           expect(sub.y).to.equal(defaultValues.y);
         });
 
-        it("creates Entity instances", () => {
-          expect(defaultSub() instanceof nrser.d.Entity).to.be.true;
+        it("creates Model instances", () => {
+          expect(defaultSub() instanceof Model).to.be.true;
         });
 
         it("creates Base instances", () => {
@@ -109,8 +109,8 @@ describe("data/Entity.js", () => {
           expect(t.isType(Sub)).to.be.true;
         });
 
-        it("creates instances that pass Entity.is()", () => {
-          expect(nrser.d.Entity.is(defaultSub())).to.be.true;
+        it("creates instances that pass Model.is()", () => {
+          expect(Model.is(defaultSub())).to.be.true;
         });
 
         it("creates instances that pass Base.is()", () => {
@@ -125,7 +125,7 @@ describe("data/Entity.js", () => {
     }); // basic inheritance and type checking
     
     context("extend via intersection", () => {
-      class Base extends Entity {
+      class Base extends Model {
         static meta = {
           props: {
             x: t.Number,
@@ -172,7 +172,7 @@ describe("data/Entity.js", () => {
     }); // intersection
     
     context("extend via refinement", () => {
-      class Base extends Entity {
+      class Base extends Model {
         static meta = {
           props: {
             x: t.Number,
@@ -218,7 +218,7 @@ describe("data/Entity.js", () => {
     }); // refinement
     
     context("extend via value specification", () => {
-      class Base extends Entity {
+      class Base extends Model {
         static meta = {
           props: {
             x: t.String,
@@ -264,8 +264,8 @@ describe("data/Entity.js", () => {
       });
     }); // value
     
-    context("extending a strict Entity", () => {
-      class Base extends Entity {
+    context("extending a strict Model", () => {
+      class Base extends Model {
         static meta = {
           props: {
             x: t.String,
@@ -332,7 +332,7 @@ describe("data/Entity.js", () => {
     }); // strict 
     
     context("nested entities", () => {
-      class Model extends Entity {
+      class Record extends Model {
         static meta = {
           props: {
             _id: t.String,
@@ -340,7 +340,7 @@ describe("data/Entity.js", () => {
         };
       }
       
-      class Post extends Model {
+      class Post extends Record {
         static meta = {
           props: {
             body: t.String,
@@ -351,5 +351,5 @@ describe("data/Entity.js", () => {
       
     }); // nested entities
     
-  }); // Entity
-}); // data/Entity.js
+  }); // Model
+}); // data/Model.js

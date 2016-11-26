@@ -21,9 +21,6 @@ export const types = {
 }
 export const t = types;
 
-export * as data from './data';
-export * as d  from './data';
-
 export { default as print } from './print';
 export * as metalogger from './metalogger';
 

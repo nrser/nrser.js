@@ -4,12 +4,6 @@ import _ from 'lodash';
 import t from 'tcomb';
 import Promise from 'bluebird';
 
-export type Type = {
-  meta: {
-    kind: string,
-  }
-}
-
 export const Undefined = t.irreducible('Undefined', (v) => _.isUndefined(v));
 
 export const Null = t.irreducible('Null', v => _.isNull(v));
@@ -44,3 +38,4 @@ export * from './value';
 export * from './list';
 export * from './struct';
 export * from './collection';
+export * from './Model';
