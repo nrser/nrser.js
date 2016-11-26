@@ -6,11 +6,15 @@ my js utils. pretty big mess right now. don't recommend other people using it qu
 version
 -------
 
-### 0.4.X
+### 0.5.X
 
 current version.
 
-`ugh` is broken out into the [@nrser/ugh][ugh] package. other than that no major changes. not creating a `v0.3` branch because there shouldn't be anything stuck on `0.3.X`.
+former `data/Entity` is now `types/Model`. few other fixes.
+
+### 0.4.X
+
+`ugh` is broken out into the [@nrser/ugh][ugh] package. other than that no major changes.
 
 [ugh]: https://github.com/nrser/ugh
 
