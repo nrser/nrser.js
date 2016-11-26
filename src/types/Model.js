@@ -1,5 +1,3 @@
-// @flow
-
 // imports
 // =======
 
@@ -14,6 +12,7 @@ import { match } from '../match';
 import { mapDefinedValues } from '../object';
 import { extendProps } from './struct';
 import * as errors from '../errors';
+import print from '../print';
 
 // types
 // =====
@@ -52,7 +51,23 @@ function extendMeta(
     defaultProps?: Object,
   }
 ): ModelMeta {
-  const superClass = Object.getPrototypeOf(modelClass);
+  if (modelClass === Model) {
+    throw new TypeError("can't extend meta for Model itself (only sub-classes)");
+  }
+  
+  // TODO can't get this to pass flow, so going to skip this file for now...
+  const superClass: Class<Model> = Object.getPrototypeOf(modelClass);
+  // this doesn't work:
+  //
+  // const proto = Object.getPrototypeOf(modelClass);
+  // 
+  // if (!(proto === Model || proto.prototype instanceof Model)) {
+  //   throw new TypeError(
+  //     `modelClass must be a subclass of Model, found ${ print(modelClass) }`
+  //   );
+  // }
+  // 
+  // const superClass: Class<Model> = proto;
   
   // handle strictness
   strict = match(strict,
@@ -104,8 +119,10 @@ function toJS(type: Type, value: any): any {
   }
   
   if (type.meta.kind === 'Model') {
+    const modelClass: Class<Model> = (type: Class<Model>);
+    
     return mapDefinedValues(
-      type.meta.props,
+      modelClass.meta.props,
       (propType: Type, key: string): any => {
         return toJS(propType, value[key]);
       }
@@ -256,7 +273,10 @@ export class Model {
   // instance methods
   // ================
   
-  constructor(values = {}, path = [this.constructor.displayName]) {
+  constructor(
+    values: Object = {},
+    path: Array<string> = [this.constructor.displayName]
+  ) {
     // prevent construction of Model itself
     if (this.constructor === Model) {
       throw errors.NotImplementedError.squish(`
