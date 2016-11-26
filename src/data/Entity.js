@@ -31,8 +31,14 @@ export class Entity {
     return this._meta;
   }
   
-  static set meta({props, strict, defaultProps}) {
-    const superClass = Object.getPrototypeOf(this);
+  static set meta(extension) {
+    this._meta = this.extendMeta({name: this.name, ...extension});
+  }
+  
+  static extendMeta({name, props, strict, defaultProps}) {
+    // when called on Entity itself we don't want to walk up the chain
+    // further, we want to get the meta from Entity itself.
+    const superClass = this === Entity ? this : Object.getPrototypeOf(this);
     
     // handle strictness
     strict = match(strict,
@@ -53,9 +59,9 @@ export class Entity {
       },
     );
     
-    this._meta = {
+    return {
       ...superClass.meta,
-      name: this.name,
+      name,
       props: types.extendProps(
         superClass.meta.props,
         props,
@@ -87,7 +93,7 @@ export class Entity {
     return this.name;
   }
   
-  static toNative(type: Type, value: any): any {
+  static toNativeObject(type: Type, value: any): any {
     // short circuit undefined and null values up front to simplify 
     // the proceeding logic
     if (value === undefined || value === null) {
@@ -99,7 +105,7 @@ export class Entity {
       return mapDefinedValues(
         type.meta.props,
         (propType: Type, key: string): any => {
-          return this.toNative(propType, value._values[key]);
+          return this.toNativeObject(propType, value._values[key]);
         }
       );
     }
@@ -108,7 +114,7 @@ export class Entity {
       return mapDefinedValues(
         value,
         (dictValue: any, dictKey: string): any => {
-          return this.toNative(type.meta.codomain, dictValue);
+          return this.toNativeObject(type.meta.codomain, dictValue);
         }
       );
     }
@@ -174,7 +180,7 @@ export class Entity {
   }
   
   toNativeObject(): Object {
-    return this.constructor.toNative(this.constructor, this);
+    return this.constructor.toNativeObject(this.constructor, this);
   }
 }
 
