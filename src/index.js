@@ -6,7 +6,6 @@ export * from './env.js';
 
 export * from './errors';
 export * from './Deferred';
-export * from './Logger';
 export * from './object';
 export * from './string';
 export * from './collection';
