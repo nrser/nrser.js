@@ -149,7 +149,7 @@ describe("data/Model.js", () => {
         const obj = {x: 3.15};
         
         it("is accepted by Base", () => {
-          expect(new Base(obj)._values).to.eql(obj);
+          expect(new Base(obj)).to.have.property('x').that.equals(3.15);
         });
         
         it("is rejected by Sub", () => {
@@ -161,11 +161,11 @@ describe("data/Model.js", () => {
         const obj = {x: 3};
         
         it("is accepted by Base", () => {
-          expect(new Base(obj)._values).to.eql(obj);
+          expect(new Base(obj)).to.have.property('x').that.equals(3);
         });
         
         it("is accepted by Sub", () => {
-          expect(new Sub(obj)._values).to.eql(obj);
+          expect(new Sub(obj)).to.have.property('x').that.equals(3);
         });
       });
       
@@ -196,7 +196,7 @@ describe("data/Model.js", () => {
         const obj = {x: 1};
         
         it("is accepted by Base", () => {
-          expect(new Base(obj)._values).to.eql(obj);
+          expect(new Base(obj)).to.have.property('x').that.equals(1);
         });
         
         it("is rejected by Sub", () => {
@@ -208,11 +208,11 @@ describe("data/Model.js", () => {
         const obj = {x: 2};
         
         it("is accepted by Base", () => {
-          expect(new Base(obj)._values).to.eql(obj);
+          expect(new Base(obj)).to.have.property('x').that.equals(2);
         });
         
         it("is accepted by Sub", () => {
-          expect(new Sub(obj)._values).to.eql(obj);
+          expect(new Sub(obj)).to.have.property('x').that.equals(2);
         });
       });
     }); // refinement
@@ -240,7 +240,7 @@ describe("data/Model.js", () => {
         });
                 
         it("accepts that exact value", () => {
-          expect(new Sub({x: "ex"})._values).to.eql({x: "ex"});
+          expect(new Sub({x: "ex"})).to.have.property('x').that.equals('ex');
         });
         
         it("rejects other values", () => {
@@ -325,7 +325,7 @@ describe("data/Model.js", () => {
         });
         
         it("succeeds when the value satisfies both types", () => {
-          expect(new Sub({x: 'hey'})._values).to.eql({x: 'hey'});
+          expect(new Sub({x: 'hey'})).to.have.property('x').that.equals('hey');
         });
       }); // intersection
       

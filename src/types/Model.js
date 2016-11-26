@@ -269,7 +269,7 @@ export class Model {
       `));
     }
     
-    this._values = _.mapValues(meta.props, (expected, key) => {
+    _.each(meta.props, (expected, key) => {
       const valuePath = path.concat(key + ': ' + t.getTypeName(expected));
       
       const actual = _.has(values, key) ? (
@@ -278,20 +278,29 @@ export class Model {
         meta.defaultProps[key]
       );
       
-      if (!_.has(this, key)) {
-        Object.defineProperty(this, key, {
-          get: function() {
-            return this._values[key];
-          },
-        });
-      }
+      // if (!_.has(this, key)) {
+      //   Object.defineProperty(this, key, {
+      //     get: function() {
+      //       return this._values[key];
+      //     },
+      //   });
+      // }
+      
+      let value;
       
       if (t.isType(expected) && expected.meta.kind === 'Model') {
-        return new expected(actual, path);
+        value = new expected(actual, path);
       } else {      
-        return create(expected, actual, valuePath);
+        value = create(expected, actual, valuePath);
       }
+      
+      this[key] = value;
     });
+    
+    // guess it might not be there in some browsers?
+    if (typeof Object.freeze === 'function') {
+      Object.freeze(this);
+    }
   } // constructor
   
   toJS(): Object {
