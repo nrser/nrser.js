@@ -4,10 +4,9 @@ import _ from 'lodash';
 import t from 'tcomb';
 
 import { j, squish } from './string.js';
-import type { KeyPath } from './types';
 import { MergeConflictError, KeyError } from './errors';
 
-import type { Collection }  from './types/collection';
+import type { KeyPath, Collection }  from './types/collection';
 
 /**
 * like lodash/underscore `groupBy` but the iteratee (called `getGroups` here)
