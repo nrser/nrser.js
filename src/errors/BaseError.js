@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 // package
 import print from '../print';
+import { squish } from '../string';
 
 /**
 * adapted from Meteor's
@@ -83,6 +84,10 @@ export const BaseError = function(message, details) {
   constructor.apply(this, [message, details]);
 
   this.errorType = name;
+}
+
+BaseError.squish = function(message, details): BaseError {
+  return new this(squish(message), details);
 }
 
 // make BaseError inherit from 

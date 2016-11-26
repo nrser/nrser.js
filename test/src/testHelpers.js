@@ -18,6 +18,8 @@ export chai, { expect } from 'chai';
 export { itMaps, Expect } from '../../lib/testing';
 export _ from 'lodash';
 export * as path from '../../lib/path';
+export * as nrser from '../../lib';
+export t from 'tcomb';
 
 export const PROJECT_ROOT = path.normalize(
   path.join(__dirname, '..', '..')

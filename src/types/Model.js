@@ -13,6 +13,7 @@ import { squish } from '../string';
 import { match } from '../match';
 import { mapDefinedValues } from '../object';
 import { extendProps } from './struct';
+import * as errors from '../errors';
 
 // types
 // =====
@@ -24,7 +25,7 @@ import type { Type, Props } from './type';
 */
 export type ModelMeta = {
   kind: 'Model',
-  name?: string,
+  name: string,
   props: Props,
   defaultProps: Object,
   identity: false,
@@ -106,7 +107,7 @@ function toJS(type: Type, value: any): any {
     return mapDefinedValues(
       type.meta.props,
       (propType: Type, key: string): any => {
-        return toJS(propType, value._values[key]);
+        return toJS(propType, value[key]);
       }
     );
   }
@@ -175,8 +176,10 @@ export class Model {
     // the tcomb kind. not sure exactly what it uses it for.
     kind: 'Model',
     
-    // name is filled in when Model is extended
-    name: undefined,
+    // name is filled in when Model is extended but we don't want it to
+    // be undefined for typing simplicity (so we don't have to handle nulls
+    // that won't really ever be there), so we define it here.
+    name: 'Model',
     
     // object mapping property names to their tcomb types
     props: {},
@@ -254,6 +257,24 @@ export class Model {
   // ================
   
   constructor(values = {}, path = [this.constructor.displayName]) {
+    // prevent construction of Model itself
+    if (this.constructor === Model) {
+      throw errors.NotImplementedError.squish(`
+        can not construct Model itself, must subclass it.
+      `);
+    }
+    
+    // check that the class we're constructing has _meta.
+    // TODO to support more exotic cases (like where there are intermediate
+    //      classes that only add methods and don't change meta) we might want
+    //      to walk the inheritance chain and fill metas in, but let's cross 
+    //      that bridge when we get to it.
+    if (!this.constructor.hasOwnProperty('_meta')) {
+      throw errors.StateError.squish(`
+        model ${ this.constructor.name } has no meta.
+      `);
+    }
+    
     const meta = this.constructor.meta;
     
     // check for extraneous values if the Model is strict 
@@ -278,20 +299,25 @@ export class Model {
         meta.defaultProps[key]
       );
       
-      // if (!_.has(this, key)) {
-      //   Object.defineProperty(this, key, {
-      //     get: function() {
-      //       return this._values[key];
-      //     },
-      //   });
-      // }
-      
       let value;
       
       if (t.isType(expected) && expected.meta.kind === 'Model') {
         value = new expected(actual, path);
       } else {      
         value = create(expected, actual, valuePath);
+      }
+      
+      // check that there's not anything (like a function definition) there
+      // 
+      // TODO in the future we might want a more flexible system where
+      //      input values can be mapped to a different property value, 
+      //      say `x` to `_x` so that you can define `get x() {...}` to
+      //      compute a value? that seems just confusing, honestly.
+      //      punt for now.
+      if (_.has(this, key)) {
+        throw new errors.StateError(squish`
+          Model ${ this.name } already has property ${ key }.
+        `);
       }
       
       this[key] = value;
@@ -304,7 +330,7 @@ export class Model {
   } // constructor
   
   toJS(): Object {
-    return this.constructor.toNativeValue(this.constructor, this);
+    return this.constructor.toJS(this.constructor, this);
   }
   
   toJSON(): Object {
