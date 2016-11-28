@@ -45,7 +45,8 @@
   },
   "scripts": {
     "clean": "gulp clean`",
-    "build": "gulp build",
+    "build": "gulp build:this",
+    "build-all": "gulp build",
     "test": "gulp mocha",
     "watch": "gulp watch",
     "docs": "esdoc -c ./esdoc.json"
