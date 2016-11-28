@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@nrser/ugh@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.1.5.tgz#8eb1d66d86416cc891ac4d94563accbff5b97053"
+"@nrser/ugh@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.1.6.tgz#369ea38db519731ee5c4fd9aef08b37356ba9890"
   dependencies:
     bluebird ">= 2.3.2 < 3"
     chalk "^1.1.3"
