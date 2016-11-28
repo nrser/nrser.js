@@ -38,4 +38,3 @@ export * from './value';
 export * from './list';
 export * from './struct';
 export * from './collection';
-export * from './Model';

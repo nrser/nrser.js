@@ -10,7 +10,7 @@ version
 
 current version.
 
-former `data/Entity` is now `types/Model`. few other fixes.
+`data/Entity` is removed (now `Model` in `@nrser/supermodel`). it was moved to `types/Model` in `0.5.0` but nothing used that so i just kept going with the `0.5.X` versions after removing it.
 
 ### 0.4.X
 
