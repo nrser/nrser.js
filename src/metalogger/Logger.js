@@ -242,10 +242,10 @@ export class Logger {
     dateFormat = "YYYY-MM-DD HH:mm:ss.SSS",
     notifTitle = 'METALOGGER',
   }: {
-    nodeHeaderFormat: string,
-    browserHeaderFormat: string,
-    dateFormat: string,
-    notifTitle: string,
+    nodeHeaderFormat?: string,
+    browserHeaderFormat?: string,
+    dateFormat?: string,
+    notifTitle?: string,
   } = {}) {
     this.nodeHeaderFormat = nodeHeaderFormat;
     this.browserHeaderFormat = browserHeaderFormat;
