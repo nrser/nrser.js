@@ -44,7 +44,7 @@
     "node-notifier": "^4.6.1"
   },
   "scripts": {
-    "clean": "gulp clean`",
+    "clean": "gulp clean",
     "build": "gulp build:this",
     "build-all": "gulp build",
     "test": "gulp mocha",
