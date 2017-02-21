@@ -8,6 +8,9 @@
 /lib
 /test/lib
 
+# qb artifacts
+.qb-playbook.yml
+
 ##############################################################################
 # BEGIN Global/OSX.gitignore
 #
