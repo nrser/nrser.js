@@ -13,7 +13,7 @@
     "untildify": "^3.0.2"
   },
   "devDependencies": {
-    "@nrser/ugh": "^0.2.7",
+    "@nrser/ugh": "^0.2.9",
     "babel-cli": "^6.23.0",
     "babel-core": "^6.23.1",
     "babel-plugin-metalog": "^0.1.0",

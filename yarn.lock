@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@nrser/ugh@^0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.2.7.tgz#f69e70f48c24e7a473359a54cc918fea6197e7e6"
+"@nrser/ugh@^0.2.9":
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.2.9.tgz#c5b7a47d918da162e9eb7fad2315a5185b76d042"
   dependencies:
     ansi-html "^0.0.6"
     bluebird ">= 2.3.2 < 3"
@@ -1170,7 +1170,7 @@ dateformat@^1.0.11:
     get-stdin "^4.0.1"
     meow "^3.3.0"
 
-debug@2.2.0, debug@^2.1.1, debug@~2.2.0:
+debug@2.2.0, debug@^2.1.1, debug@^2.2.0, debug@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
   dependencies:
@@ -1182,7 +1182,7 @@ debug@2.3.3:
   dependencies:
     ms "0.7.2"
 
-debug@2.6.1, debug@^2.2.0:
+debug@2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
   dependencies:
