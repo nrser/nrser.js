@@ -9,7 +9,6 @@
     "fs-extra": "^0.30.0",
     "lodash": "^4.16.2",
     "minimatch": "^3.0.3",
-    "sprintf-js": "^1.0.3",
     "tcomb": "^3.2.15",
     "untildify": "^3.0.2"
   },
@@ -29,18 +28,12 @@
     "babel-register": "^6.16.3",
     "chai": "^3.5.0",
     "flow-bin": "^0.36.0",
-    "gaze": "^1.1.2",
-    "glob": "^7.1.0",
-    "glob2base": "0.0.12",
-    "growl": "^1.9.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
-    "gulp-debug": "^2.1.2",
-    "gulp-less": "^3.1.0",
     "gulp-spawn-mocha": "^3.1.0",
-    "gulp-util": "^3.0.7",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.1.0",
+    "mocha": "^3.1.0"
+  },
+  "optionalDependencies": {
     "node-notifier": "^4.6.1"
   },
   "scripts": {
@@ -48,8 +41,7 @@
     "build": "gulp build:this",
     "build-all": "gulp build",
     "test": "gulp mocha",
-    "watch": "gulp watch",
-    "docs": "esdoc -c ./esdoc.json"
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",
@@ -64,7 +56,7 @@
   "browser": {
     "fs-extra": false,
     "node-notifier": false,
-    "cli-color": false,
+    "chalk": false,
     "untildify": false
   }
 }

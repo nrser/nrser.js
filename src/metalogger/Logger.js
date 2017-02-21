@@ -10,7 +10,6 @@
 import _ from 'lodash';
 import t from 'tcomb';
 import minimatch from 'minimatch';
-import chalk from 'chalk';
 
 import { IS_NODE, IS_BROWSER } from '../env';
 import print from '../print';
@@ -27,6 +26,11 @@ import { snapshot } from './snapshot';
 let notifier;
 try {
   notifier = require('node-notifier');
+} catch (e) {}
+
+let chalk;
+try {
+  chalk = require('chalk');
 } catch (e) {}
 
 // types
@@ -136,12 +140,18 @@ export class Logger {
     trace: '#a3aaae',
   };
   
-  static NODE_COLORS = {
+  static NODE_COLORS = chalk ? {
     error: chalk.red,
     warn: chalk.yellow,
     info: chalk.blue,
     debug: chalk.cyan,
     trace: chalk.gray,
+  } : {
+    error: x => x,
+    warn: x => x,
+    info: x => x,
+    debug: x => x,
+    trace: x => x,
   };
   
   // static methods
