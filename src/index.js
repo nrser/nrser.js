@@ -1,5 +1,23 @@
 // @flow
 
+// re-exports
+// ==========
+// 
+// the idea is to let dependent packages just use the versions from here,
+// automatically keeping them on the same version w/o having to go around
+// upgrading everywhere to prevent multiple versions of libraries getting
+// installed - just upgrade the nrser version and then dependent libs address
+// compatibility when upgrading nrser.
+// 
+// this should (hopefully) help keep everything in sync easier.
+// 
+// dependencies not re-exported are incorporated into other exports.
+// 
+export _ from 'lodash';
+export chalk from 'chalk';
+export Promise from 'bluebird';
+export minimatch from 'minimatch';
+
 import { IS_NODE, IS_BROWSER } from './env';
 
 export * from './env.js';
