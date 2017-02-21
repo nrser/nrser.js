@@ -1,6 +1,6 @@
 {
   "name": "nrser",
-  "version": "0.5.3-dev",
+  "version": "0.5.4",
   "description": "my js utils",
   "main": "lib/index.js",
   "dependencies": {
