@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@nrser/ugh@^0.2.10":
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.2.10.tgz#80bf65d3eabb7db332e981187cb843821d1fadf5"
+"@nrser/ugh@^0.2.11":
+  version "0.2.11"
+  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.2.11.tgz#f5bb8d577dbf65b7b134d38b61a2d00023abf17d"
   dependencies:
     ansi-html "^0.0.7"
     bluebird ">= 2.3.2 < 3"
@@ -28,7 +28,7 @@
     js-yaml "^3.8.1"
     lodash "^4.17.4"
     moment "^2.17.1"
-    nrser "^0.5.2"
+    nrser "^0.5.4"
     react "^15.4.2"
     react-bootstrap "^0.30.7"
     react-dom "^15.4.2"
@@ -1469,16 +1469,6 @@ fs-exists-sync@^0.1.0:
   version "0.1.0"
   resolved "http://registry.npmjs.org/fs-exists-sync/-/fs-exists-sync-0.1.0.tgz#982d6893af918e72d08dec9e8673ff2b5a8d6add"
 
-fs-extra@^0.30.0:
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-0.30.0.tgz#f233ffcc08d4da7d432daa449776989db1df93f0"
-  dependencies:
-    graceful-fs "^4.1.2"
-    jsonfile "^2.1.0"
-    klaw "^1.0.0"
-    path-is-absolute "^1.0.0"
-    rimraf "^2.2.8"
-
 fs-extra@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-2.0.0.tgz#337352bded4a0b714f3eb84de8cea765e9d37600"
@@ -1695,7 +1685,7 @@ graceful-fs@^3.0.0:
   dependencies:
     natives "^1.1.0"
 
-graceful-fs@^4.1.2, graceful-fs@^4.1.4, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
+graceful-fs@^4.1.2, graceful-fs@^4.1.4, graceful-fs@^4.1.6:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
@@ -2137,12 +2127,6 @@ kind-of@^3.0.2:
   dependencies:
     is-buffer "^1.0.2"
 
-klaw@^1.0.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/klaw/-/klaw-1.3.1.tgz#4088433b46b3b1ba259d78785d8e96f73ba02439"
-  optionalDependencies:
-    graceful-fs "^4.1.9"
-
 liftoff@^2.1.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/liftoff/-/liftoff-2.3.0.tgz#a98f2ff67183d8ba7cfaca10548bd7ff0550b385"
@@ -2287,7 +2271,7 @@ lodash.templatesettings@^3.0.0:
     lodash._reinterpolate "^3.0.0"
     lodash.escape "^3.0.0"
 
-lodash@^4.11.1, lodash@^4.13.1, lodash@^4.15.0, lodash@^4.16.2, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1:
+lodash@^4.11.1, lodash@^4.13.1, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -2496,18 +2480,19 @@ npmlog@^4.0.1:
     gauge "~2.7.1"
     set-blocking "~2.0.0"
 
-nrser@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/nrser/-/nrser-0.5.2.tgz#ea3f03dc4214249539abba8a1ed6c51d5d1914e7"
+nrser@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/nrser/-/nrser-0.5.4.tgz#72710877dec150f43d1287cef43bd30bf98062d3"
   dependencies:
     bluebird ">= 2.3.2 < 3"
     chalk "^1.1.3"
-    fs-extra "^0.30.0"
-    lodash "^4.16.2"
+    fs-extra "^2.0.0"
+    lodash "^4.17.4"
     minimatch "^3.0.3"
-    sprintf-js "^1.0.3"
-    tcomb "^3.2.15"
+    tcomb "^3.2.17"
     untildify "^3.0.2"
+  optionalDependencies:
+    node-notifier "^5.0.2"
 
 number-is-nan@^1.0.0:
   version "1.0.1"
@@ -2976,13 +2961,7 @@ resolve@^1.1.6, resolve@^1.1.7:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.2.0.tgz#9589c3f2f6149d1417a40becc1663db6ec6bc26c"
 
-rimraf@2, rimraf@^2.2.8:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.0.tgz#89b8a0fe432b9ff9ec9a925a00b6cdb3a91bbada"
-  dependencies:
-    glob "^7.0.5"
-
-rimraf@~2.5.1, rimraf@~2.5.4:
+rimraf@2, rimraf@~2.5.1, rimraf@~2.5.4:
   version "2.5.4"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.5.4.tgz#96800093cbf1a0c86bd95b4625467535c29dfa04"
   dependencies:
@@ -3135,7 +3114,7 @@ sparkles@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/sparkles/-/sparkles-1.0.0.tgz#1acbbfb592436d10bbe8f785b7cc6f82815012c3"
 
-sprintf-js@^1.0.3, sprintf-js@~1.0.2:
+sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
@@ -3256,7 +3235,7 @@ tcomb-validation@^3.0.0:
   dependencies:
     tcomb "^3.0.0"
 
-tcomb@^3.0.0, tcomb@^3.2.15, tcomb@^3.2.17:
+tcomb@^3.0.0, tcomb@^3.2.17:
   version "3.2.17"
   resolved "https://registry.yarnpkg.com/tcomb/-/tcomb-3.2.17.tgz#4466b4ae881a6efc6a2b3017a4ae3773a646e887"
 
