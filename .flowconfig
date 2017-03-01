@@ -1,5 +1,15 @@
 [ignore]
+
+# for now, just ignore ugh...
 .*/node_modules/\@nrser/ugh/.*
+
+#  some
+# 
+#     hjson/test/assets/failJSON*_test.json
+# 
+# test files in hjson choke up flow, so ignore 'em
+# 
+.*/node_modules/hjson/.*\.json
 
 [include]
 

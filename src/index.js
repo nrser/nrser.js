@@ -13,10 +13,10 @@
 // 
 // dependencies not re-exported are incorporated into other exports.
 // 
-export _ from 'lodash';
-export chalk from 'chalk';
-export Promise from 'bluebird';
-export minimatch from 'minimatch';
+export { default as _ } from 'lodash';
+export { default as chalk } from 'chalk';
+export { default as Promise } from 'bluebird';
+export { default as minimatch } from 'minimatch';
 
 import { IS_NODE, IS_BROWSER } from './env';
 
