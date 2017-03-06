@@ -443,7 +443,7 @@ export class Logger {
   */
   getConsoleFunction(level: Level): Function {
     if (IS_BROWSER) {
-      return console.trace || console.log;
+      return console.log;
     }
     
     let fn: Function;
