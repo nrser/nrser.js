@@ -47,7 +47,10 @@ export const IS_BROWSER = isBrowser();
 export const IS_NODE = isNode();
 
 /**
-* get the environment, defaulting to {@}
+* get the environment, defaulting to {@link DEFAULT_ENV}.
+* 
+* @return {string}
+*   the environment name.
 * 
 * @throws {StateError}
 *   if we can't determine that we're in a node or browser environment.
