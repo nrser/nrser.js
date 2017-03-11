@@ -13,6 +13,7 @@
     "untildify": "^3.0.2"
   },
   "devDependencies": {
+    "@nrser/esdoc": "^0.5.2",
     "@nrser/ugh": "^0.3.1",
     "babel-cli": "^6.23.0",
     "babel-core": "^6.23.1",
