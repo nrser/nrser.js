@@ -1,8 +1,15 @@
 const gulp = require('gulp');
-const Ugh = require('@nrser/ugh').Ugh;
+const sh = require('shelljs');
 
-const ugh = new Ugh({gulp, packageDir: __dirname});
+const libUgh = require('@nrser/ugh');
+
+const ugh = new libUgh.Ugh({gulp, packageDir: __dirname});
 
 ugh.autoTasks();
+
+// ESDoc generation
+ugh.task(libUgh.EsdocTask, {
+  id: 'src',
+});
 
 module.exports = ugh;
