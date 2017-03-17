@@ -51,9 +51,14 @@ export const IS_NODE = isNode();
 * (versus "app instance", which declares *where* it's running / what it's
 * doing -- see {@link .appInstance}).
 * 
-* the environment can be set to anything by setting the `NODE_ENV` environment
-* variable, though unless you have given considerable through and uncovered 
-* sufficient reason, it should probably be one of:
+* the value is read from the `NODE_ENV` environment variable at 
+* `process.env.NODE_ENV` on the server and from `window.ENV` on the client.
+* 
+* if neither of these are found, throws a {@link StateError}.
+* 
+* the environment can be set to anything, though unless you have given
+* considerable through and uncovered sufficient reason, it should probably 
+* be one of:
 * 
 * 1.  `development` (default)
 * 2.  `production`
