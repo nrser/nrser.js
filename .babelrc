@@ -1,35 +1,114 @@
 {
+  "passPerPreset": true,
+  
   "presets": [
     "stage-2",
     "react",
     "es2015"
   ],
-  "passPerPreset": true,
-  "plugins": [
-    ["metalog", {
-      "strip": false,
-      "extraLabels": [
-        "errorRefs",
-        "warnRefs",
-        "infoRefs",
-        "debugRefs",
-        "traceRefs",
-        "notif",
-        "errorNotif",
-        "warnNotif",
-        "infoNotif",
-        "debugNotif",
-        "traceNotif"
+  
+  "sourceMaps": true,
+  
+  "env": {
+    "development": {
+      "plugins": [
+        ["metalog", {
+          "strip": {
+            "labels": {
+              "trace": false
+            }
+          },
+          "extraLabels": [
+            "errorRefs",
+            "warnRefs",
+            "infoRefs",
+            "debugRefs",
+            "traceRefs",
+            "notif",
+            "errorNotif",
+            "warnNotif",
+            "infoNotif",
+            "debugNotif",
+            "traceNotif",
+            "event"
+          ]
+        }],
+        "syntax-flow",
+        "transform-export-extensions",
+        ["tcomb", {
+          "skipAsserts": true
+        }],
+        "transform-flow-strip-types"
       ]
-    }],
-    "syntax-flow",
-    ["tcomb", {
-      "skipAsserts": true,
-      "globals": [
-        {"Class": true}
+    },
+    
+    "test": {
+      "plugins": [
+        ["metalog", {
+          "strip": {
+            "labels": {
+              "trace": false
+            }
+          },
+          "extraLabels": [
+            "errorRefs",
+            "warnRefs",
+            "infoRefs",
+            "debugRefs",
+            "traceRefs",
+            "notif",
+            "errorNotif",
+            "warnNotif",
+            "infoNotif",
+            "debugNotif",
+            "traceNotif",
+            "event"
+          ]
+        }],
+        "syntax-flow",
+        "transform-export-extensions",
+        ["tcomb", {
+          "skipAsserts": true
+        }],
+        "transform-flow-strip-types"
       ]
-    }],
-    "transform-export-extensions",
-    "transform-flow-strip-types"
-  ]
+    },
+  
+    "production": {
+      "plugins": [
+        ["metalog", {
+          "strip": {
+            "labels": {
+              "debug": true,
+              "trace": true,
+              "debugRefs": true,
+              "traceRefs": true,
+              "notif": true,
+              "debugNotif": true,
+              "traceNotif": true
+            }
+          },
+          "extraLabels": [
+            "errorRefs",
+            "warnRefs",
+            "infoRefs",
+            "debugRefs",
+            "traceRefs",
+            "notif",
+            "errorNotif",
+            "warnNotif",
+            "infoNotif",
+            "debugNotif",
+            "traceNotif"
+          ]
+        }],
+        "syntax-flow",
+        "transform-export-extensions",
+        ["tcomb", {
+          "skipAsserts": true
+        }],
+        "transform-flow-strip-types"
+      ]
+    }
+  }
 }
