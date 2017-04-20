@@ -34,6 +34,8 @@ export type Meta = {
 * a tcomb type.
 * 
 * this is to support flow; if you need to test in runtime use tcomb's t.Type.
+* 
+* @typedef {Object} Type
 */
 export type Type = {
   meta: Meta,
