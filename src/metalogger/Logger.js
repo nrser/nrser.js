@@ -251,6 +251,7 @@ export class Logger {
     browserHeaderFormat = "(%delta) %level [%path]",
     dateFormat = "YYYY-MM-DD HH:mm:ss.SSS",
     notifTitle = 'METALOGGER',
+    levelSpecs,
   }: {
     nodeHeaderFormat: string,
     browserHeaderFormat: string,
@@ -262,6 +263,10 @@ export class Logger {
     this.dateFormat = dateFormat;
     this.notifTitle = notifTitle;
     this.specs = [];
+    
+    if (levelSpecs) {
+      _.each(levelSpecs, (spec) => this.pushSpec(spec));
+    }
   } // constructor
   
   // instance methods
