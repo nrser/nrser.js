@@ -76,8 +76,8 @@ export class Expect<T> {
       expect(actual).to.be.instanceOf(this.instanceOf);
     }
     
-    if (this.properties) {
-      _.each(this.properties, (value, name) => {
+    if (this.props) {
+      _.each(this.props, (value, name) => {
         expect(actual).to.have.property(name);
         
         if (value instanceof Expect) {
