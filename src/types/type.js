@@ -10,10 +10,7 @@
 * @see https://archive.is/C6Iqh
 */
 export type Meta = {
-  // the type kind, equal to "irreducible" for irreducible types
-  //
-  // other types include 'struct' for `Struct` types created with `t.struct`
-  // and 'Model' for subclasses of our Model class.
+  // the tcomb type kind, see their docs / source for details.
   // 
   kind: string,
   
