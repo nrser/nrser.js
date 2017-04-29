@@ -1,13 +1,13 @@
 import chai, { expect } from 'chai';
 import _ from 'lodash';
 import { itMaps } from '../../../lib/testing.js';
-import * as nrser from '../../../lib/index.js';
+import * as NRSER from '../../../lib/index.js';
 import t from 'tcomb';
 
 describe('types/number.js', () => {
   describe('type Integer', () => {
     itMaps({
-      func: v => nrser.t.Integer.is(v),
+      func: v => NRSER.t.Integer.is(v),
       funcName: 'Integer.is',
       map: (f, throws) => [
         f(1), true,
@@ -16,7 +16,7 @@ describe('types/number.js', () => {
     });
     
     itMaps({
-      func: v => nrser.t.Integer(v),
+      func: v => NRSER.t.Integer(v),
       funcName: 'Integer',
       map: (f, throws) => [
         f(1), 1,
@@ -25,26 +25,27 @@ describe('types/number.js', () => {
     });
   }); // Integer
   
-  describe("type ZERO", () => {
+  describe("type Zero", () => {
     itMaps({
-      func: v => nrser.t.ZERO.is(v),
+      func: v => NRSER.t.Zero.is(v),
       map: (f, throws) => [
         f(0), true,
         f(1), false,
         f(0.0), true,
         f(-1), false,
         f(0.1), false,
+        f(-0), true,
       ],
     });
     
     // expect(() => {
-    //   const z: nrser.t.ZERO = 1;
+    //   const z: NRSER.t.Zero = 1;
     // }).to.throw(TypeError, /Invalid value 1 supplied/);
   });
   
   describe("type Positive", () => {
     itMaps({
-      func: v => nrser.t.Positive.is(v),
+      func: v => NRSER.t.Positive.is(v),
       map: (f, throws) => [
         f(0), false,
         f(1), true,
@@ -54,13 +55,13 @@ describe('types/number.js', () => {
     });
     
     // expect(() => {
-    //   const z: nrser.t.Positive = -1;
+    //   const z: NRSER.t.Positive = -1;
     // }).to.throw(TypeError, /Invalid value -1 supplied/);
   });
   
   describe("type PositiveInteger", () => {
     itMaps({
-      func: v => nrser.t.PositiveInteger.is(v),
+      func: v => NRSER.t.PositiveInteger.is(v),
       map: (f, throws) => [
         f(0), false,
         f(1), true,
@@ -70,13 +71,13 @@ describe('types/number.js', () => {
     });
     
     // expect(() => {
-    //   const z: nrser.t.PositiveInteger = 1.1;
+    //   const z: NRSER.t.PositiveInteger = 1.1;
     // }).to.throw(TypeError, /Invalid value 1\.1 supplied/);
   });
   
   describe("type Negative", () => {
     itMaps({
-      func: v => nrser.t.Negative.is(v),
+      func: v => NRSER.t.Negative.is(v),
       map: (f, throws) => [
         f(0), false,
         f(1), false,
@@ -86,13 +87,13 @@ describe('types/number.js', () => {
     });
     
     // expect(() => {
-    //   const z: nrser.t.Negative = 0;
+    //   const z: NRSER.t.Negative = 0;
     // }).to.throw(TypeError, /Invalid value 0 supplied/);
   });
   
   describe("type NegativeInteger", () => {
     itMaps({
-      func: v => nrser.t.NegativeInteger.is(v),
+      func: v => NRSER.t.NegativeInteger.is(v),
       map: (f, throws) => [
         f(0), false,
         f(1), false,
@@ -102,13 +103,13 @@ describe('types/number.js', () => {
     });
     
     // expect(() => {
-    //   const z: nrser.t.NegativeInteger = -1.1;
+    //   const z: NRSER.t.NegativeInteger = -1.1;
     // }).to.throw(TypeError, /Invalid value -1\.1 supplied/);
   });
   
   describe("type NonPositiveInteger", () => {
     itMaps({
-      func: v => nrser.t.NonPositiveInteger.is(v),
+      func: v => NRSER.t.NonPositiveInteger.is(v),
       map: (f, throws) => [
         f(0), true,
         f(1), false,
@@ -120,7 +121,7 @@ describe('types/number.js', () => {
   
   describe("type NonNegativeInteger", () => {
     itMaps({
-      func: v => nrser.t.NonNegativeInteger.is(v),
+      func: v => NRSER.t.NonNegativeInteger.is(v),
       map: (f, throws) => [
         f(0), true,
         f(1), true,
