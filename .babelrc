@@ -29,12 +29,19 @@
             "warnNotif",
             "infoNotif",
             "debugNotif",
-            "traceNotif",
-            "event"
+            "traceNotif"
           ]
         }],
         "syntax-flow",
         "transform-export-extensions",
+        ["module-resolver", {
+          "alias": {
+            "/": ".",
+            "nrser/lib": "./lib",
+            "nrser": "./lib"
+          },
+          "cwd": "babelrc"
+        }],
         ["tcomb", {
           "skipAsserts": true
         }],
@@ -67,6 +74,14 @@
         }],
         "syntax-flow",
         "transform-export-extensions",
+        ["module-resolver", {
+          "alias": {
+            "/": ".",
+            "nrser/lib": "./lib",
+            "nrser": "./lib"
+          },
+          "cwd": "babelrc"
+        }],
         ["tcomb", {
           "skipAsserts": true
         }],
@@ -104,6 +119,14 @@
         }],
         "syntax-flow",
         "transform-export-extensions",
+        ["module-resolver", {
+          "alias": {
+            "/": ".",
+            "nrser/lib": "./lib",
+            "nrser": "./lib"
+          },
+          "cwd": "babelrc"
+        }],
         ["tcomb", {
           "skipAsserts": true
         }],
