@@ -28,6 +28,7 @@ export * from './object';
 export * from './string';
 export * from './collection';
 export * from './match';
+export * from './array';
 
 // our types extend tcomb's
 import tcomb from 'tcomb';
@@ -42,10 +43,14 @@ export const t = types;
 export { default as print } from './print';
 export * as metalogger from './metalogger';
 
+export * as Path from './path';
+// legacy
 export * as path from './path';
 
+export let FS;
+// legacy
 export let fs;
 
 if (IS_NODE) {
-  fs = require('./fs').default;
+  FS = fs = require('./fs').default;
 }
