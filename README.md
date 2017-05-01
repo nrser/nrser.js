@@ -6,9 +6,15 @@ my js utils. pretty big mess right now. don't recommend other people using it qu
 version
 -------
 
-### 0.5.X
+### 0.6.X
 
-current version.
+Current version.
+
+`mergeNoConflict` was renamed to `assemble` and now throws `KeyError` when it fails.
+
+The `//src/testing.js` file was moved to `//src/testing/index.js` in preparation for it being broken up and other files added. This should not be a problem since it should be imported as `nrser/lib/testing` either way, but any imports that used the `.js` extension will need to be updated.
+
+### 0.5.X
 
 `data/Entity` is removed (now `Model` in `@nrser/supermodel`). it was moved to `types/Model` in `0.5.0` but nothing used that so i just kept going with the `0.5.X` versions after removing it.
 
