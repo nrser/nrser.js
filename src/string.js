@@ -34,13 +34,17 @@ export function tag(func: (value: *) => string) {
 }
 
 /**
-* replace consecutive whitespace with a single space and removes leading
-* and trailing whitespace. can be used as a template literal.
+* Replace consecutive whitespace with a single space and removes leading
+* and trailing whitespace. Can be used as a template literal.
 * 
-* @param {string} input
-*  string to squish
+* @param {string|Array<string>} strings
+*  String to squish.
 * 
-* @return {string} squished output.
+* @param {...string} values
+*   Values to interpolate.
+* 
+* @return {string}
+*   Squished output.
 */
 export function squish(
   strings: Array<string> | string,
