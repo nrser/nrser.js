@@ -3,8 +3,8 @@ import _ from 'lodash';
 import chai, { expect } from 'chai';
 
 // package
-import * as path from '../../lib/path';
-import { Logger } from '../../lib/metalogger';
+import * as path from '//lib/path';
+import { Logger } from '//lib/metalogger';
 
 // configure metalogger
 global.LOGGER = new Logger({
@@ -15,10 +15,10 @@ global.METALOG = LOGGER.log.bind(LOGGER);
 
 // re-exports
 export chai, { expect } from 'chai';
-export { itMaps, Expect } from '../../lib/testing';
+export { itMaps, Expect } from '//lib/testing';
 export _ from 'lodash';
-export * as path from '../../lib/path';
-export * as nrser from '../../lib';
+export * as path from '//lib/path';
+export * as nrser from '//lib';
 export t from 'tcomb';
 
 export const PROJECT_ROOT = path.normalize(

@@ -1,8 +1,8 @@
 import chai, {expect} from 'chai';
 import _ from 'lodash';
-import { itMaps } from '../../../lib/testing.js';
-import { Level, LEVEL_NAME_PAD_LENGTH } from '../../../lib/metalogger/Level';
-import type { LevelName, LevelRank } from '../../../lib/metalogger/Level';
+import { itMaps } from '//lib/testing';
+import { Level, LEVEL_NAME_PAD_LENGTH } from '//lib/metalogger/Level';
+import type { LevelName, LevelRank } from '//lib/metalogger/Level';
 
 describe('metalogger/Level.js', () => {
   it("has LEVEL_NAME_PAD_LENGTH = 5", () => {

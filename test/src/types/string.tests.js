@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
 import _ from 'lodash';
-import { itMaps } from '../../../lib/testing.js';
-import * as nrser from '../../../lib/index.js';
+import { itMaps } from '//lib/testing';
+import * as nrser from '//lib/index.js';
 import t from 'tcomb';
 
 describe('types/string.js', () => {

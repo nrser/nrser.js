@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai';
 
-import { itMaps } from '//lib/testing.js';
+import { itMaps } from '//lib/testing';
 import { eachAsArray, mapAsArray } from '//lib/array.js';
 
 describe('//src/array.js', () => {

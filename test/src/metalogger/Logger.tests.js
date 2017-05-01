@@ -1,10 +1,10 @@
 import chai, {expect} from 'chai';
 import _ from 'lodash';
-import { itMaps } from '../../../lib/testing.js';
-import { Logger } from '../../../lib/metalogger/Logger';
-import { Level, LEVEL_NAME_PAD_LENGTH } from '../../../lib/metalogger/Level';
-import { LevelSpec } from '../../../lib/metalogger/LevelSpec';
-import type { LevelName, LevelRank } from '../../../lib/metalogger/Level';
+import { itMaps } from '//lib/testing';
+import { Logger } from '//lib/metalogger/Logger';
+import { Level, LEVEL_NAME_PAD_LENGTH } from '//lib/metalogger/Level';
+import { LevelSpec } from '//lib/metalogger/LevelSpec';
+import type { LevelName, LevelRank } from '//lib/metalogger/Level';
 
 describe('metalogger/Logger.js', () => {
   

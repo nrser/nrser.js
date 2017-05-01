@@ -1,8 +1,8 @@
 import chai, { expect } from 'chai';
 import _ from 'lodash';
-import { itMaps } from '../../../lib/testing.js';
-import { LevelSpec } from '../../../lib/metalogger/LevelSpec';
-import { Level } from '../../../lib/metalogger/Level';
+import { itMaps } from '//lib/testing';
+import { LevelSpec } from '//lib/metalogger/LevelSpec';
+import { Level } from '//lib/metalogger/Level';
 
 describe('metalogger/LevelSpec.js', () => {
   describe('LevelSpec', () => {

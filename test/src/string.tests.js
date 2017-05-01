@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
-import { itMaps } from '../../lib/testing.js';
+import { itMaps } from '//lib/testing';
 
-import print from '../../lib/print';
+import print from '//lib/print';
 
 import {
   j,
@@ -12,7 +12,7 @@ import {
   findCommonIndent,
   leadingWhitespace,
   squish,
-} from '../../lib/string.js';
+} from '//lib/string.js';
 
 describe('string.js', () => {
   describe('.j', () => {

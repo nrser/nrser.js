@@ -1,7 +1,7 @@
 import chai, {expect} from 'chai';
 import _ from 'lodash';
-import { itMaps } from '../../../lib/testing.js';
-import { snapshot, SNAPSHOT_REF } from '../../../lib/metalogger/snapshot';
+import { itMaps } from '//lib/testing';
+import { snapshot, SNAPSHOT_REF } from '//lib/metalogger/snapshot';
 
 describe('metalogger/snapshot.js', () => {
   describe('snapshot', () => {

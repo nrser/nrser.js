@@ -3,8 +3,8 @@ import _ from 'lodash';
 import chai, { expect } from 'chai';
 
 // package
-import { itMaps } from '../../lib/testing';
-import * as nrser from '../../lib';
+import { itMaps } from '//lib/testing';
+import * as nrser from '//lib';
 
 function describeFunc(...args) {
   let func: Function,
