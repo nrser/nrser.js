@@ -1,14 +1,18 @@
 // @flow
 
+// Imports
+// ==========================================================================
+
 import chai, { expect } from 'chai';
 import _ from 'lodash';
 import t from 'tcomb';
 import type { $Refinement } from 'tcomb';
 
-import * as nrser from '.';
+import * as nrser from '//src/';
 
-// types
-// =====
+
+// Types
+// ==========================================================================
 
 declare function it(title: string, block: () => void): void;
 
@@ -23,6 +27,10 @@ function hasEvenLength(array: Array<*>): boolean {
 }
 
 type Pairable<V> = Array<V> & $Refinement<typeof hasEvenLength>;
+
+
+// Private
+// ==========================================================================
 
 class Throws {
   errorClass: ErrorClass;
@@ -42,6 +50,11 @@ class Throws {
   }
 }
 
+
+// Exports
+// ==========================================================================
+
+// export * from './Describer';
 
 /**
 * OO structure for expectations.
