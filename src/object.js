@@ -4,7 +4,7 @@ import _ from 'lodash';
 import t from 'tcomb';
 
 import { j, squish } from './string.js';
-import { MergeConflictError, KeyError } from './errors';
+import { KeyError } from './errors';
 
 import type { KeyPath, Collection }  from './types/collection';
 
@@ -47,11 +47,56 @@ export function groupByEach<V>(
   return result;
 } // groupByEach()
 
+
 /**
-* merges `objects` together from left right throwing `MergeConflictError` if
-* any keys are duplicated among them.
+* Set `keyPath` to `value` in `object` only if the key does not exist. The key
+* path must be completely absent -- if it is set to `undefined` or `null` 
+* an error will still be thrown.
+* 
+* **Mutates `object`.**
+* 
+* @param {Object} object
+*   Object to insert into.
+* 
+* @param {KeyPath} keyPath
+*   Key path to insert at.
+* 
+* @param {*} value
+*   Value to insert.
+* 
+* @return {Object}
+*   The mutated object.
+* 
+* @throws {KeyError}
+*   If `keyPath` exists in `object`.
 */
-export function mergeNoConflicts(...objects: Array<Object>): Object {
+export function insert(object: Object, keyPath: KeyPath, value: any): Object {
+  if (_.has(object, keyPath)) {
+    throw KeyError.squish(`Key path ${ keyPath } exists in object.`, {
+      keyPath,
+      currentValue: _.get(object, keyPath),
+      object
+    });
+  }
+  
+  return _.set(object, keyPath, value);
+}
+
+
+/**
+* Shallow merges `objects` together into a new {@link Object} as long as there
+* are no conflicting keys.
+* 
+* @param {...Object} objects
+*   Objects to merge.
+* 
+* @return {Object}
+*   New object assembled from `objects`.
+* 
+* @throws {KeyError}
+*   If any of `objects` share keys.
+*/
+export function assemble(...objects: Array<Object>): Object {
   // Objects(objects);
   
   const result = {};
@@ -59,7 +104,7 @@ export function mergeNoConflicts(...objects: Array<Object>): Object {
   _.each(objects, (object) => {
     _.each(object, (value, key) => {
       if (_.has(result, key)) {
-        throw new MergeConflictError(
+        throw new KeyError(
           j`merge conflict for key ${ key }`,
           {objects}
         );
@@ -70,7 +115,8 @@ export function mergeNoConflicts(...objects: Array<Object>): Object {
   });
   
   return result;
-} // mergeNoConflicts
+} // assemble()
+
 
 /**
 * gets the value at a key path from an object, throwing `KeyError`
@@ -79,10 +125,15 @@ export function mergeNoConflicts(...objects: Array<Object>): Object {
 * @param {Object} object
 *   the object to retrieve from.
 * 
-* @param {KeyPath} keyPath
+* @param {?KeyPath} keyPath
 *   the path to the key.
 * 
-* @return the 
+* @param {Object} options
+* @property {*} defaultValue
+*   Value to default to if `keyPath` is not found.
+* 
+* @return {*}
+*   The value at `keyPath`.
 */
 export function need(
   object: Object,

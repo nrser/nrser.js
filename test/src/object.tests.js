@@ -1,12 +1,32 @@
 import chai, { expect } from 'chai';
-import { itMaps } from '../../lib/testing.js';
-import { groupByEach, mergeNoConflicts, need } from '../../lib/object.js';
-import { MergeConflictError, KeyError } from '../../lib/errors/';
+import { itMaps } from '//lib/testing';
+
+// package
+import {
+  groupByEach,
+  assemble,
+  need,
+  insert,
+} from '//lib/object.js';
+
+import { KeyError } from '//lib/errors/';
 
 describe('object.js', () => {
-  describe('mergeNoConflicts()', () => {
+  describe('insert()', () => {
+    itMaps({
+      func: insert,
+      map: (f, throws) => [
+        f({}, 'x', 1), {x: 1},
+        f({x: 1}, 'x', 2), throws(KeyError),
+        f({x: undefined}, 'x', 2), throws(KeyError),
+        f({x: 1}, 'y', 2), {x: 1, y: 2},
+      ]
+    });
+  });
+  
+  describe('assemble()', () => {
     it("returns {} when args are empty", () => {
-      expect(mergeNoConflicts()).to.eql({});
+      expect(assemble()).to.eql({});
     });
     
     // it("throws on bad args", () => {
@@ -15,14 +35,14 @@ describe('object.js', () => {
     
     it("succeeds when there are no conflicts", () => {
       expect(
-        mergeNoConflicts({a: 1}, {b: 2}, {c: 3, d: 4})
+        assemble({a: 1}, {b: 2}, {c: 3, d: 4})
       ).to.eql({a: 1, b: 2, c: 3, d: 4});
     });
     
     it("fails when there are conflicts", () => {
       expect(() => {
-        mergeNoConflicts({a: 1}, {a: 2})
-      }).to.throw(MergeConflictError);
+        assemble({a: 1}, {a: 2})
+      }).to.throw(KeyError);
     });
   });
   
