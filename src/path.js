@@ -1,39 +1,64 @@
 // @flow
 
-import sysPath from 'path';
+
+// Imports
+// ==========================================================================
+
+import StdlibPath from 'path';
 import _ from 'lodash';
-import type { $Refinement } from 'tcomb';
 import _untildify from 'untildify';
 
-export * from 'path';
 
-export const untildify = _untildify;
+// Types
+// ==========================================================================
+
+import type { $Refinement, $Reify } from 'tcomb';
 
 // types
 //======
 
-export type AbsPath = string & $Refinement<typeof sysPath.isAbsolute>;
+/**
+* An absolute path.
+* 
+* @typedef {string} AbsPath
+*/
+export type AbsPath = string & $Refinement<typeof StdlibPath.isAbsolute>;
+
+/**
+* tcomb type for {@link AbsPath}.
+*
+* @type {Type}
+*/
+export const tAbsPath = (({}: any): $Reify<AbsPath>);
+
 
 /**
 * tests if the string is a path segment, which is a string that devoid of the
 * path separator and not empty.
 */
 export function isPathSegment(str: string): boolean {
-  return str !== '' && str.indexOf(sysPath.sep) === -1;
+  return str !== '' && str.indexOf(StdlibPath.sep) === -1;
 }
 
 export type PathSegement = string & $Refinement<typeof isPathSegment>;
 
 export type PathSegments = Array<PathSegement>;
 
-// functions
-// =========
+
+// Exports
+// ==========================================================================
+
+// re-export everything from stdlib path
+export * from 'path';
+
+// export the untildify function
+export const untildify = _untildify;
 
 /**
 * split a path by the system separator, removing any empty parts.
 */
 export function split(path: string): PathSegments {
-  return _.reject(path.split(sysPath.sep), (part: string) => {
+  return _.reject(path.split(StdlibPath.sep), (part: string) => {
     return part === '';
   });  
 }
@@ -42,7 +67,7 @@ export function split(path: string): PathSegments {
 * gets and absolute path by un-tilde-fying (expand '~') and then resolving.
 */
 export function absolute(path: string): AbsPath {
-  return sysPath.resolve(untildify(path));
+  return StdlibPath.resolve(untildify(path));
 }
 
 /**
@@ -76,6 +101,6 @@ export function commonBase(...paths: Array<string>): ?AbsPath {
   );
   
   if (common.length > 0) {
-    return sysPath.join('/', ...common);
+    return StdlibPath.join('/', ...common);
   }
 }
