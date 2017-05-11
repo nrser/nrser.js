@@ -1,6 +1,6 @@
 // @flow
 
-import _ from 'lodash';
+import _ from '//src/lodash';
 
 /**
 * If `subject` is an {@link Array}, return it. Otherwise return a new Array
@@ -114,3 +114,9 @@ export function mapAsArray<Element, Result>(
     return [iteratee(subject, 0)];
   }
 } // mapAsArray()
+
+_.mixin({
+  asArray,
+  mapAsArray,
+  eachAsArray,
+});

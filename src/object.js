@@ -1,6 +1,6 @@
 // @flow
 
-import _ from 'lodash';
+import _ from '//src/lodash';
 import t from 'tcomb';
 
 import { j, squish } from './string.js';
@@ -138,7 +138,13 @@ export function assemble(...objects: Array<Object>): Object {
 export function need(
   object: Object,
   keyPath?: KeyPath,
-  {defaultValue}: {defaultValue?: mixed} = {}
+  {
+    defaultValue,
+    errorMsg,
+  }: {
+    defaultValue?: mixed,
+    errorMsg: string | Function,
+  } = {}
 ): * {
   const result = _.isEmpty(keyPath) ? (
     object
@@ -170,6 +176,7 @@ export function need(
   return result;
 }
 
+
 /**
 * map values but drop keys where the mapped value is undefined.
 */
@@ -188,3 +195,10 @@ export function mapDefinedValues<DOMAIN, CODOMAIN>(
   
   return results;
 }
+
+_.mixin({
+  insert,
+  need,
+  assemble,
+  mapDefinedValues,
+});

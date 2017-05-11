@@ -7,7 +7,7 @@
 * 
 */
 
-import _ from 'lodash';
+import _ from '//src/lodash';
 import t from 'tcomb';
 import minimatch from 'minimatch';
 

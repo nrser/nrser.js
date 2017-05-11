@@ -1,8 +1,18 @@
 // @flow
 
-import _ from 'lodash';
+// Imports
+// ===========================================================================
+
+// Deps
 import t from 'tcomb';
 import Promise from 'bluebird';
+
+// Package
+import _ from '//src/lodash';
+
+
+// Exports
+// ===========================================================================
 
 export const Undefined = t.irreducible('Undefined', (v) => _.isUndefined(v));
 

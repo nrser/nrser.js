@@ -13,7 +13,6 @@
 // 
 // dependencies not re-exported are incorporated into other exports.
 // 
-export { default as _ } from 'lodash';
 export { default as chalk } from 'chalk';
 export { default as Promise } from 'bluebird';
 export { default as minimatch } from 'minimatch';
@@ -29,6 +28,7 @@ export * from './string';
 export * from './collection';
 export * from './match';
 export * from './array';
+export * from './lodash';
 
 // our types extend tcomb's
 import tcomb from 'tcomb';

@@ -1,5 +1,5 @@
 import chai, {expect} from 'chai';
-import _ from 'lodash';
+import { _ } from 'nrser';
 import { itMaps } from '//lib/testing';
 import { Logger } from '//lib/metalogger/Logger';
 import { Level, LEVEL_NAME_PAD_LENGTH } from '//lib/metalogger/Level';

@@ -1,5 +1,5 @@
 // deps
-import _ from 'lodash';
+import { _ } from 'nrser';
 import chai, { expect } from 'chai';
 
 // package

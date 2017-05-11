@@ -1,6 +1,6 @@
 // @flow
 
-import _ from 'lodash';
+import _ from '//src/lodash';
 import print from './print';
 
 /**

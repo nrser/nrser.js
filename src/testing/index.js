@@ -4,7 +4,7 @@
 // ==========================================================================
 
 import chai, { expect } from 'chai';
-import _ from 'lodash';
+import _ from '//src/lodash';
 import t from 'tcomb';
 import type { $Refinement } from 'tcomb';
 

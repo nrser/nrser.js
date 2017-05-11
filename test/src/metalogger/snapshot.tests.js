@@ -1,5 +1,5 @@
 import chai, {expect} from 'chai';
-import _ from 'lodash';
+import { _ } from 'nrser';
 import { itMaps } from '//lib/testing';
 import { snapshot, SNAPSHOT_REF } from '//lib/metalogger/snapshot';
 

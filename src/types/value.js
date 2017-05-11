@@ -1,5 +1,5 @@
 import t from 'tcomb';
-import _ from 'lodash';
+import _ from '//src/lodash';
 
 import { NonEmptyString, UpperCaseString } from './string.js';
 import { nonEmptyList } from './list.js';

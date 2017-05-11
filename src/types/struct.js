@@ -1,5 +1,5 @@
 import t from 'tcomb';
-import _ from 'lodash';
+import _ from '//src/lodash';
 import { match } from '../match';
 import { value } from './value';
 import { squish } from '../string.js';

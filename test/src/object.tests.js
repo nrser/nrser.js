@@ -9,6 +9,8 @@ import {
   insert,
 } from '//lib/object.js';
 
+import _ from '//lib/lodash';
+
 import { KeyError } from '//lib/errors/';
 
 describe('object.js', () => {
@@ -21,6 +23,18 @@ describe('object.js', () => {
         f({x: undefined}, 'x', 2), throws(KeyError),
         f({x: 1}, 'y', 2), {x: 1, y: 2},
       ]
+    });
+    
+    context("through _.insert", function() {
+      itMaps({
+        func: _.insert.bind(_),
+        map: (f, throws) => [
+          f({}, 'x', 1), {x: 1},
+          f({x: 1}, 'x', 2), throws(KeyError),
+          f({x: undefined}, 'x', 2), throws(KeyError),
+          f({x: 1}, 'y', 2), {x: 1, y: 2},
+        ]
+      });
     });
   });
   

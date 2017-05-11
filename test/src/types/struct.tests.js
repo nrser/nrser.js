@@ -2,7 +2,7 @@ import chai, { expect } from 'chai';
 import { itMaps } from '//lib/testing';
 import * as nrser from '//lib';
 import t from 'tcomb';
-import _ from 'lodash';
+import { _ } from 'nrser';
 
 describe("types/struct.js", () => {
   describe("struct()", () => {

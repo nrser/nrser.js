@@ -1,7 +1,7 @@
 // @flow
 
 // deps
-import _ from 'lodash';
+import _ from '//src/lodash';
 
 // package
 import * as errors from './errors';
