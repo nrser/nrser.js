@@ -1,5 +1,7 @@
 // @flow
 
+import type { $Refinement, $Reify } from 'tcomb';
+
 /**
 * tcomb type meta object
 * 
@@ -39,6 +41,8 @@ export type Type = {
   displayName: string,
   is: (value: any) => boolean,
 }
+
+export const tType = (({}: any): $Reify<Type>);
 
 /**
 * tcomb props - an object mapping property names to their tcomb type.
