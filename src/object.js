@@ -1,12 +1,14 @@
 // @flow
 
-import _ from '//src/lodash';
 import t from 'tcomb';
 
-import { j, squish } from './string.js';
-import { KeyError } from './errors';
+import _ from '//src/lodash';
+import { j, squish } from '//src/string.js';
+import { KeyError } from '//src/errors';
+import { eachAsArray } from '//src/array';
 
-import type { KeyPath, Collection }  from './types/collection';
+import type { KeyPath, Collection }  from '//src/types/collection';
+import type { Type } from '//src/types/type';
 
 /**
 * like lodash/underscore `groupBy` but the iteratee (called `getGroups` here)
@@ -140,10 +142,10 @@ export function need(
   keyPath?: KeyPath,
   {
     defaultValue,
-    errorMsg,
+    type,
   }: {
     defaultValue?: mixed,
-    errorMsg: string | Function,
+    type?: Type,
   } = {}
 ): * {
   const result = _.isEmpty(keyPath) ? (
@@ -169,9 +171,58 @@ export function need(
         {object, keyPath}
       );
     } else {
+      // we're going to use the default value
+      
+      // check it's type if one was provided -- this makes it so when type
+      // is specified the function will always return something that is of 
+      // that type if it succeeds.
+      if (type) {
+        t.assert(type.is(defaultValue), () => squish`
+          needed default value ${ t.assert.stringify(defaultValue) }
+          of type '${ typeof defaultValue }'
+          to be of type ${ t.getTypeName(type) }
+          (looking for missing key path ${ t.assert.stringify(keyPath) })
+        `);
+      }
+      
       return defaultValue;
     }
   }
+  
+  if (type) {
+    t.assert(type.is(result), () => squish`
+      needed value ${ t.assert.stringify(result) }
+      of type '${ typeof result }'
+      at key path ${ t.assert.stringify(keyPath) }
+      to be of type ${ t.getTypeName(type) }.
+    `);
+  }
+  
+  return result;
+}
+
+/**
+* A pickier [_.pick][] -- throw a {@link KeyError} if any of `paths` are 
+* missing.
+* 
+* [_.pick]: https://lodash.com/docs/4.17.4#pick
+*/
+export function procure<V>(
+  object: {[key: string]: V},
+  paths: string | Array<string>,
+  {
+    defaultValue,
+    type,
+  }: {
+    defaultValue: mixed,
+    type: Type,
+  } = {}
+): {[key: string]: V} {
+  const result = {};
+  
+  eachAsArray(paths, (path) => {
+    _.set(result, path, need(object, path, {defaultValue, type}));
+  });
   
   return result;
 }
@@ -200,5 +251,6 @@ _.mixin({
   insert,
   need,
   assemble,
+  procure,
   mapDefinedValues,
 });

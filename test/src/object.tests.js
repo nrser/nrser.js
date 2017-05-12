@@ -1,5 +1,6 @@
 import chai, { expect } from 'chai';
-import { itMaps } from '//lib/testing';
+import { itMaps } from 'nrser/lib/testing';
+import { t } from 'nrser';
 
 // package
 import {
@@ -70,7 +71,17 @@ describe('object.js', () => {
         f({x: [{y: 'why'}]}, ['x', 0, 'y']),      'why',
         f({x: [{y: 'why'}]}, 'x.0.y'),            'why',
         f({}, 'a'),                               throws(KeyError),
+        
+        // specifying default value:
         f({}, 'a', {defaultValue: 'blah'}),       'blah',
+        
+        // specifying type:
+        f({x: 1}, 'x', {type: t.String}),         throws(TypeError),
+        f({x: 1}, 'x', {type: t.Number}),         1,
+        
+        // default value and type:
+        f({x: 1}, 'y', {defaultValue: 2, type: t.Number}), 2,
+        f({x: 1}, 'y', {defaultValue: 2, type: t.String}), throws(TypeError),
       ]),
     })
   });
