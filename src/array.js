@@ -60,11 +60,13 @@ export function asArray<Element>(
 * @return {undefined}
 */
 export function eachAsArray<Element, Result>(
-  subject: Element | Array<Element>,
+  subject: undefined | Element | Array<Element>,
   iteratee: (element: Element) => Result,
 ): void {
   if (_.isArray(subject)) {
     _.each(subject, iteratee);
+  } else if (subject === undefined) {
+    // pass
   } else {
     iteratee(subject, 0);
   }

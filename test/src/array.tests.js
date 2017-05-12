@@ -27,6 +27,7 @@ describe('//src/array.js', () => {
       map: (f, throws) => [
         f('a'), [['a', 0]],
         f(['a', 'b', 'c']), [['a', 0], ['b', 1], ['c', 2]],
+        f(), [],
       ]
     })
   }); // eachAsArray()
