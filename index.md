@@ -11,7 +11,7 @@ layout: default
 Versions
 -----------------------------------------------------------------------------
 
--   [Latest](/v/latest)
+-   [Latest]({{ url }}/v/latest)
 {% for version in site.data.versions %}
--   [{{ version }}](/v/{{ version }})
+-   [{{ version }}]({{ url }}/v/{{ version }})
 {% endfor %}
