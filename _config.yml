@@ -1,0 +1,4 @@
+---
+repository: nrser/nrser.js
+gems:
+  - jekyll-redirect-from
