@@ -1,10 +1,19 @@
+// Imports
+// ==========================================================================
+
 // deps
+import 'source-map-support/register';
+
 import { _ } from 'nrser';
 import chai, { expect } from 'chai';
 
 // package
-import * as path from '//lib/path';
-import { Logger } from '//lib/metalogger';
+import * as Path from 'nrser/lib/path';
+import { Logger } from 'nrser/lib/metalogger';
+
+
+// Config
+// ==========================================================================
 
 // configure metalogger
 global.LOGGER = new Logger({
@@ -13,21 +22,27 @@ global.LOGGER = new Logger({
 
 global.METALOG = LOGGER.log.bind(LOGGER);
 
+
+// Exports
+// ==========================================================================
+
 // re-exports
 export chai, { expect } from 'chai';
-export { itMaps, Expect } from '//lib/testing';
-export _ from 'lodash';
-export * as path from '//lib/path';
-export * as nrser from '//lib';
+
+// TODO module resolve doesn't work!
+// export * from 'nrser/lib/testing';
+export * from '../../lib/testing';
+// export { Promise, _ } from 'nrser';
+export { Promise, _ } from '../../lib';
+
+export * as path from 'nrser/lib/path';
+
+export * as NRSER from 'nrser';
+export * as nrser from 'nrser';
+
 export t from 'tcomb';
 
-export const PROJECT_ROOT = path.normalize(
-  path.join(__dirname, '..', '..')
-);
-
-export function resolve(...paths: Array<string>): string {
-  return path.resolve(PROJECT_ROOT, ...paths);
-}
-
-export const SRC_DIR = resolve('src');
+// TODO module resolver doesn't work:
+// export * from '//config/Paths';
+export * from '../../config/Paths';
 

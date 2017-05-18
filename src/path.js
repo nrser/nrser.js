@@ -7,6 +7,7 @@
 import StdlibPath from 'path';
 import _ from '//src/lodash';
 import _untildify from 'untildify';
+import _tildify from 'tildify';
 
 
 // Types
@@ -14,11 +15,65 @@ import _untildify from 'untildify';
 
 import type { $Refinement, $Reify } from 'tcomb';
 
-// types
-//======
+
+// Path Types
+// --------------------------------------------------------------------------
+
+// ### Normalized Path
+
+/** @private */
+function isNormalized(path: string): boolean {
+  return (
+    (
+      path === '.'
+    ) || (
+      path === '/'
+    ) || (
+      path !== '' && _.every(
+        path.split(StdlibPath.sep),
+        (seg, index, segs) => {
+          return (
+            seg !== '..'
+          ) && (
+            seg !== '.'
+          ) && (
+            index === 0 || index === segs.length - 1  || seg !== ''
+          );
+        }
+      )
+    )
+  );
+}
 
 /**
-* An absolute path.
+* A normalized path is a path that is either:
+* 
+* -   Exactly `.`.
+* -   Has no `.`, `..` or empty segments.
+* 
+* Intended to represent the return type of [path.normalize][].
+* 
+* [path.normalize]: https://nodejs.org/api/path.html#path_path_normalize_path
+* 
+* @typedef {string} NormPath
+*/
+export type NormPath = string & $Refinement<typeof isNormalized>;
+
+/**
+* tcomb type for {@link NormPath}.
+* 
+* @type {Type}
+*/
+export const tNormPath = (({}: any): $Reify<NormPath>);
+
+
+// ### Absolute Path
+
+/**
+* An absolute path, per Node's [path.isAbsolute][],
+* which returns `false` for tilde paths (`~/...`).
+* 
+* [path.isAbsolute]: https://nodejs.org/api/path.html#path_path_isabsolute_path
 * 
 * @typedef {string} AbsPath
 */
@@ -32,17 +87,187 @@ export type AbsPath = string & $Refinement<typeof StdlibPath.isAbsolute>;
 export const tAbsPath = (({}: any): $Reify<AbsPath>);
 
 
+// ### Resolved Path
+
 /**
-* tests if the string is a path segment, which is a string that devoid of the
-* path separator and not empty.
+* A resolved path is a path that is absolute and normalized, as returned from
+* Node's [path.resolve][].
+* 
+* [path.resolve]: https://nodejs.org/api/path.html#path_path_resolve_path
+* 
+* @typedef {string} ResolvedPath
 */
-export function isPathSegment(str: string): boolean {
-  return str !== '' && str.indexOf(StdlibPath.sep) === -1;
+export type ResPath = AbsPath & NormPath;
+
+/**
+* tcomb type for {@link ResPath}.
+* 
+* @type {Type}
+*/
+export const tResPath = (({}: any): $Reify<ResPath>);
+
+
+// ### Tilde Path
+
+/** @private */
+function isTildePath(path: string): boolean {
+  return path[0] === '~';
 }
 
-export type PathSegement = string & $Refinement<typeof isPathSegment>;
+/**
+* A tilde path is a string that starts with '~', which we interpret like the
+* shell to mean the current user's home directory.
+* 
+* @typedef {string} TildePath
+*/
+export type TildePath = string & $Refinement<typeof isTildePath>;
 
-export type PathSegments = Array<PathSegement>;
+/**
+* tcomb type for {@link TildePath}.
+* 
+* @type {Type}
+*/
+export const tTildePath = (({}: any): $Reify<TildePath>);
+
+
+// ### Path Segment
+
+/** @private */
+function isPathSegment(str: string): boolean {
+  return str.indexOf(StdlibPath.sep) === -1;
+}
+
+/**
+* A piece of a path... which is a string that doesn't have the path 
+* separator character in it.
+* 
+* @typedef {string} PathSegment
+*/
+export type PathSegment = string & $Refinement<typeof isPathSegment>;
+
+/**
+* tcomb type for {@link PathSegment}.
+* 
+* @type {Type}
+*/
+export const tPathSegment = (({}: any): $Reify<PathSegment>);
+
+/**
+* Many pieces of paths.
+* 
+* @typedef {Array<string>} PathSegments
+*/
+export type PathSegments = Array<PathSegment>;
+
+/**
+* tcomb type for {@link PathSegments}.
+* 
+* @type {Type}
+*/
+export const tPathSegments = (({}: any): $Reify<PathSegments>);
+
+
+// Directory Types
+// --------------------------------------------------------------------------
+
+// ### Directory Path
+
+/** @private */
+function isDirStr(path: string): boolean {
+  const last = _.last(split(path));
+  
+  return (
+    last === ''
+  ) || (
+    last === '.'
+  ) || (
+    last === '..'
+  );
+} // isDirStr()
+
+/**
+* A path that we know is a directory because it's last segment
+* is `/`, `.` or `..`.
+* 
+* @typedef {string} Dir
+*/
+export type Dir = string & $Refinement<typeof isDirStr>;
+
+/**
+* tcomb type for {@link Dir}.
+* 
+* @type {Type}
+*/
+export const tDir = (({}: any): $Reify<Dir>);
+
+
+// ### Normalized Directory Path
+
+/**
+* A normalized directory - a {@link Dir} that is also a {@link NormPath}.
+* 
+* @typedef {string} NormDir
+*/
+export type NormDir = Dir & NormPath;
+
+/**
+* tcomb type for {@link NormDir}.
+* 
+* @type {Type}
+*/
+export const tNormDir = (({}: any): $Reify<NormDir>);
+
+
+// ### Absolute Directory Path
+
+/**
+* An absolute directory - a {@link Dir} that is also a {@link AbsPath}.
+* 
+* @typedef {string} AbsDir
+*/
+export type AbsDir = Dir & AbsPath;
+
+/**
+* tcomb type for {@link AbsDir}.
+* 
+* @type {Type}
+*/
+export const tAbsDir = (({}: any): $Reify<AbsDir>);
+
+
+// ### Resolved Directory Path
+
+/**
+* An resolved directory - a {@link Dir} that is also a {@link ResPath}.
+* 
+* @typedef {string} ResDir
+*/
+export type ResDir = Dir & ResPath;
+
+/**
+* tcomb type for {@link ResDir}.
+* 
+* @type {Type}
+*/
+export const tResDir = (({}: any): $Reify<ResDir>);
+
+
+// ### Tilde (~) Directory Path
+
+/**
+* A directory relative to the user's home via starting with `~` -
+* a {@link Dir} that is also a {@link TildePath}.
+* 
+* @typedef {string} TildeDir
+*/
+export type TildeDir = Dir & TildePath;
+
+/**
+* tcomb type for {@link TildeDir}.
+* 
+* @type {Type}
+*/
+export const tTildeDir = (({}: any): $Reify<TildeDir>);
 
 
 // Exports
@@ -51,31 +276,48 @@ export type PathSegments = Array<PathSegement>;
 // re-export everything from stdlib path
 export * from 'path';
 
-// export the untildify function
+// export the tildify and untildify functions
 export const untildify = _untildify;
+export const tildify = _tildify;
+
 
 /**
-* split a path by the system separator, removing any empty parts.
+* Split a path by the system path separator.
 */
 export function split(path: string): PathSegments {
-  return _.reject(path.split(StdlibPath.sep), (part: string) => {
-    return part === '';
-  });  
+  return path.split(StdlibPath.sep);
+}
+
+
+/**
+* Like {@link Path.resolve} but it expands tilde paths to the user's home
+* directory.
+* 
+* @param {...string} paths
+*   Paths to expand. Joins them from last backwards until am absolute path is
+*   formed, otherwise assumes relative to {@link process.cwd}.
+* 
+* @return {ResPath}
+*   Resolved (absolute) path.
+*/
+export function expand(...paths: Array<string>): ResPath {
+  return StdlibPath.resolve(..._.map(paths, p => untildify(p)));
 }
 
 /**
-* gets and absolute path by un-tilde-fying (expand '~') and then resolving.
+* @deprecated Old name for {@link expand}.
 */
-export function absolute(path: string): AbsPath {
-  return StdlibPath.resolve(untildify(path));
-}
+export const absolute = expand;
+
 
 /**
-* find the common base path.
+* Find the common base path. Expands paths before comparison, and doesn't 
+* consider '/' to be common because it is shared between *all* unix-y file
+* paths, making it a bit pointless.
 */
-export function commonBase(...paths: Array<string>): ?AbsPath {
+export function commonBase(...paths: Array<string>): ?ResPath {
   const splits = _.map(paths, (path: string): PathSegments => {
-    return split(absolute(path))
+    return split(expand(path))
   });
   
   const common = _.reduce(
@@ -100,7 +342,7 @@ export function commonBase(...paths: Array<string>): ?AbsPath {
     }
   );
   
-  if (common.length > 0) {
+  if (common.length > 1) {
     return StdlibPath.join('/', ...common);
   }
 }
