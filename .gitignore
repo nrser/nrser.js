@@ -85,17 +85,13 @@ jspm_packages
 ##############################################################################
 
 ##############################################################################
-# BEGIN esdoc generated output
-#
-/doc/esdoc
-#
-# END esdoc generated output
-##############################################################################
-##############################################################################
-# BEGIN Qb.gitingore
+# BEGIN QB.gitingore
 #
 # generated qb playbooks
 .qb-playbook.yml
+
+# ansible retry files
+.qb-playbook.retry
 #
-# END Qb.gitingore
+# END QB.gitingore
 ##############################################################################
