@@ -1,11 +1,42 @@
+# omit development stuff
 /dev
-# since there's nothing in it
+
+# omit the docs - they're too big and heavy
 /doc
+/README.md
+
+# omit tests - pull the source if you want to run them
+/test
+
+# obviously don't need temp files
 /tmp
+
+# babel
 /.babelrc
+/config/getBabelOptions.js
+
+# flow
 /.flowconfig
-/.gitignore
-/esdoc.json
+
+# git
+.git*
+
+# esdoc
+/.esdoc.json
+/config/esdoc.js
+
+# gulp
 /gulpfile.js
+/gulpfile.babel.js
+
+# ugh
+/ugh.js
+/ugh.babel.js
+
+# QB
 .qb-options.yml
+.qb-playbook.yml
+.qb-playbook.retry
+
+# yarn
 /yarn.lock
