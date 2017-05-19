@@ -1,6 +1,6 @@
 {
   "source": "src",
-  "destination": "doc/gh-pages/versions/0.6.1-dev.0",
+  "destination": "doc/gh-pages/versions/0.6.1",
   "test": {
     "type": "mocha",
     "source": "./test"
