@@ -97,6 +97,10 @@ describe('path.js', function() {
         // even if it doesn't end with /
         f('.'), true,
         
+        // we take the empty string to mean the current directory, so it
+        // is a directory as well
+        f(''), true,
+        
         // and the dir above us
         f('../'), true,
         
@@ -216,7 +220,7 @@ describe('path.js', function() {
   
   
   /** @test {split} */
-  describe('.split()', function() {
+  describe('split()', function() {
     itMaps({
       func: NRSER.Path.split,
       map: (f, throws) => [
@@ -227,22 +231,23 @@ describe('path.js', function() {
         f('/x/y/z'), ['', 'x', 'y', 'z'],
       ]
     });
-  }); // .split()
+  }); // split()
   
   
   /** @test {expand} */
-  describe('.expand()', function() {
+  describe('expand()', function() {
     itMaps({
       func: NRSER.Path.expand,
       map: (f, throws) => [
         f('~'), process.env.HOME,
         f('.'), NRSER.Path.resolve(),
+        f(''), NRSER.Path.resolve(),
         f('/etc', 'x', 'y'), '/etc/x/y',
         f('/etc', '~/temp', 'blah'), `${ process.env.HOME }/temp/blah`,
         f('/x/y'), '/x/y',
       ]
     });
-  }); // .expand()
+  }); // expand()
   
   
   /** @test {commondBase} */
@@ -277,5 +282,56 @@ describe('path.js', function() {
         f('/x/y/z/', '/x/y', '/x//y/w', '/x'), '/x',
       ]
     });
-  }); // .commonBase()
+  }); // commonBase()
+  
+  
+  /** @test {toDir} */
+  describe('toDir()', function() {
+    itMaps({
+      func: NRSER.Path.toDir,
+      map: (f, throws) => [
+        // leaves Dir alone
+        f('/'), '/',
+        f('.'), '.',
+        f(''), '',
+        f('x/y/z/'), 'x/y/z/',
+        
+        // adds slash to non-Dir
+        f('x/y'), 'x/y/',
+        
+        // barfs on non-string
+        f(), throws(TypeError, /Invalid value undefined/),
+        f(1), throws(TypeError, /Invalid value 1/),
+      ]
+    });
+  }); // toDir()
+  
+  
+  /** @test {@link resolveDir} */
+  describe('resolveDir()', function() {
+    itMaps({
+      func: NRSER.Path.resolveDir,
+      map: (f, throws) => [
+        f(), process.cwd() + '/',
+        f('/etc/x', 'y'), '/etc/x/y/',
+        
+        // NOTE uses resolve, so doesn't expand ~
+        f('~'), NRSER.Path.join(process.cwd(), '~') + '/',
+      ]
+    });
+  }); // resolveDir()
+  
+  
+  /** @test {@link expandDir} */
+  describe('expandDir()', function() {
+    itMaps({
+      func: NRSER.Path.expandDir,
+      map: (f, throws) => [
+        f(), process.cwd() + '/',
+        f('/etc/x', 'y'), '/etc/x/y/',
+        f('~'), process.env.HOME + '/',
+      ]
+    });
+  }); // expandDir()
+  
 }); // path.js

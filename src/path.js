@@ -15,6 +15,8 @@ import _tildify from 'tildify';
 
 import type { $Refinement, $Reify } from 'tcomb';
 
+import t from 'tcomb';
+
 
 // Path Types
 // --------------------------------------------------------------------------
@@ -187,7 +189,7 @@ function isDirStr(path: string): boolean {
 
 /**
 * A path that we know is a directory because it's last segment
-* is `/`, `.` or `..`.
+* is empty, `.` or `..`.
 * 
 * @typedef {string} Dir
 */
@@ -345,4 +347,55 @@ export function commonBase(...paths: Array<string>): ?ResPath {
   if (common.length > 1) {
     return StdlibPath.join('/', ...common);
   }
+} // commonBase()
+
+
+/**
+* Make a path string into a {@link Dir} by appending `/` to it if needed.
+* 
+* @param {string} path
+*   Path to convert.
+* 
+* @return {Dir}
+*   Directory string.
+*/
+export function toDir(path: string): Dir {
+  if (tDir.is(t.String(path))) {
+    return path;
+  }
+  
+  return tDir(path + '/');
+} // .toDir()
+
+/**
+* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.
+* 
+* **NOTICE** 
+* 
+* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably
+* want to use {@link expandDir}, which expands paths that start with `~` to
+* the current user's home direcotry.
+* 
+* @param {...string} paths
+*   Paths to resolve.
+* 
+* @return {ResDir}
+*   Resolved directory path.
+*/
+export function resolveDir(...paths: Array<string>): ResDir {
+  return tResDir(toDir(StdlibPath.resolve(...paths)));
+}
+
+
+/**
+* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.
+* 
+* @param {...string} paths
+*   Paths to expand.
+* 
+* @return {ResDir}
+*   Expanded directory path.
+*/
+export function expandDir(...paths: Array<string>): ResDir {
+  return tResDir(toDir(expand(...paths)));
 }
