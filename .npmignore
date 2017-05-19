@@ -3,7 +3,6 @@
 
 # omit the docs - they're too big and heavy
 /doc
-/README.md
 
 # omit tests - pull the source if you want to run them
 /test
