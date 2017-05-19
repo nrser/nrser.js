@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/metalogger/Logger.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="https://github.com/nrser/nrser.js" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Deferred.js~Deferred.html">Deferred</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-asArray">asArray</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-eachAsArray">eachAsArray</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mapAsArray">mapAsArray</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findOnly">findOnly</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mapDefined">mapDefined</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-appInstance">appInstance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-env">env</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isDir">isDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isDirSync">isDirSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-match">match</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-assemble">assemble</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-groupByEach">groupByEach</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-insert">insert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mapDefinedValues">mapDefinedValues</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-need">need</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-procure">procure</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-commonBase">commonBase</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-expand">expand</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-expandDir">expandDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-resolveDir">resolveDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-split">split</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toDir">toDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-commonPrefix">commonPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deindent">deindent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findCommonIndent">findCommonIndent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-indent">indent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isWhitespace">isWhitespace</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-leadingWhitespace">leadingWhitespace</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-lines">lines</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-nonWhitespaceLines">nonWhitespaceLines</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pad">pad</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-rsplit">rsplit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-squish">squish</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-tag">tag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEFAULT_ENV">DEFAULT_ENV</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IS_BROWSER">IS_BROWSER</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IS_NODE">IS_NODE</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-isBrowser">isBrowser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-isNode">isNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-fs">fs</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-t">t</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-types">types</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-absolute">absolute</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tAbsDir">tAbsDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tAbsPath">tAbsPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tDir">tDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNormDir">tNormDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNormPath">tNormPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPathSegment">tPathSegment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPathSegments">tPathSegments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tResDir">tResDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tResPath">tResPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tTildeDir">tTildeDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tTildePath">tTildePath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tildify">tildify</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-untildify">untildify</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-I">I</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-JSONTag">JSONTag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-inspect">inspect</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-j">j</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-AbsDir">AbsDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-AbsPath">AbsPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Dir">Dir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NormDir">NormDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NormPath">NormPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PathSegment">PathSegment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PathSegments">PathSegments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ResolvedPath">ResolvedPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-TildeDir">TildeDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-TildePath">TildePath</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">errors</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/KeyError.js~KeyError.html">KeyError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/MatchError.js~MatchError.html">MatchError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/NotFoundError.js~NotFoundError.html">NotFoundError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/NotImplementedError.js~NotImplementedError.html">NotImplementedError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/NrserError.js~NrserError.html">NrserError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/StateError.js~StateError.html">StateError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/ValueError.js~ValueError.html">ValueError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-BaseError">BaseError</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">metalogger</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/Level.js~Level.html">Level</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/LevelSpec.js~LevelSpec.html">LevelSpec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/Logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/snapshot.js~SNAPSHOT_REF.html">SNAPSHOT_REF</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-snapshot">snapshot</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-LEVEL_NAME_PAD_LENGTH">LEVEL_NAME_PAD_LENGTH</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEFAULT_LOGGER">DEFAULT_LOGGER</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">testing</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/testing/Describer.js~Describer.html">Describer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/testing/index.js~Expect.html">Expect</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-itMaps">itMaps</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">types</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-instanceOf">instanceOf</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-nullable">nullable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-subclassOf">subclassOf</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-nonEmptyList">nonEmptyList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-extendProps">extendProps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-struct">struct</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-value">value</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-values">values</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Empty">Empty</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ErrorType">ErrorType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Null">Null</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PromiseType">PromiseType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Undefined">Undefined</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tInteger">tInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNegative">tNegative</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNegativeInteger">tNegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNonNegativeInteger">tNonNegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNonPositiveInteger">tNonPositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPositive">tPositive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPositiveInteger">tPositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tZero">tZero</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tType">tType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-KeyPath">KeyPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Integer">Integer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NegativeInteger">NegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NonNegativeInteger">NonNegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NonPositiveInteger">NonPositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Positive">Positive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PositiveInteger">PositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PositiveInteger">PositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Zero">Zero</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Type">Type</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/metalogger/Logger.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+* new logger for use with babel-plugin-metalog
+* 
+* adapted from nrser.Logger, which was adapted from pince
+* 
+* https://github.com/mad-eye/pince
+* 
+*/
+
+import _ from &apos;//src/nodash&apos;;
+import t from &apos;tcomb&apos;;
+import minimatch from &apos;minimatch&apos;;
+
+import { IS_NODE, IS_BROWSER } from &apos;../env&apos;;
+import print from &apos;../print&apos;;
+import type { NonNegativeInteger } from &apos;../types/number&apos;;
+
+import { Level, LEVEL_NAME_PAD_LENGTH } from &apos;./Level&apos;;
+import type { LevelName } from &apos;./Level&apos;;
+import { LevelSpec } from &apos;./LevelSpec&apos;;
+import type { SpecQuery, SpecProps } from &apos;./LevelSpec&apos;;
+import { snapshot } from &apos;./snapshot&apos;;
+
+// optional requires that may or may not be present
+
+let notifier;
+try {
+  notifier = require(&apos;node-notifier&apos;);
+} catch (e) {}
+
+let chalk;
+try {
+  chalk = require(&apos;chalk&apos;);
+} catch (e) {}
+
+// types
+// =====
+
+type RefsLabel =  &quot;errorRefs&quot; |
+                  &quot;warnRefs&quot; | 
+                  &quot;infoRefs&quot; | 
+                  &quot;debugRefs&quot; | 
+                  &quot;traceRefs&quot;;
+
+// type NotifLabel = 
+
+/**
+* raw message that the METALOG plugin generates as the argument to `METALOG()`
+* (or whatever global function call is configured).
+* 
+* this is basically just what i found in babel-plugin-trace with a few
+* small changes.
+*/
+type MetalogMessage = {
+  label: string, // LevelName,
+  filename: string,
+  filepath: string,
+  content: Array&lt;*&gt;,
+  line: number,
+  parentPath: Array&lt;string&gt;,
+};
+
+/**
+* message we craft in the runtime out of the MetalogMessage with properties
+* we need to actually output.
+*/
+type LogMessage = {
+  // level of the message
+  level: Level,
+  
+  // if we should log refs (as `console.log` and friends normally do) instead
+  // of trying to snapshot the values
+  refs: boolean,
+  
+  // if we should try to generate a system notification in addition to logging
+  // the message
+  notif: boolean,
+  
+  // level formatted for output
+  formattedLevel: string,
+  
+  // datetime of the log call
+  date: Date,
+  
+  // date formatted for output
+  formattedDate: string,
+  
+  // the path to the log site that we output,
+  // which is &lt;filename&gt;:&lt;parentPath&gt;:&lt;line&gt;
+  path: string,
+  
+  // ms since last message logged
+  delta: ?number,
+  
+  // delta formatted for output
+  formattedDelta: string,
+  
+  // the content from the MetalogMessage
+  content: Array&lt;*&gt;,
+}
+
+export class Logger {
+  lastMessageDate: ?Date;
+  specs: Array&lt;LevelSpec&gt;;
+  nodeHeaderFormat: string;
+  browserHeaderFormat: string;
+  dateFormat: string;
+  notifTitle: string;
+  
+  // constants
+  // =========
+  
+  static HEADER_FORMAT_TOKENS = {
+    &apos;%date&apos;:  (message: LogMessage): string =&gt; message.formattedDate,
+    // &apos;%level&apos;: (message: LogMessage) =&gt; COLORS[message.level](data.level),
+    &apos;%level&apos;: (message: LogMessage): string =&gt; message.formattedLevel,
+    &apos;%delta&apos;: (message: LogMessage): string =&gt; message.formattedDelta,
+    &apos;%path&apos;:  (message: LogMessage): string =&gt; message.path,
+  };
+  
+  /**
+  * tokens in date format string are replaced with result of calling
+  * the function with the date.
+  */
+  static DATE_FORMAT_TOKENS = {
+    &apos;YYYY&apos;: (d: Date): string =&gt; _.padStart(d.getFullYear(), 4, &quot;0&quot;),
+    &apos;MM&apos;:   (d: Date): string =&gt; _.padStart(d.getMonth() + 1, 2, &quot;0&quot;),
+    &apos;DD&apos;:   (d: Date): string =&gt; _.padStart(d.getDate(), 2, &quot;0&quot;),
+    &apos;HH&apos;:   (d: Date): string =&gt; _.padStart(d.getHours(), 2, &quot;0&quot;),
+    &apos;mm&apos;:   (d: Date): string =&gt; _.padStart(d.getMinutes(), 2, &quot;0&quot;),
+    &apos;ss&apos;:   (d: Date): string =&gt; _.padStart(d.getSeconds(), 2, &quot;0&quot;),
+    &apos;SSS&apos;:  (d: Date): string =&gt; _.padStart(d.getMilliseconds(), 3, &quot;0&quot;),
+  };
+  
+  static BROWSER_COLORS = {
+    error: &apos;#CC0C39&apos;, //&apos;#d8292f&apos;,
+    warn: &apos;#E6781E&apos;, // &apos;#d39100&apos;,
+    info: &apos;#1693A7&apos;, // &apos;#337ab7&apos;,
+    debug: &apos;#00548b&apos;,
+    trace: &apos;#a3aaae&apos;,
+  };
+  
+  static NODE_COLORS = chalk ? {
+    error: chalk.red,
+    warn: chalk.yellow,
+    info: chalk.blue,
+    debug: chalk.cyan,
+    trace: chalk.gray,
+  } : {
+    error: x =&gt; x,
+    warn: x =&gt; x,
+    info: x =&gt; x,
+    debug: x =&gt; x,
+    trace: x =&gt; x,
+  };
+  
+  // static methods
+  // ==============
+  
+  static format(
+    data: *,
+    formatStr: string,
+    tokens: {[token: string]: Function},
+  ): string {
+    let result: string = formatStr;
+    _.each(tokens, (formatter, token) =&gt; {
+      if (_.includes(formatStr, token)) {
+        result = result.replace(new RegExp(token, &apos;g&apos;), formatter(data));
+      }
+    });
+    return result;
+  }
+  
+  /**
+  * format a date according to a format string, see `.DATE_FORMAT_TOKENS` for
+  * the available tokens.
+  */
+  static formatDate(date: Date, formatStr: string): string {
+    return this.format(date, formatStr, this.DATE_FORMAT_TOKENS);
+  }
+  
+  /**
+  * format a header according to a format string, see `.HEADER_FORMAT_TOKENS`
+  * for the available tokens.
+  */
+  static formatHeader(message: LogMessage, formatStr: string): string {
+    return this.format(message, formatStr, this.HEADER_FORMAT_TOKENS);
+  }
+  
+  /**
+  * the string output of the level.
+  */
+  static formatLevel(level: Level): string {
+    return _.padEnd(
+      level.name.toUpperCase(),
+      LEVEL_NAME_PAD_LENGTH
+    );
+  }
+  
+  /**
+  * formats a delta in ms for output.
+  * 
+  * when:
+  * 
+  * -   delta is undefined (first message), returns &quot;+----ms&quot;
+  * -   the delta is 9999 or less, returns something like &quot;+0888ms&quot;
+  * -   the delta is over 9999, returns &quot;+++++ms&quot;
+  */
+  static formatDelta(delta: ?NonNegativeInteger): string {
+    let digits = &apos;----&apos;;
+    
+    if (typeof delta !== &apos;undefined&apos;) {
+      if (delta &gt; 9999) {
+        digits = &apos;++++&apos;;
+        
+      } else {
+        digits = _.padStart(delta, 4, &apos;0&apos;);
+        
+      }
+    }
+    
+    return `+${ digits }ms`;
+  }
+  
+  /**
+  * formats the path consisting of filename, parentPath and line for output.
+  */
+  static formatPath(rawMessage: MetalogMessage): string {
+    const path = [rawMessage.filename];
+    
+    if (!_.isEmpty(rawMessage.parentPath)) {
+      path.push(
+        _.map(rawMessage.parentPath, (segment: string) =&gt; {
+          if (segment.match(/\[anonymous\@\d+\]/)) {
+            return &quot;?&quot;;
+          }
+          return segment;
+        }).join(&apos;:&apos;)
+      );
+    }
+    
+    path.push(rawMessage.line);
+    
+    return path.join(&apos;:&apos;);
+  }
+  
+  // ========
+  
+  constructor({
+    nodeHeaderFormat = &quot;%date (%delta) %level [%path]&quot;,
+    browserHeaderFormat = &quot;(%delta) %level [%path]&quot;,
+    dateFormat = &quot;YYYY-MM-DD HH:mm:ss.SSS&quot;,
+    notifTitle = &apos;METALOGGER&apos;,
+    levelSpecs,
+  }: {
+    nodeHeaderFormat: string,
+    browserHeaderFormat: string,
+    dateFormat: string,
+    notifTitle: string,
+  } = {}) {
+    this.nodeHeaderFormat = nodeHeaderFormat;
+    this.browserHeaderFormat = browserHeaderFormat;
+    this.dateFormat = dateFormat;
+    this.notifTitle = notifTitle;
+    this.specs = [];
+    
+    if (levelSpecs) {
+      _.each(levelSpecs, (spec) =&gt; this.pushSpec(spec));
+    }
+  } // constructor
+  
+  // instance methods
+  // ================
+  
+  /**
+  * adds a spec to the end of the specs array (least priority).
+  * returns the spec.
+  */
+  pushSpec(spec: LevelSpec | SpecProps): LevelSpec {
+    if (!(spec instanceof LevelSpec)) {
+      spec = new LevelSpec(spec);
+    }
+    
+    this.specs.push(spec);
+    
+    return spec;
+  }
+  
+  /**
+  * adds a spec to the beginning of the specs (highest priority).
+  * returns the spec.
+  */
+  unshiftSpec(spec: LevelSpec | SpecProps): LevelSpec {
+    if (!(spec instanceof LevelSpec)) {
+      spec = new LevelSpec(spec);
+    }
+    
+    this.spec.unshift(spec);
+    
+    return spec;
+  }
+  
+  /**
+  * sends a system notification if the node-notifier package is available.
+  */
+  notify(message: LogMessage) {
+    if (notifier) {      
+      notifier.notify({
+        title: this.notifTitle,
+        message: (
+          message.formattedLevel + &quot;\n&quot; + 
+          _.map(message.content, (obj) =&gt; {
+            if (typeof obj === &apos;string&apos;) {
+              return obj;
+            } else {
+              return print(obj);
+            }
+          }).join(&quot;\n&quot;)
+        ),
+      });
+    }
+  }
+  
+  /**
+  * find the active level spec given spec query properties from a log message, 
+  * which is the first spec for which `LevelSpec#match` returns true.
+  * 
+  * - query: SpecQuery
+  * 
+  * 
+  * returns `undefined` if no spec matches.
+  */
+  specFor(query: SpecQuery): ?LevelSpec {
+    return _.find(this.specs, (spec: LevelSpec) =&gt; spec.match(query));
+  }
+  
+  /**
+  * get the level from the spec for a query, if any match.
+  */
+  levelFor(query: SpecQuery): ?Level {
+    const spec: ?LevelSpec = this.specFor(query);
+    
+    if (spec) {
+      return spec.level;
+    }
+    
+    return; // undefined
+  }
+  
+  /**
+  * determines if a message should be logged given level and spec query info
+  * by finding the applicable level spec and seeing if it&apos;s level is 
+  */
+  shouldLog(level: Level, query : SpecQuery): boolean {
+    const currentLevel: ?Level = this.levelFor(query);
+    
+    if (!currentLevel) {
+      // we don&apos;t have any matching level spec so log everything
+      return true;
+    }
+    
+    return level.rank &lt;= currentLevel.rank;
+  }
+  
+  /**
+  * log a message unless filtered by a level spec.
+  */
+  log(rawMessage: MetalogMessage): boolean {
+    let refs: boolean = false;
+    let notif: boolean = false;
+    let levelName: string = rawMessage.label;
+    
+    // plain &apos;notif&apos; label is logged as &apos;info&apos; level
+    if (levelName === &apos;notif&apos;) {
+      notif = true;
+      levelName = &apos;info&apos;;
+    }
+    
+    if (_.includes(levelName, &apos;Refs&apos;)) {
+      refs = true;
+      levelName = levelName.replace(&apos;Refs&apos;, &apos;&apos;);
+    }
+    
+    if (_.includes(levelName, &apos;Notif&apos;)) {
+      notif = true;
+      levelName = levelName.replace(&apos;Notif&apos;, &apos;&apos;);
+    }
+    
+    const path: string = this.constructor.formatPath(rawMessage);
+    
+    const level: Level = Level.forName(levelName);
+    const query: SpecQuery = {
+      content: rawMessage.content,
+      path,
+    };
+    
+    // bail now if there is a spec filtering out this message
+    if (!this.shouldLog(level, query)) {
+      return false;
+    }
+    
+    const now: Date = new Date();
+    const delta: ?NonNegativeInteger = this.getDelta(now);
+    // set the last message date so `#getDelta` will work
+    // do it here so an error outputting won&apos;t break `#getDelta`
+    this.lastMessageDate = now;
+    
+    // now we know we&apos;re going to output
+    // form the log message
+    const logMessage: LogMessage = {
+      level,
+      refs,
+      notif,
+      formattedLevel: this.constructor.formatLevel(level),
+      date: now,
+      formattedDate: this.constructor.formatDate(now, this.dateFormat),
+      path,
+      delta,
+      formattedDelta: this.constructor.formatDelta(delta),
+      content: rawMessage.content,
+    };
+    
+    // do environment-dependent output
+    if (IS_NODE) {
+      this.logInNode(logMessage);
+    } else if (IS_BROWSER) {
+      this.logInBrowser(logMessage);
+    } else {
+      throw new Error(&quot;don&apos;t seem to be in node or the browser, can&apos;t log&quot;);
+    }
+    
+    // signal that we output the log
+    return true;
+  } // log
+  
+  /**
+  * gets the ms since the last message was logged, or undefined if it&apos;s the
+  * first.
+  */
+  getDelta(now: Date): ?NonNegativeInteger {
+    if (this.lastMessageDate) {
+      return now - this.lastMessageDate;
+    }
+  }
+  
+  /**
+  * get the proper `console.*` function for the log level.
+  */
+  getConsoleFunction(level: Level): Function {
+    if (IS_BROWSER) {
+      return console.log;
+    }
+    
+    let fn: Function;
+    
+    switch (level.name) {
+      case &apos;trace&apos;:
+        return console.debug || console.log;
+        
+      case &apos;debug&apos;:
+        return console.debug || console.log;
+        
+      case &apos;info&apos;: 
+        fn = console.info || console.log;
+        break;
+      
+      case &apos;warn&apos;:
+        fn = console.warn || console.log;
+        break;
+        
+      case &apos;error&apos;:
+        fn = console.error || console.log;
+        break;
+      
+      default:
+        throw new TypeError(`bad level name?! ${ level.name }`);
+    }
+    
+    return fn;
+  }
+  
+  /**
+  * log the message in node, where we don&apos;t need to fuck with
+  * values vs. references like we do on the browser since it get spits out
+  * text at that time. we also have colors there (easily).
+  * 
+  * gonna try out the `print` npm package for display.
+  * 
+  * https://www.npmjs.com/package/print
+  */
+  logInNode(message: LogMessage): void {
+    const header: string = this.constructor.NODE_COLORS[message.level.name](
+      this.constructor.formatHeader(
+        message,
+        this.nodeHeaderFormat
+      )
+    );
+    
+    const dumps: Array&lt;string&gt; = _.map(message.content, (value: *): string =&gt; {
+      if (typeof value === &apos;string&apos;) {
+        return value;
+      } else {
+        return print(value);
+      }
+    });
+    
+    this.getConsoleFunction(message.level).call(console, header, ...dumps);
+    
+    // send a notif if needed
+    if (message.notif) {
+      this.notify(message);
+    }
+  }
+  
+  /**
+  * log the message in the browser, where we want to log the actual
+  * objects so we can explore them in the console, but usually want to log
+  * snapshots of the values as they were at the times they were logged.
+  */
+  logInBrowser(message: LogMessage): void {
+    const header: string = this.constructor.formatHeader(
+      message,
+      this.browserHeaderFormat
+    );
+    
+    this.getConsoleFunction(message.level).call(
+      console,
+      `%c ${ header }`,
+      `color: ${ this.constructor.BROWSER_COLORS[message.level.name] };`,
+      ...(message.refs ? message.content : snapshot(message.content))
+    );
+  }
+  
+} // class Logger
+
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
