@@ -1,4 +1,4 @@
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 import t from 'tcomb';
 import { j } from './string.js';
 

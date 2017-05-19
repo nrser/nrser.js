@@ -1,5 +1,5 @@
 import minimatch from 'minimatch';
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 
 import { Level } from './Level';
 import type { LevelName } from './Level';

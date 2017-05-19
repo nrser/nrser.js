@@ -5,7 +5,7 @@
 // ==========================================================================
 
 import StdlibPath from 'path';
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 import _untildify from 'untildify';
 import _tildify from 'tildify';
 

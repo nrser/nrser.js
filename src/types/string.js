@@ -1,6 +1,6 @@
 import t from 'tcomb';
 import type { $Refinement } from 'tcomb';
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 
 /**
 * string of length one

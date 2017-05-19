@@ -4,7 +4,7 @@
 * extends fs-extra with other things i want / need
 */
 
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 import fsExtra from 'fs-extra';
 import Promise from 'bluebird';
 

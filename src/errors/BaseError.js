@@ -8,7 +8,7 @@
 */
 
 // deps
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 
 // package
 import print from '../print';

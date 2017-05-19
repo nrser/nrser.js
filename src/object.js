@@ -2,7 +2,7 @@
 
 import t from 'tcomb';
 
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 import { j, squish } from '//src/string.js';
 import { KeyError } from '//src/errors';
 import { eachAsArray } from '//src/array';

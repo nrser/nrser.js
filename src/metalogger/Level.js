@@ -1,6 +1,6 @@
 // @flow
 
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 import type { $Refinement } from 'tcomb';
 import * as errors from '../errors';
 

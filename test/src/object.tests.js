@@ -10,7 +10,7 @@ import {
   insert,
 } from '//lib/object.js';
 
-import _ from '//lib/lodash';
+import _ from '//lib/nodash';
 
 import { KeyError } from '//lib/errors/';
 

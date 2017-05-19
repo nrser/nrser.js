@@ -1,6 +1,6 @@
 // @flow
 
-import _ from '//src/lodash';
+import _ from '//src/nodash';
 
 /**
 * If `subject` is an {@link Array}, return it. Otherwise return a new Array
