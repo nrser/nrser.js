@@ -3753,7 +3753,7 @@
     "__docId__": 150,
     "kind": "file",
     "name": "src/path.js",
-    "content": "// @flow\n\n\n// Imports\n// ==========================================================================\n\nimport StdlibPath from 'path';\nimport _ from '//src/lodash';\nimport _untildify from 'untildify';\nimport _tildify from 'tildify';\n\n\n// Types\n// ==========================================================================\n\nimport type { $Refinement, $Reify } from 'tcomb';\n\nimport t from 'tcomb';\n\n\n// Path Types\n// --------------------------------------------------------------------------\n\n// ### Normalized Path\n\n/** @private */\nfunction isNormalized(path: string): boolean {\n  return (\n    (\n      path === '.'\n    ) || (\n      path === '/'\n    ) || (\n      path !== '' && _.every(\n        path.split(StdlibPath.sep),\n        (seg, index, segs) => {\n          return (\n            seg !== '..'\n          ) && (\n            seg !== '.'\n          ) && (\n            index === 0 || index === segs.length - 1  || seg !== ''\n          );\n        }\n      )\n    )\n  );\n}\n\n/**\n* A normalized path is a path that is either:\n* \n* -   Exactly `.`.\n* -   Has no `.`, `..` or empty segments.\n* \n* Intended to represent the return type of [path.normalize][].\n* \n* [path.normalize]: https://nodejs.org/api/path.html#path_path_normalize_path\n* \n* @typedef {string} NormPath\n*/\nexport type NormPath = string & $Refinement<typeof isNormalized>;\n\n/**\n* tcomb type for {@link NormPath}.\n* \n* @type {Type}\n*/\nexport const tNormPath = (({}: any): $Reify<NormPath>);\n\n\n// ### Absolute Path\n\n/**\n* An absolute path, per Node's [path.isAbsolute][],\n* which returns `false` for tilde paths (`~/...`).\n* \n* [path.isAbsolute]: https://nodejs.org/api/path.html#path_path_isabsolute_path\n* \n* @typedef {string} AbsPath\n*/\nexport type AbsPath = string & $Refinement<typeof StdlibPath.isAbsolute>;\n\n/**\n* tcomb type for {@link AbsPath}.\n*\n* @type {Type}\n*/\nexport const tAbsPath = (({}: any): $Reify<AbsPath>);\n\n\n// ### Resolved Path\n\n/**\n* A resolved path is a path that is absolute and normalized, as returned from\n* Node's [path.resolve][].\n* \n* [path.resolve]: https://nodejs.org/api/path.html#path_path_resolve_path\n* \n* @typedef {string} ResolvedPath\n*/\nexport type ResPath = AbsPath & NormPath;\n\n/**\n* tcomb type for {@link ResPath}.\n* \n* @type {Type}\n*/\nexport const tResPath = (({}: any): $Reify<ResPath>);\n\n\n// ### Tilde Path\n\n/** @private */\nfunction isTildePath(path: string): boolean {\n  return path[0] === '~';\n}\n\n/**\n* A tilde path is a string that starts with '~', which we interpret like the\n* shell to mean the current user's home directory.\n* \n* @typedef {string} TildePath\n*/\nexport type TildePath = string & $Refinement<typeof isTildePath>;\n\n/**\n* tcomb type for {@link TildePath}.\n* \n* @type {Type}\n*/\nexport const tTildePath = (({}: any): $Reify<TildePath>);\n\n\n// ### Path Segment\n\n/** @private */\nfunction isPathSegment(str: string): boolean {\n  return str.indexOf(StdlibPath.sep) === -1;\n}\n\n/**\n* A piece of a path... which is a string that doesn't have the path \n* separator character in it.\n* \n* @typedef {string} PathSegment\n*/\nexport type PathSegment = string & $Refinement<typeof isPathSegment>;\n\n/**\n* tcomb type for {@link PathSegment}.\n* \n* @type {Type}\n*/\nexport const tPathSegment = (({}: any): $Reify<PathSegment>);\n\n/**\n* Many pieces of paths.\n* \n* @typedef {Array<string>} PathSegments\n*/\nexport type PathSegments = Array<PathSegment>;\n\n/**\n* tcomb type for {@link PathSegments}.\n* \n* @type {Type}\n*/\nexport const tPathSegments = (({}: any): $Reify<PathSegments>);\n\n\n// Directory Types\n// --------------------------------------------------------------------------\n\n// ### Directory Path\n\n/** @private */\nfunction isDirStr(path: string): boolean {\n  const last = _.last(split(path));\n  \n  return (\n    last === ''\n  ) || (\n    last === '.'\n  ) || (\n    last === '..'\n  );\n} // isDirStr()\n\n/**\n* A path that we know is a directory because it's last segment\n* is empty, `.` or `..`.\n* \n* @typedef {string} Dir\n*/\nexport type Dir = string & $Refinement<typeof isDirStr>;\n\n/**\n* tcomb type for {@link Dir}.\n* \n* @type {Type}\n*/\nexport const tDir = (({}: any): $Reify<Dir>);\n\n\n// ### Normalized Directory Path\n\n/**\n* A normalized directory - a {@link Dir} that is also a {@link NormPath}.\n* \n* @typedef {string} NormDir\n*/\nexport type NormDir = Dir & NormPath;\n\n/**\n* tcomb type for {@link NormDir}.\n* \n* @type {Type}\n*/\nexport const tNormDir = (({}: any): $Reify<NormDir>);\n\n\n// ### Absolute Directory Path\n\n/**\n* An absolute directory - a {@link Dir} that is also a {@link AbsPath}.\n* \n* @typedef {string} AbsDir\n*/\nexport type AbsDir = Dir & AbsPath;\n\n/**\n* tcomb type for {@link AbsDir}.\n* \n* @type {Type}\n*/\nexport const tAbsDir = (({}: any): $Reify<AbsDir>);\n\n\n// ### Resolved Directory Path\n\n/**\n* An resolved directory - a {@link Dir} that is also a {@link ResPath}.\n* \n* @typedef {string} ResDir\n*/\nexport type ResDir = Dir & ResPath;\n\n/**\n* tcomb type for {@link ResDir}.\n* \n* @type {Type}\n*/\nexport const tResDir = (({}: any): $Reify<ResDir>);\n\n\n// ### Tilde (~) Directory Path\n\n/**\n* A directory relative to the user's home via starting with `~` -\n* a {@link Dir} that is also a {@link TildePath}.\n* \n* @typedef {string} TildeDir\n*/\nexport type TildeDir = Dir & TildePath;\n\n/**\n* tcomb type for {@link TildeDir}.\n* \n* @type {Type}\n*/\nexport const tTildeDir = (({}: any): $Reify<TildeDir>);\n\n\n// Exports\n// ==========================================================================\n\n// re-export everything from stdlib path\nexport * from 'path';\n\n// export the tildify and untildify functions\nexport const untildify = _untildify;\nexport const tildify = _tildify;\n\n\n/**\n* Split a path by the system path separator.\n*/\nexport function split(path: string): PathSegments {\n  return path.split(StdlibPath.sep);\n}\n\n\n/**\n* Like {@link Path.resolve} but it expands tilde paths to the user's home\n* directory.\n* \n* @param {...string} paths\n*   Paths to expand. Joins them from last backwards until am absolute path is\n*   formed, otherwise assumes relative to {@link process.cwd}.\n* \n* @return {ResPath}\n*   Resolved (absolute) path.\n*/\nexport function expand(...paths: Array<string>): ResPath {\n  return StdlibPath.resolve(..._.map(paths, p => untildify(p)));\n}\n\n/**\n* @deprecated Old name for {@link expand}.\n*/\nexport const absolute = expand;\n\n\n/**\n* Find the common base path. Expands paths before comparison, and doesn't \n* consider '/' to be common because it is shared between *all* unix-y file\n* paths, making it a bit pointless.\n*/\nexport function commonBase(...paths: Array<string>): ?ResPath {\n  const splits = _.map(paths, (path: string): PathSegments => {\n    return split(expand(path))\n  });\n  \n  const common = _.reduce(\n    splits,\n    (common: PathSegments, segments: PathSegments): PathSegments => {\n      // short ciruit if we already know we can't match anything more\n      if (common.length === 0) {\n        return common;\n      }\n      \n      let i = 0;\n      const max = Math.max(common.length, segments.length);\n      \n      while (common[i] === segments[i] && i < max) { i++; }\n      \n      // short-circuit copy if it matched the whole thing\n      if (i === common.length) {\n        return common;\n      }\n      \n      return common.slice(0, i);\n    }\n  );\n  \n  if (common.length > 1) {\n    return StdlibPath.join('/', ...common);\n  }\n} // commonBase()\n\n\n/**\n* Make a path string into a {@link Dir} by appending `/` to it if needed.\n* \n* @param {string} path\n*   Path to convert.\n* \n* @return {Dir}\n*   Directory string.\n*/\nexport function toDir(path: string): Dir {\n  if (tDir.is(t.String(path))) {\n    return path;\n  }\n  \n  return tDir(path + '/');\n} // .toDir()\n\n/**\n* Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   \n*/\nexport function resolveDir(...paths: Array<string>): ResDir {\n  return tResDir(toDir(StdlibPath.resolve(...paths)));\n}\n",
+    "content": "// @flow\n\n\n// Imports\n// ==========================================================================\n\nimport StdlibPath from 'path';\nimport _ from '//src/lodash';\nimport _untildify from 'untildify';\nimport _tildify from 'tildify';\n\n\n// Types\n// ==========================================================================\n\nimport type { $Refinement, $Reify } from 'tcomb';\n\nimport t from 'tcomb';\n\n\n// Path Types\n// --------------------------------------------------------------------------\n\n// ### Normalized Path\n\n/** @private */\nfunction isNormalized(path: string): boolean {\n  return (\n    (\n      path === '.'\n    ) || (\n      path === '/'\n    ) || (\n      path !== '' && _.every(\n        path.split(StdlibPath.sep),\n        (seg, index, segs) => {\n          return (\n            seg !== '..'\n          ) && (\n            seg !== '.'\n          ) && (\n            index === 0 || index === segs.length - 1  || seg !== ''\n          );\n        }\n      )\n    )\n  );\n}\n\n/**\n* A normalized path is a path that is either:\n* \n* -   Exactly `.`.\n* -   Has no `.`, `..` or empty segments.\n* \n* Intended to represent the return type of [path.normalize][].\n* \n* [path.normalize]: https://nodejs.org/api/path.html#path_path_normalize_path\n* \n* @typedef {string} NormPath\n*/\nexport type NormPath = string & $Refinement<typeof isNormalized>;\n\n/**\n* tcomb type for {@link NormPath}.\n* \n* @type {Type}\n*/\nexport const tNormPath = (({}: any): $Reify<NormPath>);\n\n\n// ### Absolute Path\n\n/**\n* An absolute path, per Node's [path.isAbsolute][],\n* which returns `false` for tilde paths (`~/...`).\n* \n* [path.isAbsolute]: https://nodejs.org/api/path.html#path_path_isabsolute_path\n* \n* @typedef {string} AbsPath\n*/\nexport type AbsPath = string & $Refinement<typeof StdlibPath.isAbsolute>;\n\n/**\n* tcomb type for {@link AbsPath}.\n*\n* @type {Type}\n*/\nexport const tAbsPath = (({}: any): $Reify<AbsPath>);\n\n\n// ### Resolved Path\n\n/**\n* A resolved path is a path that is absolute and normalized, as returned from\n* Node's [path.resolve][].\n* \n* [path.resolve]: https://nodejs.org/api/path.html#path_path_resolve_path\n* \n* @typedef {string} ResolvedPath\n*/\nexport type ResPath = AbsPath & NormPath;\n\n/**\n* tcomb type for {@link ResPath}.\n* \n* @type {Type}\n*/\nexport const tResPath = (({}: any): $Reify<ResPath>);\n\n\n// ### Tilde Path\n\n/** @private */\nfunction isTildePath(path: string): boolean {\n  return path[0] === '~';\n}\n\n/**\n* A tilde path is a string that starts with '~', which we interpret like the\n* shell to mean the current user's home directory.\n* \n* @typedef {string} TildePath\n*/\nexport type TildePath = string & $Refinement<typeof isTildePath>;\n\n/**\n* tcomb type for {@link TildePath}.\n* \n* @type {Type}\n*/\nexport const tTildePath = (({}: any): $Reify<TildePath>);\n\n\n// ### Path Segment\n\n/** @private */\nfunction isPathSegment(str: string): boolean {\n  return str.indexOf(StdlibPath.sep) === -1;\n}\n\n/**\n* A piece of a path... which is a string that doesn't have the path \n* separator character in it.\n* \n* @typedef {string} PathSegment\n*/\nexport type PathSegment = string & $Refinement<typeof isPathSegment>;\n\n/**\n* tcomb type for {@link PathSegment}.\n* \n* @type {Type}\n*/\nexport const tPathSegment = (({}: any): $Reify<PathSegment>);\n\n/**\n* Many pieces of paths.\n* \n* @typedef {Array<string>} PathSegments\n*/\nexport type PathSegments = Array<PathSegment>;\n\n/**\n* tcomb type for {@link PathSegments}.\n* \n* @type {Type}\n*/\nexport const tPathSegments = (({}: any): $Reify<PathSegments>);\n\n\n// Directory Types\n// --------------------------------------------------------------------------\n\n// ### Directory Path\n\n/** @private */\nfunction isDirStr(path: string): boolean {\n  const last = _.last(split(path));\n  \n  return (\n    last === ''\n  ) || (\n    last === '.'\n  ) || (\n    last === '..'\n  );\n} // isDirStr()\n\n/**\n* A path that we know is a directory because it's last segment\n* is empty, `.` or `..`.\n* \n* @typedef {string} Dir\n*/\nexport type Dir = string & $Refinement<typeof isDirStr>;\n\n/**\n* tcomb type for {@link Dir}.\n* \n* @type {Type}\n*/\nexport const tDir = (({}: any): $Reify<Dir>);\n\n\n// ### Normalized Directory Path\n\n/**\n* A normalized directory - a {@link Dir} that is also a {@link NormPath}.\n* \n* @typedef {string} NormDir\n*/\nexport type NormDir = Dir & NormPath;\n\n/**\n* tcomb type for {@link NormDir}.\n* \n* @type {Type}\n*/\nexport const tNormDir = (({}: any): $Reify<NormDir>);\n\n\n// ### Absolute Directory Path\n\n/**\n* An absolute directory - a {@link Dir} that is also a {@link AbsPath}.\n* \n* @typedef {string} AbsDir\n*/\nexport type AbsDir = Dir & AbsPath;\n\n/**\n* tcomb type for {@link AbsDir}.\n* \n* @type {Type}\n*/\nexport const tAbsDir = (({}: any): $Reify<AbsDir>);\n\n\n// ### Resolved Directory Path\n\n/**\n* An resolved directory - a {@link Dir} that is also a {@link ResPath}.\n* \n* @typedef {string} ResDir\n*/\nexport type ResDir = Dir & ResPath;\n\n/**\n* tcomb type for {@link ResDir}.\n* \n* @type {Type}\n*/\nexport const tResDir = (({}: any): $Reify<ResDir>);\n\n\n// ### Tilde (~) Directory Path\n\n/**\n* A directory relative to the user's home via starting with `~` -\n* a {@link Dir} that is also a {@link TildePath}.\n* \n* @typedef {string} TildeDir\n*/\nexport type TildeDir = Dir & TildePath;\n\n/**\n* tcomb type for {@link TildeDir}.\n* \n* @type {Type}\n*/\nexport const tTildeDir = (({}: any): $Reify<TildeDir>);\n\n\n// Exports\n// ==========================================================================\n\n// re-export everything from stdlib path\nexport * from 'path';\n\n// export the tildify and untildify functions\nexport const untildify = _untildify;\nexport const tildify = _tildify;\n\n\n/**\n* Split a path by the system path separator.\n*/\nexport function split(path: string): PathSegments {\n  return path.split(StdlibPath.sep);\n}\n\n\n/**\n* Like {@link Path.resolve} but it expands tilde paths to the user's home\n* directory.\n* \n* @param {...string} paths\n*   Paths to expand. Joins them from last backwards until am absolute path is\n*   formed, otherwise assumes relative to {@link process.cwd}.\n* \n* @return {ResPath}\n*   Resolved (absolute) path.\n*/\nexport function expand(...paths: Array<string>): ResPath {\n  return StdlibPath.resolve(..._.map(paths, p => untildify(p)));\n}\n\n/**\n* @deprecated Old name for {@link expand}.\n*/\nexport const absolute = expand;\n\n\n/**\n* Find the common base path. Expands paths before comparison, and doesn't \n* consider '/' to be common because it is shared between *all* unix-y file\n* paths, making it a bit pointless.\n*/\nexport function commonBase(...paths: Array<string>): ?ResPath {\n  const splits = _.map(paths, (path: string): PathSegments => {\n    return split(expand(path))\n  });\n  \n  const common = _.reduce(\n    splits,\n    (common: PathSegments, segments: PathSegments): PathSegments => {\n      // short ciruit if we already know we can't match anything more\n      if (common.length === 0) {\n        return common;\n      }\n      \n      let i = 0;\n      const max = Math.max(common.length, segments.length);\n      \n      while (common[i] === segments[i] && i < max) { i++; }\n      \n      // short-circuit copy if it matched the whole thing\n      if (i === common.length) {\n        return common;\n      }\n      \n      return common.slice(0, i);\n    }\n  );\n  \n  if (common.length > 1) {\n    return StdlibPath.join('/', ...common);\n  }\n} // commonBase()\n\n\n/**\n* Make a path string into a {@link Dir} by appending `/` to it if needed.\n* \n* @param {string} path\n*   Path to convert.\n* \n* @return {Dir}\n*   Directory string.\n*/\nexport function toDir(path: string): Dir {\n  if (tDir.is(t.String(path))) {\n    return path;\n  }\n  \n  return tDir(path + '/');\n} // .toDir()\n\n/**\n* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* **NOTICE** \n* \n* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably\n* want to use {@link expandDir}, which expands paths that start with `~` to\n* the current user's home direcotry.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   Resolved directory path.\n*/\nexport function resolveDir(...paths: Array<string>): ResDir {\n  return tResDir(toDir(StdlibPath.resolve(...paths)));\n}\n\n\n/**\n* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* @param {...string} paths\n*   Paths to expand.\n* \n* @return {ResDir}\n*   Expanded directory path.\n*/\nexport function expandDir(...paths: Array<string>): ResDir {\n  return tResDir(toDir(expand(...paths)));\n}\n",
     "static": true,
     "longname": "src/path.js",
     "access": null,
@@ -4532,8 +4532,8 @@
     "export": true,
     "importPath": "nrser/src/path.js",
     "importStyle": "{resolveDir}",
-    "description": "Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.",
-    "lineNumber": 379,
+    "description": "Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n\n**NOTICE** \n\nUnless you explicitly *don't* want tilde (`~/...`) expansion you probably\nwant to use {@link expandDir}, which expands paths that start with `~` to\nthe current user's home direcotry.",
+    "lineNumber": 385,
     "params": [
       {
         "nullable": null,
@@ -4552,11 +4552,47 @@
         "ResDir"
       ],
       "spread": false,
-      "description": ""
+      "description": "Resolved directory path."
     }
   },
   {
     "__docId__": 185,
+    "kind": "function",
+    "name": "expandDir",
+    "memberof": "src/path.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/path.js~expandDir",
+    "access": null,
+    "export": true,
+    "importPath": "nrser/src/path.js",
+    "importStyle": "{expandDir}",
+    "description": "Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.",
+    "lineNumber": 399,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "...string"
+        ],
+        "spread": true,
+        "optional": false,
+        "name": "paths",
+        "description": "Paths to expand."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ResDir"
+      ],
+      "spread": false,
+      "description": "Expanded directory path."
+    }
+  },
+  {
+    "__docId__": 186,
     "kind": "file",
     "name": "src/print.js",
     "content": "\"use strict\";\n\n/**\n* print npm package v1.0.1\n* https://raw.githubusercontent.com/Alhadis/Print/v1.0.1/print.js\n* \n* coppied here 'cause meteor is on fuckin' node v4.5.0 and print wants node\n* >=6.0.0 so we'll pass the source through babel.\n*/\n\n/**\n * Generate a human-readable representation of a value.\n *\n * @param {Mixed}   input\n * @param {Object}  options          - Optional parameters\n * @param {Boolean} ampedSymbols     - Prefix Symbol-keyed properties with @@\n * @param {Mixed}   escapeChars      - Which characters are escaped in string values\n * @param {Number}  maxArrayLength   - Maximum number of array values to show before truncating\n * @param {Boolean} showArrayIndices - Show the index of each element in an array\n * @param {Boolean} showArrayLength  - Display an array's \"length\" property after its values\n * @param {Boolean} sortProps        - Alphabetise the enumerable properties of printed objects\n * @param {Array<*>|*} omit \t\t\t\t\t - objects to omit from printing.\n * @return {String}\n */\nfunction print(input, options = {}, /*…Internal:*/ name = \"\", refs = null){\n\t\n\t/** Handle options/defaults */\n\tlet {\n\t\tampedSymbols,\n\t\tescapeChars,\n\t\tmaxArrayLength,\n\t\tshowArrayIndices,\n\t\tshowArrayLength,\n\t\tsortProps,\n\t\tomit\n\t} = options;\n\t\n\tampedSymbols   = undefined === ampedSymbols   ? true : ampedSymbols;\n\tescapeChars    = undefined === escapeChars    ? /(?!\\x20)\\s|\\\\/g : escapeChars;\n\tsortProps      = undefined === sortProps      ? true  : sortProps;\n\tmaxArrayLength = undefined === maxArrayLength ? 100   : (!+maxArrayLength ? false : maxArrayLength);\n\t\n\tif(omit !== undefined && !(omit instanceof Set)) {\n\t\tif (!Array.isArray(omit)) {\n\t\t\tomit = [omit];\n\t\t}\n\t\tomit = new Set(omit);\n\t\t\n\t\toptions = {...options, omit};\n\t}\n\n\tif(escapeChars && \"function\" !== typeof escapeChars)\n\t\tescapeChars = (function(pattern){\n\t\t\treturn function(input){\n\t\t\t\treturn input.replace(pattern, function(char){\n\t\t\t\t\tswitch(char){\n\t\t\t\t\t\tcase \"\\f\": return \"\\\\f\";\n\t\t\t\t\t\tcase \"\\n\": return \"\\\\n\";\n\t\t\t\t\t\tcase \"\\r\": return \"\\\\r\";\n\t\t\t\t\t\tcase \"\\t\": return \"\\\\t\";\n\t\t\t\t\t\tcase \"\\v\": return \"\\\\v\";\n\t\t\t\t\t\tcase \"\\\\\": return \"\\\\\\\\\";\n\t\t\t\t\t}\n\t\t\t\t\tconst cp  = char.codePointAt(0);\n\t\t\t\t\tconst hex = cp.toString(16).toUpperCase();\n\t\t\t\t\tif(cp < 0xFF) return \"\\\\x\" + hex;\n\t\t\t\t\treturn \"\\\\u{\" + hex + \"}\";\n\t\t\t\t});\n\t\t\t}\n\t\t}(escapeChars));\n\t\n\t\n\t/** Only thing that can't be checked with obvious methods */\n\tif(Number.isNaN(input)) return \"NaN\";\n\t\n\t/** Exact match */\n\tswitch(input){\n\t\t\n\t\t/** Primitives */\n\t\tcase null:      return \"null\";\n\t\tcase undefined: return \"undefined\";\n\t\tcase true:      return \"true\";\n\t\tcase false:     return \"false\";\n\t\t\n\t\t/** \"Special\" values */\n\t\tcase Math.E:                   return \"Math.E\";\n\t\tcase Math.LN10:                return \"Math.LN10\";\n\t\tcase Math.LN2:                 return \"Math.LN2\";\n\t\tcase Math.LOG10E:              return \"Math.LOG10E\";\n\t\tcase Math.LOG2E:               return \"Math.LOG2E\";\n\t\tcase Math.PI:                  return \"Math.PI\";\n\t\tcase Math.SQRT1_2:             return \"Math.SQRT1_2\";\n\t\tcase Math.SQRT2:               return \"Math.SQRT2\";\n\t\t\n\t\tcase Number.EPSILON:           return \"Number.EPSILON\";\n\t\tcase Number.MIN_VALUE:         return \"Number.MIN_VALUE\";\n\t\tcase Number.MAX_VALUE:         return \"Number.MAX_VALUE\";\n\t\tcase Number.MIN_SAFE_INTEGER:  return \"Number.MIN_SAFE_INTEGER\";\n\t\tcase Number.MAX_SAFE_INTEGER:  return \"Number.MAX_SAFE_INTEGER\";\n\t\tcase Number.NEGATIVE_INFINITY: return \"Number.NEGATIVE_INFINITY\";\n\t\tcase Number.POSITIVE_INFINITY: return \"Number.POSITIVE_INFINITY\";\n\t}\n\t\n\t/** Basic data types */\n\tconst type = Object.prototype.toString.call(input);\n\tswitch(type){\n\t\tcase \"[object Symbol]\":\n\t\tcase \"[object Number]\":  return input.toString();\n\t\tcase \"[object RegExp]\":  return `/${input.source}/${input.flags}`;\n\t\tcase \"[object String]\":{\n\t\t\tif(escapeChars)\n\t\t\t\tinput = escapeChars(input);\n\t\t\t\n\t\t\treturn `\"${input}\"`;\n\t\t}\n\t\tcase \"[object Date]\": {\n\t\t\treturn `Date(\"${ input }\")`;\n\t\t}\n\t}\n\t\n\t/** omit references in omit option */\n\tif(omit !== undefined && omit.has(input)) {\n\t\treturn \"-> {omitted}\";\n\t}\n\t\n\t/** Guard against circular references */\n\trefs = refs || new Map();\n\tif(refs.has(input))\n\t\treturn \"-> \" + (refs.get(input) || \"{input}\");\n\trefs.set(input, name);\n\t\n\t\n\t/** Begin compiling some serious output */\n\tlet output = \"\";\n\tlet typeName = \"\";\n\t\n\tlet arrayLike;\n\tlet isFunc;\n\tlet ignoreNumbers;\n\tlet padBeforeProps;\n\t\n\t\n\t/** Maps */\n\tif(\"[object Map]\" === type){\n\t\ttypeName = \"Map\";\n\t\t\n\t\tif(input.size){\n\t\t\tpadBeforeProps = true;\n\t\t\t\n\t\t\tlet index = 0;\n\t\t\tfor(let entry of input.entries()){\n\t\t\t\tconst namePrefix  = (name ? name : \"Map\") + \".entries\";\n\t\t\t\tconst keyString   = `${index}.` + \"key\";\n\t\t\t\tconst valueString = `${index}.` + \"value\";\n\t\t\t\t\n\t\t\t\tlet [key, value] = entry;\n\t\t\t\tkey   = print(key,   options, `${namePrefix}[${keyString}]`,   refs);\n\t\t\t\tvalue = print(value, options, `${namePrefix}[${valueString}]`, refs);\n\t\t\t\t\n\t\t\t\t/** Key */\n\t\t\t\tlet delim = /^->\\s/.test(key) ? \" \" : \" => \";\n\t\t\t\tlet str = keyString + delim + key;\n\t\t\t\t\n\t\t\t\t/** Value */\n\t\t\t\tdelim   = /^->\\s/.test(value) ? \" \" : \" => \";\n\t\t\t\tstr    += \"\\n\" + valueString + delim + value;\n\t\t\t\t\n\t\t\t\toutput += str + \"\\n\\n\";\n\t\t\t\t++index;\n\t\t\t}\n\t\t\t\n\t\t\toutput = \"\\n\" + output.replace(/(?:\\n\\s*\\n)+$/m, \"\");\n\t\t}\n\t}\n\t\n\t\n\t/** Sets */\n\telse if(\"[object Set]\" === type){\n\t\ttypeName = \"Set\";\n\t\t\n\t\tif(input.size){\n\t\t\tpadBeforeProps = true;\n\t\t\t\n\t\t\tlet index  = 0;\n\t\t\tfor(let value of input.values()){\n\t\t\t\tconst valueName = (name ? name : \"{input}\") + \".entries[\" + index + \"]\";\n\t\t\t\tvalue = print(value, options, valueName, refs);\n\t\t\t\t\n\t\t\t\tconst delim = /^->\\s/.test(value) ? \" \" : \" => \";\n\t\t\t\toutput += index + delim + value + \"\\n\";\n\t\t\t\t++index;\n\t\t\t}\n\t\t\t\n\t\t\toutput = \"\\n\" + output.replace(/(?:\\n\\t*\\n?)+$/, \"\");\n\t\t}\n\t}\n\t\n\t\n\t/** Objects, Arrays, and Functions */\n\telse{\n\t\tarrayLike     = \"function\" === typeof input[Symbol.iterator];\n\t\tisFunc        = \"function\" === typeof input;\n\t\tignoreNumbers = !showArrayIndices && arrayLike;\n\t}\n\t\n\t\n\t/** Obtain a list of every (non-symbolic) property to show */\n\tlet keys = Object.keys(input);\n\t\n\t/** Functions: Include name and arity */\n\tif(isFunc){\n\t\tif(-1 === keys.indexOf(\"name\"))    keys.push(\"name\");\n\t\tif(-1 === keys.indexOf(\"length\"))  keys.push(\"length\");\n\t}\n\t\n\t/** Errors: Include name and message */\n\telse if(input instanceof Error){\n\t\tif(-1 === keys.indexOf(\"name\"))    keys.push(\"name\");\n\t\tif(-1 === keys.indexOf(\"message\")) keys.push(\"message\");\n\t}\n\t\n\t/** Arrays: Add length if requested */\n\telse if(arrayLike && showArrayLength && -1 === keys.indexOf(\"length\"))\n\t\tkeys.push(\"length\");\n\t\n\n\t/** Clip lengthy arrays to a sensible limit */\n\tlet truncationNote = null;\n\tif(maxArrayLength !== false && arrayLike && input.length > maxArrayLength){\n\t\tkeys = keys.filter(k => +k != k || +k < maxArrayLength);\n\t\ttruncationNote = `\\n\\n… ${input.length - maxArrayLength} more values not shown\\n`;\n\t}\n\t\n\t\n\t/** Alphabetise each property name */\n\tif(sortProps) keys = keys.sort((a, b) => {\n\t\tlet A, B;\n\t\t\n\t\t/** Numbers: Compare algebraically */\n\t\tif((\"0\" == a || +a == a) && (\"0\" == b || +b == b)){\n\t\t\tA = +a;\n\t\t\tB = +b;\n\t\t}\n\t\t\n\t\t/** Anything else: Convert to lowercase */\n\t\telse{\n\t\t\tA = a.toLowerCase();\n\t\t\tB = b.toLowerCase();\n\t\t}\n\t\t\n\t\tif(A < B) return -1;\n\t\tif(A > B) return 1;\n\t\treturn 0;\n\t});\n\t\n\t\n\t/** Insert a blank line if existing lines have been printed for this object */\n\tif(padBeforeProps && keys.length)\n\t\toutput += \"\\n\";\n\t\n\t\n\t/** Regular properties */\n\tfor(let i = 0, l = keys.length; i < l; ++i){\n\t\tlet key      = keys[i];\n\t\t\n\t\t/** Array's been truncated, and this is the first non-numeric key */\n\t\tif(null !== truncationNote && +key != key){\n\t\t\toutput  += truncationNote;\n\t\t\ttruncationNote = null;\n\t\t}\n\t\t\n\t\tlet accessor = /\\W|^\\d+$/.test(key) ? `[${key}]` : (name ? \".\"+key : key);\n\t\tlet value    = print(input[key], options, name + accessor, refs);\n\t\toutput      += \"\\n\";\n\t\t\n\t\t/** Arrays: Check if each value's index should be omitted */\n\t\tif(ignoreNumbers && /^\\d+$/.test(key))\n\t\t\toutput += value;\n\t\t\n\t\t/** Name: Value */\n\t\telse output += `${key}: ${value}`;\n\t}\n\t\n\t/** If we still have a truncation notice, it means there were only numerics to list */\n\tif(null !== truncationNote)\n\t\toutput += truncationNote.replace(/\\n+$/, \"\");\n\t\n\t\n\t/** Properties keyed by Symbols */\n\tlet symbols = Object.getOwnPropertySymbols(input);\n\tif(sortProps) symbols = symbols.sort((a, b) => {\n\t\tconst A = a.toString().toLowerCase();\n\t\tconst B = b.toString().toLowerCase();\n\t\tif(A < B) return -1;\n\t\tif(A > B) return 1;\n\t\treturn 0;\n\t});\n\t\n\tfor(let i = 0, l = symbols.length; i < l; ++i){\n\t\tconst symbol = symbols[i];\n\t\tlet accessor = symbol.toString();\n\t\tlet valName  = \"[\" + accessor + \"]\";\n\t\t\n\t\t/** Use a @@-prefixed form to represent Symbols in property lists */\n\t\tif(ampedSymbols){\n\t\t\taccessor = \"@@\" + accessor.replace(/^Symbol\\(|\\)$/g, \"\");\n\t\t\tvalName  = (name ? \".\" : \"\") + accessor;\n\t\t}\n\t\t\n\t\tconst value = print(input[symbol], options, name + valName, refs);\n\t\toutput += `\\n${accessor}: ${value}`;\n\t}\n\t\n\t\n\t/** Tweak output based on the value's type */\n\tif(\"[object Arguments]\" === type)\n\t\ttypeName = \"Arguments\";\n\t\n\telse{\n\t\tconst ctr = input.constructor ? input.constructor.name : \"\";\n\t\tswitch(ctr){\n\t\t\t\n\t\t\tcase \"GeneratorFunction\":\n\t\t\t\ttypeName = \"function*()\";\n\t\t\t\tbreak;\n\t\t\t\n\t\t\tcase \"Function\":\n\t\t\t\ttypeName = \"function()\";\n\t\t\t\tbreak;\n\t\t\t\n\t\t\tcase \"Array\":\n\t\t\tcase \"Object\":\n\t\t\t\ttypeName = \"\";\n\t\t\t\tbreak;\n\t\t\t\n\t\t\tdefault:\n\t\t\t\ttypeName = ctr;\n\t\t\t\tbreak;\n\t\t}\n\t}\n\t\n\toutput = output ? output.replace(/\\n/g, \"\\n\\t\") + \"\\n\" : \"\";\n\treturn typeName + (arrayLike\n\t\t? \"[\" + output + \"]\"\n\t\t: \"{\" + output + \"}\");\n}\n\nmodule.exports = print;\n\n\n/** Wrapper for console.log(print(…)) */\nmodule.exports.out = function(...args){\n\tconst output = print(...args);\n\tconsole.log(output);\n\treturn output;\n};",
@@ -4567,7 +4603,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 186,
+    "__docId__": 187,
     "kind": "function",
     "name": "print",
     "memberof": "src/print.js",
@@ -4684,7 +4720,7 @@
     }
   },
   {
-    "__docId__": 187,
+    "__docId__": 188,
     "kind": "function",
     "name": "out",
     "memberof": "src/print.js",
@@ -4714,7 +4750,7 @@
     }
   },
   {
-    "__docId__": 188,
+    "__docId__": 189,
     "kind": "file",
     "name": "src/string.js",
     "content": "// @flow\n\nimport _ from '//src/lodash';\nimport print from './print';\n\n/**\n* make a tag function for string template literals that applies a function to\n* each interpolation value when called as a string template\n* \n* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals\n* \n* @param {function(value: <TemplateValue>): string} func\n*   function to apply to each interpolation\n*   value when the function `tag` returns is used as a string template tag.\n*   \n*   it should accept any types that will be provided in the string templates\n*   and return a string.\n* \n* @return {function(strings: string[], ...values:Array<TemplateValue>): string}\n*   function that can be uses as a string template tag.\n*/\nexport function tag(func: (value: *) => string) {\n  return (strings: Array<string>, ...values: Array<*>) => {\n    if (_.isArray(strings)) {\n      let result = strings[0];\n      for (let i = 0; i < values.length; i++) {\n        result += func(values[i]) + strings[i + 1];\n      }\n      return result;\n    } else {\n      return func(strings);\n    }\n  }\n}\n\n/**\n* Replace consecutive whitespace with a single space and removes leading\n* and trailing whitespace. Can be used as a template literal.\n* \n* @param {string|Array<string>} strings\n*  String to squish.\n* \n* @param {...string} values\n*   Values to interpolate.\n* \n* @return {string}\n*   Squished output.\n*/\nexport function squish(\n  strings: Array<string> | string,\n  ...values: Array<string>\n) {\n  let input: string;\n  \n  if (Array.isArray(strings)) {\n    input = strings[0];\n    for (let i = 0; i < values.length; i++) {\n      input += values[i] + strings[i + 1];\n    }\n  } else {\n    input = strings;\n  }\n  \n  return input\n    .replace(/\\s+/g, \" \")\n    .replace(/^\\s+/, '')\n    .replace(/\\s+$/, '');\n}\n\n/**\n* string template tag to JSON encode values\n*/\nexport const JSONTag = tag(JSON.stringify);\n\n/**\n* alias for {@link JSONTag}\n*/\nexport const j = JSONTag;\n\n// TODO doesn't work right with regex sep\nexport function rsplit(\n  str: string,\n  sep: string,\n  maxsplit: number\n): Array<string> {\n  const split = str.split(sep);\n  if (maxsplit) {\n    return [split.slice(0, -maxsplit).join(sep)].concat(split.slice(-maxsplit))\n  } else {\n    return split\n  }\n} // rsplit()\n\nexport const inspect = tag(print);\n\nexport const I = inspect;\n\nexport function indent(\n  str: string,\n  {\n    amount = 2,\n    indent,\n  }: {\n    amount?: number,\n    indent?: string,\n  } = {}\n) {\n  indent = indent || ' '.repeat(amount);\n  indent + str.split(\"\\n\").join(`\\n${ indent }`);\n} // indent()\n\n/**\n* split a string into lines.\n*/\nexport function lines(input: string): Array<string> {\n  var re=/\\r\\n|\\n\\r|\\n|\\r/g;\n\n  return input.replace(re,\"\\n\").split(\"\\n\");\n}\n\n/**\n* gets the common prefix for an array of strings, which will be '' if they\n* don't have any.\n*/\nexport function commonPrefix(strings: Array<string>): string {\n  var A= strings.concat().sort(), \n  a1= A[0], a2= A[A.length-1], L= a1.length, i= 0;\n  while(i<L && a1.charAt(i)=== a2.charAt(i)) i++;\n  return a1.substring(0, i);\n}\n\nexport function isWhitespace(input: string): boolean {\n  return !!input.match(/^\\s+$/m);\n}\n\nexport function nonWhitespaceLines(input: string): Array<string> {\n  return _.reject(lines(input), line => line.match(/^\\s*$/));\n}\n\nexport function leadingWhitespace(input: string): string {\n  const match = input.match(/^\\s+/);\n  if (match) {\n    return match[0];\n  }\n  \n  return '';\n}\n\nexport function findCommonIndent(input: string): string {\n  return commonPrefix(\n    _.map(nonWhitespaceLines(input), line => leadingWhitespace(line))\n  );\n}\n\nexport function deindent(input: string): string {\n  const indent = findCommonIndent(input);\n  \n  const regexp = new RegExp(`^${ indent }`, 'g');\n  \n  return _.map(lines(input), line => {\n    return line.replace(regexp, '');\n  }).join(\"\\n\");\n}\n\nexport function pad(\n  number: number,\n  padLength: number,\n  padWith: string = '0',\n) {\n  let padded = number.toString();\n  while (padded.length < padLength) {\n    padded = padWith + padded;\n  }\n  return padded;\n} // pad()",
@@ -4725,7 +4761,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 189,
+    "__docId__": 190,
     "kind": "function",
     "name": "tag",
     "memberof": "src/string.js",
@@ -4761,7 +4797,7 @@
     }
   },
   {
-    "__docId__": 190,
+    "__docId__": 191,
     "kind": "function",
     "name": "squish",
     "memberof": "src/string.js",
@@ -4808,7 +4844,7 @@
     }
   },
   {
-    "__docId__": 191,
+    "__docId__": 192,
     "kind": "variable",
     "name": "JSONTag",
     "memberof": "src/string.js",
@@ -4827,7 +4863,7 @@
     }
   },
   {
-    "__docId__": 192,
+    "__docId__": 193,
     "kind": "variable",
     "name": "j",
     "memberof": "src/string.js",
@@ -4846,7 +4882,7 @@
     }
   },
   {
-    "__docId__": 193,
+    "__docId__": 194,
     "kind": "function",
     "name": "rsplit",
     "memberof": "src/string.js",
@@ -4894,7 +4930,7 @@
     }
   },
   {
-    "__docId__": 194,
+    "__docId__": 195,
     "kind": "variable",
     "name": "inspect",
     "memberof": "src/string.js",
@@ -4920,7 +4956,7 @@
     }
   },
   {
-    "__docId__": 195,
+    "__docId__": 196,
     "kind": "variable",
     "name": "I",
     "memberof": "src/string.js",
@@ -4946,7 +4982,7 @@
     }
   },
   {
-    "__docId__": 196,
+    "__docId__": 197,
     "kind": "function",
     "name": "indent",
     "memberof": "src/string.js",
@@ -4986,7 +5022,7 @@
     ]
   },
   {
-    "__docId__": 197,
+    "__docId__": 198,
     "kind": "function",
     "name": "lines",
     "memberof": "src/string.js",
@@ -5015,7 +5051,7 @@
     }
   },
   {
-    "__docId__": 198,
+    "__docId__": 199,
     "kind": "function",
     "name": "commonPrefix",
     "memberof": "src/string.js",
@@ -5044,7 +5080,7 @@
     }
   },
   {
-    "__docId__": 199,
+    "__docId__": 200,
     "kind": "function",
     "name": "isWhitespace",
     "memberof": "src/string.js",
@@ -5080,7 +5116,7 @@
     }
   },
   {
-    "__docId__": 200,
+    "__docId__": 201,
     "kind": "function",
     "name": "nonWhitespaceLines",
     "memberof": "src/string.js",
@@ -5116,7 +5152,7 @@
     }
   },
   {
-    "__docId__": 201,
+    "__docId__": 202,
     "kind": "function",
     "name": "leadingWhitespace",
     "memberof": "src/string.js",
@@ -5152,7 +5188,7 @@
     }
   },
   {
-    "__docId__": 202,
+    "__docId__": 203,
     "kind": "function",
     "name": "findCommonIndent",
     "memberof": "src/string.js",
@@ -5188,7 +5224,7 @@
     }
   },
   {
-    "__docId__": 203,
+    "__docId__": 204,
     "kind": "function",
     "name": "deindent",
     "memberof": "src/string.js",
@@ -5224,7 +5260,7 @@
     }
   },
   {
-    "__docId__": 204,
+    "__docId__": 205,
     "kind": "function",
     "name": "pad",
     "memberof": "src/string.js",
@@ -5275,7 +5311,7 @@
     }
   },
   {
-    "__docId__": 205,
+    "__docId__": 206,
     "kind": "file",
     "name": "src/testing/Describer.js",
     "content": "\n/**\n* @todo this was an attempted start at offering a nicer way to structure\n* test files and have the lib help with some of the repetitive tasks.\n* \n* I didn't feel happy with it an it's not in use and shouldn't be.\n*/\nexport class Describer {\n  constructor(packageRoot) {\n    this.packageRoot = packageRoot;\n  }\n  \n  file(path, body): * {\n    const exp = require(path.replace(/^\\/\\//, this.packageRoot + '/'));\n    \n    return global.describe(`File ${ path }`, (done) => {\n      return body(exp, done);\n    });\n  }\n  \n  class(cls, body): * {\n    return global.describe(`Class ${ cls.name }`, body);\n  }\n}\n\nexport default Describer;\n",
@@ -5286,7 +5322,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 206,
+    "__docId__": 207,
     "kind": "class",
     "name": "Describer",
     "memberof": "src/testing/Describer.js",
@@ -5304,7 +5340,7 @@
     "interface": false
   },
   {
-    "__docId__": 207,
+    "__docId__": 208,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/testing/Describer.js~Describer",
@@ -5332,7 +5368,7 @@
     ]
   },
   {
-    "__docId__": 208,
+    "__docId__": 209,
     "kind": "member",
     "name": "packageRoot",
     "memberof": "src/testing/Describer.js~Describer",
@@ -5355,7 +5391,7 @@
     }
   },
   {
-    "__docId__": 209,
+    "__docId__": 210,
     "kind": "method",
     "name": "file",
     "memberof": "src/testing/Describer.js~Describer",
@@ -5394,7 +5430,7 @@
     }
   },
   {
-    "__docId__": 210,
+    "__docId__": 211,
     "kind": "method",
     "name": "class",
     "memberof": "src/testing/Describer.js~Describer",
@@ -5433,7 +5469,7 @@
     }
   },
   {
-    "__docId__": 211,
+    "__docId__": 212,
     "kind": "file",
     "name": "src/testing/index.js",
     "content": "// @flow\n\n// Imports\n// ==========================================================================\n\nimport chai, { expect } from 'chai';\nimport _ from '//src/lodash';\nimport t from 'tcomb';\nimport type { $Refinement } from 'tcomb';\n\nimport * as nrser from '//src/';\n\n\n// Types\n// ==========================================================================\n\ndeclare function it(title: string, block: () => void): void;\n\nfunction isErrorClass(obj: *): boolean {\n  return obj === Error || obj.prototype instanceof Error;\n}\n\ntype ErrorClass = any & $Refinement<typeof isErrorClass>;\n\nfunction hasEvenLength(array: Array<*>): boolean {\n  return array.length % 2 === 0;\n}\n\ntype Pairable<V> = Array<V> & $Refinement<typeof hasEvenLength>;\n\n\n// Private\n// ==========================================================================\n\nclass Throws {\n  errorClass: ErrorClass;\n  pattern: ?RegExp;\n  \n  constructor(errorClass: ErrorClass = Error, pattern?: RegExp) {\n    this.errorClass = errorClass;\n    this.pattern = pattern;\n  }\n  \n  throwArgs() {\n    const args = [this.errorClass];\n    if (this.pattern) {\n      args.push(this.pattern);\n    }\n    return args;\n  }\n}\n\n\n// Exports\n// ==========================================================================\n\n// export * from './Describer';\n\n/**\n* OO structure for expectations.\n*/\nexport class Expect<T> {\n  instanceOf: T;\n  props: Object;\n  size: number;\n  lengthOf: number;\n  \n  constructor({\n    instanceOf,\n    props,\n    size,\n    lengthOf,\n    // members,\n  }: {\n    instanceOf: T,\n    props: Object,\n    size: number,\n    lengthOf: number,\n  }) {\n    this.instanceOf = instanceOf;\n    this.props = props;\n    this.size = size;\n    this.lengthOf = lengthOf;\n    // this.members = members;\n  }\n  \n  test(actual: *): void {\n    if (this.instanceOf) {\n      expect(actual).to.be.instanceOf(this.instanceOf);\n    }\n    \n    if (this.props) {\n      _.each(this.props, (value, name) => {\n        expect(actual).to.have.property(name);\n        \n        if (value instanceof Expect) {\n          value.test(actual[name]);\n        } else {\n          expect(actual[name]).to.eql(value);\n        }\n      });\n    }\n    \n    if (this.size) {\n      expect(_.size(actual)).to.equal(this.size);\n    }\n    \n    if (this.lengthOf) {\n      expect(actual).to.have.lengthOf(this.lengthOf);\n    }\n      \n    // TODO figure this out...\n    // if (this.members) {\n    //   _.each(this.members, (value) => {\n    //     if (value instanceof Expect) {\n    //       expect(actual).to.have.any.member.that.satisfy()\n    //     }\n    //   });\n    // }\n  }\n}\n\nexport function itMaps({\n  func,\n  map,\n  \n  funcName = func.name ? func.name.replace('bound ', '') : 'f',\n  \n  tester = ({actual, expected}) => {\n    if (expected instanceof Expect) {\n      expected.test(actual);\n    } else {\n      expect(actual).to.eql(expected);\n    }\n  },\n  \n  formatArgs = (args: Array<*>, funcName: string): string => (\n    `${ funcName }(${ _.map(args, (a) => JSON.stringify(a)).join(\", \") })`\n  ),\n  \n  formatExpected = (expected: *): string => {\n    const json = JSON.stringify(expected);\n    if (typeof json === 'string') {\n      return json;\n    }\n    return '???';\n  },\n  \n  formatter = (args: Array<*>, expected: *, funcName: string): string => {\n    if (expected instanceof Throws) {\n      return nrser.squish`\n        ${ formatArgs(args, funcName) }\n        throws\n        ${ expected.errorClass.name }\n      `;\n      \n    } else {\n      return nrser.squish`\n        maps\n        ${ formatArgs(args, funcName) }\n        to ${ formatExpected(expected) }\n      `;\n      \n    }\n  },\n}: {\n  func: Function,\n  \n  funcName?: string,\n  \n  // the map is function that accepts two arguments:\n  map: (\n    // 1. a wrapper that converts it's arguments to an array to be fed into\n    // the test function\n    f: (...args: Array<*>) => Array<*>,\n    // 2. a function that creates a {Throws} to indicate the call should\n    // throw an error of a certain type with an optional pattern for the\n    // message\n    throws: (errorClass: ErrorClass, pattern?: RegExp) => Throws,\n  // and returns a array of even length that represents actual, expected pairs\n  ) => Pairable<*>,\n  \n  // the function the performs the assertions, the default implementation of\n  // which checks that the actual is deeply equal to the expected.\n  tester?: (pair: {actual: *, expected: *}) => void,\n  \n  // a function to format the calling args for display\n  formatArgs?: (args: Array<*>, funcName: string) => string,\n  \n  // a function to format the expected value\n  formatExpected?: (expected: *) => string,\n  \n  // a function to format it all that calls the others by default\n  formatter?: (args: Array<*>, expected: *, funcName: string) => string,\n}): void {\n  const mapping: Pairable<*> = map(\n    (...args) => args,\n    (errorClass, pattern) => new Throws(errorClass, pattern)\n  );\n  \n  for (let i = 0; i < mapping.length; i += 2) {\n    const args = mapping[i];\n    const expected = mapping[i + 1];\n    \n    it(formatter(args, expected, funcName), () => {\n      if (expected instanceof Throws) {\n        chai.expect(\n          () => func(...args)\n        ).to.throw(expected.errorClass, expected.pattern);\n      } else {\n        tester({actual: func(...args), expected});\n      }\n    })\n  }\n}\n",
@@ -5444,7 +5480,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 212,
+    "__docId__": 213,
     "kind": "function",
     "name": "isErrorClass",
     "memberof": "src/testing/index.js",
@@ -5480,7 +5516,7 @@
     }
   },
   {
-    "__docId__": 213,
+    "__docId__": 214,
     "kind": "function",
     "name": "hasEvenLength",
     "memberof": "src/testing/index.js",
@@ -5516,7 +5552,7 @@
     }
   },
   {
-    "__docId__": 214,
+    "__docId__": 215,
     "kind": "class",
     "name": "Throws",
     "memberof": "src/testing/index.js",
@@ -5538,7 +5574,7 @@
     "interface": false
   },
   {
-    "__docId__": 215,
+    "__docId__": 216,
     "kind": "member",
     "name": "errorClass",
     "memberof": "src/testing/index.js~Throws",
@@ -5561,7 +5597,7 @@
     }
   },
   {
-    "__docId__": 216,
+    "__docId__": 217,
     "kind": "member",
     "name": "pattern",
     "memberof": "src/testing/index.js~Throws",
@@ -5584,7 +5620,7 @@
     }
   },
   {
-    "__docId__": 217,
+    "__docId__": 218,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/testing/index.js~Throws",
@@ -5621,7 +5657,7 @@
     ]
   },
   {
-    "__docId__": 218,
+    "__docId__": 219,
     "kind": "member",
     "name": "errorClass",
     "memberof": "src/testing/index.js~Throws",
@@ -5644,7 +5680,7 @@
     }
   },
   {
-    "__docId__": 219,
+    "__docId__": 220,
     "kind": "member",
     "name": "pattern",
     "memberof": "src/testing/index.js~Throws",
@@ -5667,7 +5703,7 @@
     }
   },
   {
-    "__docId__": 220,
+    "__docId__": 221,
     "kind": "method",
     "name": "throwArgs",
     "memberof": "src/testing/index.js~Throws",
@@ -5693,7 +5729,7 @@
     }
   },
   {
-    "__docId__": 221,
+    "__docId__": 222,
     "kind": "class",
     "name": "Expect",
     "memberof": "src/testing/index.js",
@@ -5708,7 +5744,7 @@
     "interface": false
   },
   {
-    "__docId__": 222,
+    "__docId__": 223,
     "kind": "member",
     "name": "instanceOf",
     "memberof": "src/testing/index.js~Expect",
@@ -5731,7 +5767,7 @@
     }
   },
   {
-    "__docId__": 223,
+    "__docId__": 224,
     "kind": "member",
     "name": "props",
     "memberof": "src/testing/index.js~Expect",
@@ -5754,7 +5790,7 @@
     }
   },
   {
-    "__docId__": 224,
+    "__docId__": 225,
     "kind": "member",
     "name": "size",
     "memberof": "src/testing/index.js~Expect",
@@ -5777,7 +5813,7 @@
     }
   },
   {
-    "__docId__": 225,
+    "__docId__": 226,
     "kind": "member",
     "name": "lengthOf",
     "memberof": "src/testing/index.js~Expect",
@@ -5800,7 +5836,7 @@
     }
   },
   {
-    "__docId__": 226,
+    "__docId__": 227,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/testing/index.js~Expect",
@@ -5835,7 +5871,7 @@
     ]
   },
   {
-    "__docId__": 227,
+    "__docId__": 228,
     "kind": "member",
     "name": "instanceOf",
     "memberof": "src/testing/index.js~Expect",
@@ -5858,7 +5894,7 @@
     }
   },
   {
-    "__docId__": 228,
+    "__docId__": 229,
     "kind": "member",
     "name": "props",
     "memberof": "src/testing/index.js~Expect",
@@ -5881,7 +5917,7 @@
     }
   },
   {
-    "__docId__": 229,
+    "__docId__": 230,
     "kind": "member",
     "name": "size",
     "memberof": "src/testing/index.js~Expect",
@@ -5904,7 +5940,7 @@
     }
   },
   {
-    "__docId__": 230,
+    "__docId__": 231,
     "kind": "member",
     "name": "lengthOf",
     "memberof": "src/testing/index.js~Expect",
@@ -5927,7 +5963,7 @@
     }
   },
   {
-    "__docId__": 231,
+    "__docId__": 232,
     "kind": "method",
     "name": "test",
     "memberof": "src/testing/index.js~Expect",
@@ -5955,7 +5991,7 @@
     ]
   },
   {
-    "__docId__": 232,
+    "__docId__": 233,
     "kind": "function",
     "name": "itMaps",
     "memberof": "src/testing/index.js",
@@ -5996,7 +6032,7 @@
     ]
   },
   {
-    "__docId__": 233,
+    "__docId__": 234,
     "kind": "file",
     "name": "src/types/collection.js",
     "content": "\n/**\n* lodash-style collection.\n*/\nexport type Collection<V> = Array<V> | {[key: string]: V};\n\n/**\n* deep 'path' to a value in a collection (array or object).\n* \n* @typedef {string | Array<string|number>} KeyPath\n*/\nexport type KeyPath = string | Array<string|number>;\n",
@@ -6007,7 +6043,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 234,
+    "__docId__": 235,
     "kind": "typedef",
     "name": "KeyPath",
     "memberof": "src/types/collection.js",
@@ -6025,7 +6061,7 @@
     }
   },
   {
-    "__docId__": 235,
+    "__docId__": 236,
     "kind": "file",
     "name": "src/types/index.js",
     "content": "// @flow\n\n// Imports\n// ===========================================================================\n\n// Deps\nimport t from 'tcomb';\nimport Promise from 'bluebird';\n\n// Package\nimport _ from '//src/lodash';\n\n\n// Exports\n// ===========================================================================\n\nexport const Undefined = t.irreducible('Undefined', (v) => _.isUndefined(v));\n\nexport const Null = t.irreducible('Null', v => _.isNull(v));\n\nexport function nullable(type) {\n  return t.union(Null, type);\n}\n\nexport const Empty = t.irreducible('Empty', (v) => _.isEmpty(v));\n\nexport function instanceOf(klass, name) {\n  return t.irreducible(\n    name || `InstanceOf<${ klass.name }>`,\n    obj => obj instanceof klass,\n  );\n}\n\nexport function subclassOf(klass, name) {\n  return t.irreducible(\n    name || `SubclassOf<${ klass.name }>`,\n    obj => obj && obj.prototype && (obj.prototype instanceof klass)\n  );\n}\n\nexport const ErrorType = instanceOf(Error);\n\nexport const PromiseType = instanceOf(Promise);\n\nexport * from './number';\nexport * from './string';\nexport * from './value';\nexport * from './list';\nexport * from './struct';\nexport * from './collection';\n",
@@ -6036,7 +6072,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 236,
+    "__docId__": 237,
     "kind": "variable",
     "name": "Undefined",
     "memberof": "src/types/index.js",
@@ -6062,7 +6098,7 @@
     }
   },
   {
-    "__docId__": 237,
+    "__docId__": 238,
     "kind": "variable",
     "name": "Null",
     "memberof": "src/types/index.js",
@@ -6088,7 +6124,7 @@
     }
   },
   {
-    "__docId__": 238,
+    "__docId__": 239,
     "kind": "function",
     "name": "nullable",
     "memberof": "src/types/index.js",
@@ -6124,7 +6160,7 @@
     }
   },
   {
-    "__docId__": 239,
+    "__docId__": 240,
     "kind": "variable",
     "name": "Empty",
     "memberof": "src/types/index.js",
@@ -6150,7 +6186,7 @@
     }
   },
   {
-    "__docId__": 240,
+    "__docId__": 241,
     "kind": "function",
     "name": "instanceOf",
     "memberof": "src/types/index.js",
@@ -6192,7 +6228,7 @@
     }
   },
   {
-    "__docId__": 241,
+    "__docId__": 242,
     "kind": "function",
     "name": "subclassOf",
     "memberof": "src/types/index.js",
@@ -6234,7 +6270,7 @@
     }
   },
   {
-    "__docId__": 242,
+    "__docId__": 243,
     "kind": "variable",
     "name": "ErrorType",
     "memberof": "src/types/index.js",
@@ -6260,7 +6296,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 244,
     "kind": "variable",
     "name": "PromiseType",
     "memberof": "src/types/index.js",
@@ -6286,7 +6322,7 @@
     }
   },
   {
-    "__docId__": 244,
+    "__docId__": 245,
     "kind": "file",
     "name": "src/types/list.js",
     "content": "import t from 'tcomb';\n\nexport function nonEmptyList(type, name) {\n  return t.refinement(\n    t.list(type, name),\n    array => array.length > 0,\n    name || `NonEmptyList<${ t.getTypeName(type) }>`\n  )\n}\n",
@@ -6297,7 +6333,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 245,
+    "__docId__": 246,
     "kind": "function",
     "name": "nonEmptyList",
     "memberof": "src/types/list.js",
@@ -6339,7 +6375,7 @@
     }
   },
   {
-    "__docId__": 246,
+    "__docId__": 247,
     "kind": "file",
     "name": "src/types/number.js",
     "content": "// @flow\n\nimport type { $Refinement, $Reify } from 'tcomb';\n\nimport type { Type } from './type';\n\n\n/**\n* The number `0`. `-0` also passes.\n* \n* @typedef {number} Zero\n*/\nexport type Zero = 0;\n\n/**\n* tcomb type for {@link Zero}.\n* \n* @type {Type}\n*/\nexport const tZero = (({}: any): $Reify<Zero>);\n\n\n/**\n* Predicate for {@link Integer}, calls {@link Number.isInteger}.\n* \n* @param {number} number\n*   The number to test.\n* \n* @return {boolean}\n*   True if `number` is an integer.\n*/\nfunction isInteger(number: number) {\n  return Number.isInteger(number);\n}\n\n/**\n* An number that is an integer.\n* \n* @typedef {number} Integer\n*/\nexport type Integer = number & $Refinement<typeof isInteger>;\n\n/**\n* tcomb type for {@link Integer}.\n* \n* @type {Type}\n*/\nexport const tInteger = (({}: any): $Reify<Integer>);\n\n\n/**\n* Predicate for {@link Positive}.\n* \n* @param {number} number\n*   The number to test.\n* \n* @return {boolean}\n*   True if `number` is positive.\n*/\nfunction isPositive(number: number): boolean {\n  return number > 0;\n}\n\n/**\n* A positive number.\n* \n* @typedef {number} Positive\n*/\nexport type Positive = number & $Refinement<typeof isPositive>;\n\n/**\n* tcomb type for {@link Positive}.\n* \n* @type {Type}\n*/\nexport const tPositive = (({}: any): $Reify<Positive>);\n\n\n/**\n* A positive integer.\n* \n* @typedef {number} PositiveInteger\n*/\nexport type PositiveInteger = Integer & Positive;\n\n/**\n* tcomb type for {@link PositiveInteger}.\n* \n* @type {Positive}\n*/\nexport const tPositiveInteger = (({}: any): $Reify<PositiveInteger>);\n\n\n/**\n* Predicate for {@link Positive}.\n* \n* @param {number} number\n*   The number to test.\n* \n* @return {boolean}\n*   True if `number` is positive.\n*/\nfunction isNegative(number: number): boolean {\n  return number < 0;\n}\n\n/**\n* A negative number.\n* \n* @typedef {number} PositiveInteger\n*/\nexport type Negative = number & $Refinement<typeof isNegative>;\n\n/**\n* tcomb type for {@link Negative}.\n* \n* @type {Type}\n*/\nexport const tNegative = (({}: any): $Reify<Negative>);\n\n\n/**\n* A negative {@link Integer}.\n* \n* @typedef {number} NegativeInteger\n*/\nexport type NegativeInteger = Integer & Negative;\n\n/**\n* tcomb type for {@link NegativeInteger}.\n* \n* @type {Type}\n*/\nexport const tNegativeInteger = (({}: any): $Reify<NegativeInteger>);\n\n\n/**\n* {@link Zero} or a {@link NegativeInteger}.\n* \n* @typedef {number} NonPositiveInteger\n*/\nexport type NonPositiveInteger = Zero | NegativeInteger;\n\n/**\n* tcomb type for {@link NonPositiveInteger}.\n* \n* @type {Type}\n*/\nexport const tNonPositiveInteger = (({}: any): $Reify<NonPositiveInteger>);\n\n\n/**\n* {@link Zero} or a {@link PositiveInteger}.\n* \n* @typedef {number} NonNegativeInteger\n*/\nexport type NonNegativeInteger = Zero | PositiveInteger;\n\n/**\n* tcomb type for {@link NonNegativeInteger}.\n* \n* @type {Type}\n*/\nexport const tNonNegativeInteger = (({}: any): $Reify<NonNegativeInteger>);\n",
@@ -6350,7 +6386,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 247,
+    "__docId__": 248,
     "kind": "typedef",
     "name": "Zero",
     "memberof": "src/types/number.js",
@@ -6368,7 +6404,7 @@
     }
   },
   {
-    "__docId__": 248,
+    "__docId__": 249,
     "kind": "variable",
     "name": "tZero",
     "memberof": "src/types/number.js",
@@ -6390,7 +6426,7 @@
     }
   },
   {
-    "__docId__": 249,
+    "__docId__": 250,
     "kind": "function",
     "name": "isInteger",
     "memberof": "src/types/number.js",
@@ -6426,7 +6462,7 @@
     }
   },
   {
-    "__docId__": 250,
+    "__docId__": 251,
     "kind": "typedef",
     "name": "Integer",
     "memberof": "src/types/number.js",
@@ -6444,7 +6480,7 @@
     }
   },
   {
-    "__docId__": 251,
+    "__docId__": 252,
     "kind": "variable",
     "name": "tInteger",
     "memberof": "src/types/number.js",
@@ -6466,7 +6502,7 @@
     }
   },
   {
-    "__docId__": 252,
+    "__docId__": 253,
     "kind": "function",
     "name": "isPositive",
     "memberof": "src/types/number.js",
@@ -6502,7 +6538,7 @@
     }
   },
   {
-    "__docId__": 253,
+    "__docId__": 254,
     "kind": "typedef",
     "name": "Positive",
     "memberof": "src/types/number.js",
@@ -6520,7 +6556,7 @@
     }
   },
   {
-    "__docId__": 254,
+    "__docId__": 255,
     "kind": "variable",
     "name": "tPositive",
     "memberof": "src/types/number.js",
@@ -6542,7 +6578,7 @@
     }
   },
   {
-    "__docId__": 255,
+    "__docId__": 256,
     "kind": "typedef",
     "name": "PositiveInteger",
     "memberof": "src/types/number.js",
@@ -6560,7 +6596,7 @@
     }
   },
   {
-    "__docId__": 256,
+    "__docId__": 257,
     "kind": "variable",
     "name": "tPositiveInteger",
     "memberof": "src/types/number.js",
@@ -6582,7 +6618,7 @@
     }
   },
   {
-    "__docId__": 257,
+    "__docId__": 258,
     "kind": "function",
     "name": "isNegative",
     "memberof": "src/types/number.js",
@@ -6618,7 +6654,7 @@
     }
   },
   {
-    "__docId__": 258,
+    "__docId__": 259,
     "kind": "typedef",
     "name": "PositiveInteger",
     "memberof": "src/types/number.js",
@@ -6636,7 +6672,7 @@
     }
   },
   {
-    "__docId__": 259,
+    "__docId__": 260,
     "kind": "variable",
     "name": "tNegative",
     "memberof": "src/types/number.js",
@@ -6658,7 +6694,7 @@
     }
   },
   {
-    "__docId__": 260,
+    "__docId__": 261,
     "kind": "typedef",
     "name": "NegativeInteger",
     "memberof": "src/types/number.js",
@@ -6676,7 +6712,7 @@
     }
   },
   {
-    "__docId__": 261,
+    "__docId__": 262,
     "kind": "variable",
     "name": "tNegativeInteger",
     "memberof": "src/types/number.js",
@@ -6698,7 +6734,7 @@
     }
   },
   {
-    "__docId__": 262,
+    "__docId__": 263,
     "kind": "typedef",
     "name": "NonPositiveInteger",
     "memberof": "src/types/number.js",
@@ -6716,7 +6752,7 @@
     }
   },
   {
-    "__docId__": 263,
+    "__docId__": 264,
     "kind": "variable",
     "name": "tNonPositiveInteger",
     "memberof": "src/types/number.js",
@@ -6738,7 +6774,7 @@
     }
   },
   {
-    "__docId__": 264,
+    "__docId__": 265,
     "kind": "typedef",
     "name": "NonNegativeInteger",
     "memberof": "src/types/number.js",
@@ -6756,7 +6792,7 @@
     }
   },
   {
-    "__docId__": 265,
+    "__docId__": 266,
     "kind": "variable",
     "name": "tNonNegativeInteger",
     "memberof": "src/types/number.js",
@@ -6778,7 +6814,7 @@
     }
   },
   {
-    "__docId__": 266,
+    "__docId__": 267,
     "kind": "file",
     "name": "src/types/string.js",
     "content": "import t from 'tcomb';\nimport type { $Refinement } from 'tcomb';\nimport _ from '//src/lodash';\n\n/**\n* string of length one\n*/\nfunction isChar(s: string): boolean {\n  return s.length === 1;\n}\nexport type Char = string & $Refinement<typeof isChar>;\n\n/**\n* string that's not ''\n*/\nfunction isNonEmptyString(s: string): boolean {\n  return s.length > 0;\n}\nexport type NonEmptyString = string & $Refinement<typeof isNonEmptyString>;\n\n/**\n* string that's all upper case\n*/\nfunction isUpperCaseString(s: string): boolean {\n  return s.toUpperCase() === s;\n}\nexport type UpperCaseString = string & $Refinement<typeof isUpperCaseString>;\n",
@@ -6789,7 +6825,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 267,
+    "__docId__": 268,
     "kind": "function",
     "name": "isChar",
     "memberof": "src/types/string.js",
@@ -6818,7 +6854,7 @@
     }
   },
   {
-    "__docId__": 268,
+    "__docId__": 269,
     "kind": "function",
     "name": "isNonEmptyString",
     "memberof": "src/types/string.js",
@@ -6847,7 +6883,7 @@
     }
   },
   {
-    "__docId__": 269,
+    "__docId__": 270,
     "kind": "function",
     "name": "isUpperCaseString",
     "memberof": "src/types/string.js",
@@ -6876,7 +6912,7 @@
     }
   },
   {
-    "__docId__": 270,
+    "__docId__": 271,
     "kind": "file",
     "name": "src/types/struct.js",
     "content": "import t from 'tcomb';\nimport _ from '//src/lodash';\nimport { match } from '../match';\nimport { value } from './value';\nimport { squish } from '../string.js';\n\nexport function extendProps(superProps, subProps, strict) {\n  const extendedProps = _.mapValues(subProps, (subProp, key) => {\n    \n    // see if there was a super type\n    if (_.has(superProps, key)) {\n      const superType = superProps[key];\n      \n      // there was.\n      // what we do depends on what the refinement \n      return match(subProp,\n        // it's another type\n        t.Type, subType => {\n          if (subType === superType) {\n            // it's identical to the super type, so just use it\n            return subType;\n          } else {\n            // it's a different type\n            // an intersection will make sure it satisfies both\n            // hopefully it's a sub-type of the super type, otherwise\n            // it will never satisfy\n            return t.intersection([superType, subType]);\n          }\n        },\n        \n        // it's a function, which we take as the predicate for a refinement\n        t.Function, predicate => t.refinement(superType, predicate),\n        \n        // it's some sort of value, which should be a member of the super\n        // type for it to make any sense\n        t.Any, v => {\n          // check that it satisfies the super type\n          t.assert(superType.is(v), () => squish(`\n            prop ${ key } given value ${ t.stringify(v) } that is not of\n            super type ${ t.getTypeName(superType) }\n          `));\n          // the new type is that exact value\n          return value(v);\n        },\n      );\n      \n    } else {\n      // there is no super type\n      \n      // if the super struct is strict this is an error since it would \n      // mean that there could be instances that satisfy the sub type\n      // but not the super\n      \n      t.assert(!strict, () => squish(`\n        can not add prop ${ key } via extension because super type\n        is strict.\n      `));\n      \n      return match(subProp,\n        t.Type, type => type,\n        t.Any, v => value(v),\n      );\n      \n    }\n  });\n  \n  const mergedProps = {\n    ...superProps,\n    ...extendedProps\n  };\n  \n  return mergedProps;\n}\n\nexport function struct(props, options = {}) {\n  const Struct = t.struct(props, options);\n  \n  /**\n  * my extend allows defining of additional properties (when extending \n  * from non-strict structs) *and* refining of existing properties with the\n  * principle that if B is an extension of A then any instance that is\n  * of type B is also of type A.\n  */\n  Struct.extend = function (props, options = {}) {\n    // deal with options\n    \n    options = match(options,\n      // if options is a string it's the name\n      t.String, name => {name},\n      // otherwise it should be an object\n      // clone it so that we can modify it without potential effects outside\n      // this function\n      t.Object, {...options},\n    );\n    \n    // merge super struct defaultProps\n    options.defaultProps = {\n      ...Struct.meta.defaultProps,\n      ...options.defaultProps\n    };\n    \n    // handle strictness\n    if (_.has(options, 'strict')) {\n      // if the super struct is strict, then extended struct must be strict\n      // (and also must add no new props) - otherwise we could have a situation\n      // where instances were members of the sub struct type but not the super\n      // struct type.\n      if (Struct.meta.strict && options.strict === false) {\n        throw new TypeError(squish(`\n          can't create a non-strict sub-struct of strict struct\n          ${ t.getTypeName(Struct) }\n        `));\n      }\n    } else {\n      // strict is not provided in the options, so inherit from the\n      // super struct\n      options.strict = Struct.meta.strict;\n    }\n    \n    return struct(\n      extendProps(Struct.meta.props, props, Struct.meta.strict),\n      options\n    );\n  }\n  \n  return Struct;\n}",
@@ -6887,7 +6923,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 271,
+    "__docId__": 272,
     "kind": "function",
     "name": "extendProps",
     "memberof": "src/types/struct.js",
@@ -6935,7 +6971,7 @@
     }
   },
   {
-    "__docId__": 272,
+    "__docId__": 273,
     "kind": "function",
     "name": "struct",
     "memberof": "src/types/struct.js",
@@ -6980,7 +7016,7 @@
     }
   },
   {
-    "__docId__": 273,
+    "__docId__": 274,
     "kind": "file",
     "name": "src/types/type.js",
     "content": "// @flow\n\nimport type { $Refinement, $Reify } from 'tcomb';\n\n/**\n* tcomb type meta object\n* \n* @see http://gcanti.github.io/tcomb/guide/index.html\n* @see https://archive.is/3JwrZ\n* \n* @see https://github.com/gcanti/tcomb/blob/master/docs/API.md\n* @see https://archive.is/C6Iqh\n*/\nexport type Meta = {\n  // the tcomb type kind, see their docs / source for details.\n  // \n  kind: string,\n  \n  // the type name\n  // \n  // this can be undefined, like when creating a Struct with t.struct and\n  // not prodiving a `name` in the options.\n  //\n  name?: string,\n  \n  // if true, `tcomb/lib/create` will create a instance with `type(value)`.\n  // if false (*and* `type` is an object *and* value is not `null`) it will\n  // use `new type(value)`\n  identity?: boolean,\n}\n\n/**\n* a tcomb type.\n* \n* this is to support flow; if you need to test in runtime use tcomb's t.Type.\n* \n* @typedef {Object} Type\n*/\nexport type Type = {\n  meta: Meta,\n  displayName: string,\n  is: (value: any) => boolean,\n}\n\nexport const tType = (({}: any): $Reify<Type>);\n\n/**\n* tcomb props - an object mapping property names to their tcomb type.\n*/\nexport type Props = {[name: string]: Type};",
@@ -6991,7 +7027,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 274,
+    "__docId__": 275,
     "kind": "typedef",
     "name": "Type",
     "memberof": "src/types/type.js",
@@ -7009,7 +7045,7 @@
     }
   },
   {
-    "__docId__": 275,
+    "__docId__": 276,
     "kind": "variable",
     "name": "tType",
     "memberof": "src/types/type.js",
@@ -7035,7 +7071,7 @@
     }
   },
   {
-    "__docId__": 276,
+    "__docId__": 277,
     "kind": "file",
     "name": "src/types/value.js",
     "content": "import t from 'tcomb';\nimport _ from '//src/lodash';\n\nimport { NonEmptyString, UpperCaseString } from './string.js';\nimport { nonEmptyList } from './list.js';\n\n/**\n* create a type that just wraps a specific value. `is()` uses `===`.\n*/\nexport function value(value, name) {\n  return t.irreducible(\n    name || `Value<${ value  }>`,\n    v => v === value,\n  );\n}\n\n/**\n* `values()` creates a union type for each of the values in the provided\n* object.\n*/\nexport function values(obj, name) {\n  const valueTypes = _.mapValues(t.Object(obj), (v) => value(v));\n  const type = t.union(_.values(valueTypes));\n  type.types = valueTypes;\n  type.values = {};\n\n  _.each(obj, (v, k) => {\n    UpperCaseString(k);\n\n    // shouldn't happen since props are not upper case\n    if (_.has(type, k)) {\n      throw new errors.ValueError(squish(`\n        can\\'t provide key ' + k + ' because union type defines the property\n      `));\n    }\n\n    // convenient accessor, like VALUES.X\n    type[k] = v;\n\n    // nice for iteration of the values\n    type.values[k] = v;\n  });\n\n  return type;\n}\n\nvalues.of = function (array) {\n  nonEmptyList(NonEmptyString)(array);\n  \n  var obj = {};\n\n  for (var i = 0, len = array.length; i < len; i++) {\n    obj[array[i].toUpperCase()] = array[i];\n  }\n\n  return values(obj);\n};",
@@ -7046,7 +7082,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 277,
+    "__docId__": 278,
     "kind": "function",
     "name": "value",
     "memberof": "src/types/value.js",
@@ -7081,7 +7117,7 @@
     }
   },
   {
-    "__docId__": 278,
+    "__docId__": 279,
     "kind": "function",
     "name": "values",
     "memberof": "src/types/value.js",
@@ -7116,7 +7152,7 @@
     }
   },
   {
-    "__docId__": 279,
+    "__docId__": 280,
     "kind": "function",
     "name": "of",
     "memberof": "src/types/value.js",
@@ -7152,7 +7188,7 @@
     }
   },
   {
-    "__docId__": 281,
+    "__docId__": 282,
     "kind": "external",
     "name": "Infinity",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
@@ -7164,7 +7200,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 282,
+    "__docId__": 283,
     "kind": "external",
     "name": "NaN",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
@@ -7176,7 +7212,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 283,
+    "__docId__": 284,
     "kind": "external",
     "name": "undefined",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
@@ -7188,7 +7224,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 284,
+    "__docId__": 285,
     "kind": "external",
     "name": "null",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
@@ -7200,7 +7236,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 285,
+    "__docId__": 286,
     "kind": "external",
     "name": "Object",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
@@ -7212,7 +7248,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 286,
+    "__docId__": 287,
     "kind": "external",
     "name": "object",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
@@ -7224,7 +7260,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 287,
+    "__docId__": 288,
     "kind": "external",
     "name": "Function",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
@@ -7236,7 +7272,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 288,
+    "__docId__": 289,
     "kind": "external",
     "name": "function",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
@@ -7248,7 +7284,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 289,
+    "__docId__": 290,
     "kind": "external",
     "name": "Boolean",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
@@ -7260,7 +7296,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 290,
+    "__docId__": 291,
     "kind": "external",
     "name": "boolean",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
@@ -7272,7 +7308,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 291,
+    "__docId__": 292,
     "kind": "external",
     "name": "Symbol",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
@@ -7284,7 +7320,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 292,
+    "__docId__": 293,
     "kind": "external",
     "name": "Error",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
@@ -7296,7 +7332,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 293,
+    "__docId__": 294,
     "kind": "external",
     "name": "EvalError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
@@ -7308,7 +7344,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 294,
+    "__docId__": 295,
     "kind": "external",
     "name": "InternalError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
@@ -7320,7 +7356,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 295,
+    "__docId__": 296,
     "kind": "external",
     "name": "RangeError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
@@ -7332,7 +7368,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 296,
+    "__docId__": 297,
     "kind": "external",
     "name": "ReferenceError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
@@ -7344,7 +7380,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 297,
+    "__docId__": 298,
     "kind": "external",
     "name": "SyntaxError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
@@ -7356,7 +7392,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 298,
+    "__docId__": 299,
     "kind": "external",
     "name": "TypeError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
@@ -7368,7 +7404,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 299,
+    "__docId__": 300,
     "kind": "external",
     "name": "URIError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
@@ -7380,7 +7416,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 300,
+    "__docId__": 301,
     "kind": "external",
     "name": "Number",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
@@ -7392,7 +7428,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 301,
+    "__docId__": 302,
     "kind": "external",
     "name": "number",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
@@ -7404,7 +7440,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 302,
+    "__docId__": 303,
     "kind": "external",
     "name": "Date",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
@@ -7416,7 +7452,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 303,
+    "__docId__": 304,
     "kind": "external",
     "name": "String",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -7428,7 +7464,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 304,
+    "__docId__": 305,
     "kind": "external",
     "name": "string",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -7440,7 +7476,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 305,
+    "__docId__": 306,
     "kind": "external",
     "name": "RegExp",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
@@ -7452,7 +7488,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 306,
+    "__docId__": 307,
     "kind": "external",
     "name": "Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
@@ -7464,7 +7500,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 307,
+    "__docId__": 308,
     "kind": "external",
     "name": "Int8Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
@@ -7476,7 +7512,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 308,
+    "__docId__": 309,
     "kind": "external",
     "name": "Uint8Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
@@ -7488,7 +7524,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 309,
+    "__docId__": 310,
     "kind": "external",
     "name": "Uint8ClampedArray",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
@@ -7500,7 +7536,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 310,
+    "__docId__": 311,
     "kind": "external",
     "name": "Int16Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
@@ -7512,7 +7548,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 311,
+    "__docId__": 312,
     "kind": "external",
     "name": "Uint16Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
@@ -7524,7 +7560,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 312,
+    "__docId__": 313,
     "kind": "external",
     "name": "Int32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
@@ -7536,7 +7572,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 313,
+    "__docId__": 314,
     "kind": "external",
     "name": "Uint32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
@@ -7548,7 +7584,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 314,
+    "__docId__": 315,
     "kind": "external",
     "name": "Float32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
@@ -7560,7 +7596,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 315,
+    "__docId__": 316,
     "kind": "external",
     "name": "Float64Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
@@ -7572,7 +7608,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 316,
+    "__docId__": 317,
     "kind": "external",
     "name": "Map",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
@@ -7584,7 +7620,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 317,
+    "__docId__": 318,
     "kind": "external",
     "name": "Set",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
@@ -7596,7 +7632,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 318,
+    "__docId__": 319,
     "kind": "external",
     "name": "WeakMap",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
@@ -7608,7 +7644,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 319,
+    "__docId__": 320,
     "kind": "external",
     "name": "WeakSet",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
@@ -7620,7 +7656,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 320,
+    "__docId__": 321,
     "kind": "external",
     "name": "ArrayBuffer",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
@@ -7632,7 +7668,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 321,
+    "__docId__": 322,
     "kind": "external",
     "name": "DataView",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
@@ -7644,7 +7680,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 322,
+    "__docId__": 323,
     "kind": "external",
     "name": "JSON",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
@@ -7656,7 +7692,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 323,
+    "__docId__": 324,
     "kind": "external",
     "name": "Promise",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
@@ -7668,7 +7704,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 324,
+    "__docId__": 325,
     "kind": "external",
     "name": "Generator",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
@@ -7680,7 +7716,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 325,
+    "__docId__": 326,
     "kind": "external",
     "name": "GeneratorFunction",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
@@ -7692,7 +7728,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 326,
+    "__docId__": 327,
     "kind": "external",
     "name": "Reflect",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
@@ -7704,7 +7740,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 327,
+    "__docId__": 328,
     "kind": "external",
     "name": "Proxy",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
@@ -7717,7 +7753,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 329,
+    "__docId__": 330,
     "kind": "external",
     "name": "CanvasRenderingContext2D",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
@@ -7729,7 +7765,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 330,
+    "__docId__": 331,
     "kind": "external",
     "name": "DocumentFragment",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
@@ -7741,7 +7777,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 331,
+    "__docId__": 332,
     "kind": "external",
     "name": "Element",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
@@ -7753,7 +7789,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 332,
+    "__docId__": 333,
     "kind": "external",
     "name": "Event",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
@@ -7765,7 +7801,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 333,
+    "__docId__": 334,
     "kind": "external",
     "name": "Node",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
@@ -7777,7 +7813,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 334,
+    "__docId__": 335,
     "kind": "external",
     "name": "NodeList",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
@@ -7789,7 +7825,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 335,
+    "__docId__": 336,
     "kind": "external",
     "name": "XMLHttpRequest",
     "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
@@ -7801,7 +7837,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 336,
+    "__docId__": 337,
     "kind": "external",
     "name": "AudioContext",
     "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",

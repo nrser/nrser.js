@@ -222,6 +222,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nrser/src/path.js~expanddir",
+    "function/index.html#static-function-expandDir",
+    "<span>expandDir</span> <span class=\"search-result-import-path\">nrser/src/path.js</span>",
+    "function"
+  ],
+  [
     "nrser/src/types/struct.js~extendprops",
     "function/index.html#static-function-extendProps",
     "<span>extendProps</span> <span class=\"search-result-import-path\">nrser/src/types/struct.js</span>",

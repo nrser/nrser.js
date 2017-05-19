@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 7877,
+  "end": 8409,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 382,
+      "line": 402,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 7877,
+    "end": 8409,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 382,
+        "line": 402,
         "column": 0
       }
     },
@@ -14224,16 +14224,16 @@
             },
             {
               "type": "CommentBlock",
-              "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   \n",
+              "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* **NOTICE** \n* \n* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably\n* want to use {@link expandDir}, which expands paths that start with `~` to\n* the current user's home direcotry.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   Resolved directory path.\n",
               "start": 7595,
-              "end": 7757,
+              "end": 7993,
               "loc": {
                 "start": {
                   "line": 370,
                   "column": 0
                 },
                 "end": {
-                  "line": 378,
+                  "line": 384,
                   "column": 2
                 }
               }
@@ -14293,16 +14293,16 @@
           },
           {
             "type": "CommentBlock",
-            "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   \n",
+            "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* **NOTICE** \n* \n* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably\n* want to use {@link expandDir}, which expands paths that start with `~` to\n* the current user's home direcotry.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   Resolved directory path.\n",
             "start": 7595,
-            "end": 7757,
+            "end": 7993,
             "loc": {
               "start": {
                 "line": 370,
                 "column": 0
               },
               "end": {
-                "line": 378,
+                "line": 384,
                 "column": 2
               }
             }
@@ -14312,15 +14312,15 @@
       },
       {
         "type": "ExportNamedDeclaration",
-        "start": 7758,
-        "end": 7876,
+        "start": 7994,
+        "end": 8112,
         "loc": {
           "start": {
-            "line": 379,
+            "line": 385,
             "column": 0
           },
           "end": {
-            "line": 381,
+            "line": 387,
             "column": 1
           }
         },
@@ -14328,29 +14328,29 @@
         "source": null,
         "declaration": {
           "type": "FunctionDeclaration",
-          "start": 7765,
-          "end": 7876,
+          "start": 8001,
+          "end": 8112,
           "loc": {
             "start": {
-              "line": 379,
+              "line": 385,
               "column": 7
             },
             "end": {
-              "line": 381,
+              "line": 387,
               "column": 1
             }
           },
           "id": {
             "type": "Identifier",
-            "start": 7774,
-            "end": 7784,
+            "start": 8010,
+            "end": 8020,
             "loc": {
               "start": {
-                "line": 379,
+                "line": 385,
                 "column": 16
               },
               "end": {
-                "line": 379,
+                "line": 385,
                 "column": 26
               },
               "identifierName": "resolveDir"
@@ -14364,29 +14364,29 @@
           "params": [
             {
               "type": "RestElement",
-              "start": 7785,
-              "end": 7808,
+              "start": 8021,
+              "end": 8044,
               "loc": {
                 "start": {
-                  "line": 379,
+                  "line": 385,
                   "column": 27
                 },
                 "end": {
-                  "line": 379,
+                  "line": 385,
                   "column": 50
                 }
               },
               "argument": {
                 "type": "Identifier",
-                "start": 7788,
-                "end": 7793,
+                "start": 8024,
+                "end": 8029,
                 "loc": {
                   "start": {
-                    "line": 379,
+                    "line": 385,
                     "column": 30
                   },
                   "end": {
-                    "line": 379,
+                    "line": 385,
                     "column": 35
                   },
                   "identifierName": "paths"
@@ -14395,58 +14395,58 @@
               },
               "typeAnnotation": {
                 "type": "TypeAnnotation",
-                "start": 7793,
-                "end": 7808,
+                "start": 8029,
+                "end": 8044,
                 "loc": {
                   "start": {
-                    "line": 379,
+                    "line": 385,
                     "column": 35
                   },
                   "end": {
-                    "line": 379,
+                    "line": 385,
                     "column": 50
                   }
                 },
                 "typeAnnotation": {
                   "type": "GenericTypeAnnotation",
-                  "start": 7795,
-                  "end": 7808,
+                  "start": 8031,
+                  "end": 8044,
                   "loc": {
                     "start": {
-                      "line": 379,
+                      "line": 385,
                       "column": 37
                     },
                     "end": {
-                      "line": 379,
+                      "line": 385,
                       "column": 50
                     }
                   },
                   "typeParameters": {
                     "type": "TypeParameterInstantiation",
-                    "start": 7800,
-                    "end": 7808,
+                    "start": 8036,
+                    "end": 8044,
                     "loc": {
                       "start": {
-                        "line": 379,
+                        "line": 385,
                         "column": 42
                       },
                       "end": {
-                        "line": 379,
+                        "line": 385,
                         "column": 50
                       }
                     },
                     "params": [
                       {
                         "type": "StringTypeAnnotation",
-                        "start": 7801,
-                        "end": 7807,
+                        "start": 8037,
+                        "end": 8043,
                         "loc": {
                           "start": {
-                            "line": 379,
+                            "line": 385,
                             "column": 43
                           },
                           "end": {
-                            "line": 379,
+                            "line": 385,
                             "column": 49
                           }
                         }
@@ -14455,15 +14455,15 @@
                   },
                   "id": {
                     "type": "Identifier",
-                    "start": 7795,
-                    "end": 7800,
+                    "start": 8031,
+                    "end": 8036,
                     "loc": {
                       "start": {
-                        "line": 379,
+                        "line": 385,
                         "column": 37
                       },
                       "end": {
-                        "line": 379,
+                        "line": 385,
                         "column": 42
                       },
                       "identifierName": "Array"
@@ -14476,44 +14476,44 @@
           ],
           "returnType": {
             "type": "TypeAnnotation",
-            "start": 7809,
-            "end": 7817,
+            "start": 8045,
+            "end": 8053,
             "loc": {
               "start": {
-                "line": 379,
+                "line": 385,
                 "column": 51
               },
               "end": {
-                "line": 379,
+                "line": 385,
                 "column": 59
               }
             },
             "typeAnnotation": {
               "type": "GenericTypeAnnotation",
-              "start": 7811,
-              "end": 7817,
+              "start": 8047,
+              "end": 8053,
               "loc": {
                 "start": {
-                  "line": 379,
+                  "line": 385,
                   "column": 53
                 },
                 "end": {
-                  "line": 379,
+                  "line": 385,
                   "column": 59
                 }
               },
               "typeParameters": null,
               "id": {
                 "type": "Identifier",
-                "start": 7811,
-                "end": 7817,
+                "start": 8047,
+                "end": 8053,
                 "loc": {
                   "start": {
-                    "line": 379,
+                    "line": 385,
                     "column": 53
                   },
                   "end": {
-                    "line": 379,
+                    "line": 385,
                     "column": 59
                   },
                   "identifierName": "ResDir"
@@ -14524,58 +14524,58 @@
           },
           "body": {
             "type": "BlockStatement",
-            "start": 7818,
-            "end": 7876,
+            "start": 8054,
+            "end": 8112,
             "loc": {
               "start": {
-                "line": 379,
+                "line": 385,
                 "column": 60
               },
               "end": {
-                "line": 381,
+                "line": 387,
                 "column": 1
               }
             },
             "body": [
               {
                 "type": "ReturnStatement",
-                "start": 7822,
-                "end": 7874,
+                "start": 8058,
+                "end": 8110,
                 "loc": {
                   "start": {
-                    "line": 380,
+                    "line": 386,
                     "column": 2
                   },
                   "end": {
-                    "line": 380,
+                    "line": 386,
                     "column": 54
                   }
                 },
                 "argument": {
                   "type": "CallExpression",
-                  "start": 7829,
-                  "end": 7873,
+                  "start": 8065,
+                  "end": 8109,
                   "loc": {
                     "start": {
-                      "line": 380,
+                      "line": 386,
                       "column": 9
                     },
                     "end": {
-                      "line": 380,
+                      "line": 386,
                       "column": 53
                     }
                   },
                   "callee": {
                     "type": "Identifier",
-                    "start": 7829,
-                    "end": 7836,
+                    "start": 8065,
+                    "end": 8072,
                     "loc": {
                       "start": {
-                        "line": 380,
+                        "line": 386,
                         "column": 9
                       },
                       "end": {
-                        "line": 380,
+                        "line": 386,
                         "column": 16
                       },
                       "identifierName": "tResDir"
@@ -14585,29 +14585,29 @@
                   "arguments": [
                     {
                       "type": "CallExpression",
-                      "start": 7837,
-                      "end": 7872,
+                      "start": 8073,
+                      "end": 8108,
                       "loc": {
                         "start": {
-                          "line": 380,
+                          "line": 386,
                           "column": 17
                         },
                         "end": {
-                          "line": 380,
+                          "line": 386,
                           "column": 52
                         }
                       },
                       "callee": {
                         "type": "Identifier",
-                        "start": 7837,
-                        "end": 7842,
+                        "start": 8073,
+                        "end": 8078,
                         "loc": {
                           "start": {
-                            "line": 380,
+                            "line": 386,
                             "column": 17
                           },
                           "end": {
-                            "line": 380,
+                            "line": 386,
                             "column": 22
                           },
                           "identifierName": "toDir"
@@ -14617,43 +14617,43 @@
                       "arguments": [
                         {
                           "type": "CallExpression",
-                          "start": 7843,
-                          "end": 7871,
+                          "start": 8079,
+                          "end": 8107,
                           "loc": {
                             "start": {
-                              "line": 380,
+                              "line": 386,
                               "column": 23
                             },
                             "end": {
-                              "line": 380,
+                              "line": 386,
                               "column": 51
                             }
                           },
                           "callee": {
                             "type": "MemberExpression",
-                            "start": 7843,
-                            "end": 7861,
+                            "start": 8079,
+                            "end": 8097,
                             "loc": {
                               "start": {
-                                "line": 380,
+                                "line": 386,
                                 "column": 23
                               },
                               "end": {
-                                "line": 380,
+                                "line": 386,
                                 "column": 41
                               }
                             },
                             "object": {
                               "type": "Identifier",
-                              "start": 7843,
-                              "end": 7853,
+                              "start": 8079,
+                              "end": 8089,
                               "loc": {
                                 "start": {
-                                  "line": 380,
+                                  "line": 386,
                                   "column": 23
                                 },
                                 "end": {
-                                  "line": 380,
+                                  "line": 386,
                                   "column": 33
                                 },
                                 "identifierName": "StdlibPath"
@@ -14662,15 +14662,15 @@
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 7854,
-                              "end": 7861,
+                              "start": 8090,
+                              "end": 8097,
                               "loc": {
                                 "start": {
-                                  "line": 380,
+                                  "line": 386,
                                   "column": 34
                                 },
                                 "end": {
-                                  "line": 380,
+                                  "line": 386,
                                   "column": 41
                                 },
                                 "identifierName": "resolve"
@@ -14682,29 +14682,29 @@
                           "arguments": [
                             {
                               "type": "SpreadElement",
-                              "start": 7862,
-                              "end": 7870,
+                              "start": 8098,
+                              "end": 8106,
                               "loc": {
                                 "start": {
-                                  "line": 380,
+                                  "line": 386,
                                   "column": 42
                                 },
                                 "end": {
-                                  "line": 380,
+                                  "line": 386,
                                   "column": 50
                                 }
                               },
                               "argument": {
                                 "type": "Identifier",
-                                "start": 7865,
-                                "end": 7870,
+                                "start": 8101,
+                                "end": 8106,
                                 "loc": {
                                   "start": {
-                                    "line": 380,
+                                    "line": 386,
                                     "column": 45
                                   },
                                   "end": {
-                                    "line": 380,
+                                    "line": 386,
                                     "column": 50
                                   },
                                   "identifierName": "paths"
@@ -14720,7 +14720,8 @@
                 }
               }
             ],
-            "directives": []
+            "directives": [],
+            "trailingComments": null
           },
           "leadingComments": [
             {
@@ -14741,22 +14742,39 @@
             },
             {
               "type": "CommentBlock",
-              "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   \n",
+              "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* **NOTICE** \n* \n* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably\n* want to use {@link expandDir}, which expands paths that start with `~` to\n* the current user's home direcotry.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   Resolved directory path.\n",
               "start": 7595,
-              "end": 7757,
+              "end": 7993,
               "loc": {
                 "start": {
                   "line": 370,
                   "column": 0
                 },
                 "end": {
-                  "line": 378,
+                  "line": 384,
                   "column": 2
                 }
               }
             }
           ],
-          "trailingComments": []
+          "trailingComments": [
+            {
+              "type": "CommentBlock",
+              "value": "*\n* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* @param {...string} paths\n*   Paths to expand.\n* \n* @return {ResDir}\n*   Expanded directory path.\n",
+              "start": 8115,
+              "end": 8302,
+              "loc": {
+                "start": {
+                  "line": 390,
+                  "column": 0
+                },
+                "end": {
+                  "line": 398,
+                  "column": 2
+                }
+              }
+            }
+          ]
         },
         "leadingComments": [
           {
@@ -14777,16 +14795,453 @@
           },
           {
             "type": "CommentBlock",
-            "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   \n",
+            "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* **NOTICE** \n* \n* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably\n* want to use {@link expandDir}, which expands paths that start with `~` to\n* the current user's home direcotry.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   Resolved directory path.\n",
             "start": 7595,
-            "end": 7757,
+            "end": 7993,
             "loc": {
               "start": {
                 "line": 370,
                 "column": 0
               },
               "end": {
-                "line": 378,
+                "line": 384,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "trailingComments": [
+          {
+            "type": "CommentBlock",
+            "value": "*\n* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* @param {...string} paths\n*   Paths to expand.\n* \n* @return {ResDir}\n*   Expanded directory path.\n",
+            "start": 8115,
+            "end": 8302,
+            "loc": {
+              "start": {
+                "line": 390,
+                "column": 0
+              },
+              "end": {
+                "line": 398,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "exportKind": "value"
+      },
+      {
+        "type": "ExportNamedDeclaration",
+        "start": 8303,
+        "end": 8408,
+        "loc": {
+          "start": {
+            "line": 399,
+            "column": 0
+          },
+          "end": {
+            "line": 401,
+            "column": 1
+          }
+        },
+        "specifiers": [],
+        "source": null,
+        "declaration": {
+          "type": "FunctionDeclaration",
+          "start": 8310,
+          "end": 8408,
+          "loc": {
+            "start": {
+              "line": 399,
+              "column": 7
+            },
+            "end": {
+              "line": 401,
+              "column": 1
+            }
+          },
+          "id": {
+            "type": "Identifier",
+            "start": 8319,
+            "end": 8328,
+            "loc": {
+              "start": {
+                "line": 399,
+                "column": 16
+              },
+              "end": {
+                "line": 399,
+                "column": 25
+              },
+              "identifierName": "expandDir"
+            },
+            "name": "expandDir",
+            "leadingComments": null
+          },
+          "generator": false,
+          "expression": false,
+          "async": false,
+          "params": [
+            {
+              "type": "RestElement",
+              "start": 8329,
+              "end": 8352,
+              "loc": {
+                "start": {
+                  "line": 399,
+                  "column": 26
+                },
+                "end": {
+                  "line": 399,
+                  "column": 49
+                }
+              },
+              "argument": {
+                "type": "Identifier",
+                "start": 8332,
+                "end": 8337,
+                "loc": {
+                  "start": {
+                    "line": 399,
+                    "column": 29
+                  },
+                  "end": {
+                    "line": 399,
+                    "column": 34
+                  },
+                  "identifierName": "paths"
+                },
+                "name": "paths"
+              },
+              "typeAnnotation": {
+                "type": "TypeAnnotation",
+                "start": 8337,
+                "end": 8352,
+                "loc": {
+                  "start": {
+                    "line": 399,
+                    "column": 34
+                  },
+                  "end": {
+                    "line": 399,
+                    "column": 49
+                  }
+                },
+                "typeAnnotation": {
+                  "type": "GenericTypeAnnotation",
+                  "start": 8339,
+                  "end": 8352,
+                  "loc": {
+                    "start": {
+                      "line": 399,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 399,
+                      "column": 49
+                    }
+                  },
+                  "typeParameters": {
+                    "type": "TypeParameterInstantiation",
+                    "start": 8344,
+                    "end": 8352,
+                    "loc": {
+                      "start": {
+                        "line": 399,
+                        "column": 41
+                      },
+                      "end": {
+                        "line": 399,
+                        "column": 49
+                      }
+                    },
+                    "params": [
+                      {
+                        "type": "StringTypeAnnotation",
+                        "start": 8345,
+                        "end": 8351,
+                        "loc": {
+                          "start": {
+                            "line": 399,
+                            "column": 42
+                          },
+                          "end": {
+                            "line": 399,
+                            "column": 48
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "id": {
+                    "type": "Identifier",
+                    "start": 8339,
+                    "end": 8344,
+                    "loc": {
+                      "start": {
+                        "line": 399,
+                        "column": 36
+                      },
+                      "end": {
+                        "line": 399,
+                        "column": 41
+                      },
+                      "identifierName": "Array"
+                    },
+                    "name": "Array"
+                  }
+                }
+              }
+            }
+          ],
+          "returnType": {
+            "type": "TypeAnnotation",
+            "start": 8353,
+            "end": 8361,
+            "loc": {
+              "start": {
+                "line": 399,
+                "column": 50
+              },
+              "end": {
+                "line": 399,
+                "column": 58
+              }
+            },
+            "typeAnnotation": {
+              "type": "GenericTypeAnnotation",
+              "start": 8355,
+              "end": 8361,
+              "loc": {
+                "start": {
+                  "line": 399,
+                  "column": 52
+                },
+                "end": {
+                  "line": 399,
+                  "column": 58
+                }
+              },
+              "typeParameters": null,
+              "id": {
+                "type": "Identifier",
+                "start": 8355,
+                "end": 8361,
+                "loc": {
+                  "start": {
+                    "line": 399,
+                    "column": 52
+                  },
+                  "end": {
+                    "line": 399,
+                    "column": 58
+                  },
+                  "identifierName": "ResDir"
+                },
+                "name": "ResDir"
+              }
+            }
+          },
+          "body": {
+            "type": "BlockStatement",
+            "start": 8362,
+            "end": 8408,
+            "loc": {
+              "start": {
+                "line": 399,
+                "column": 59
+              },
+              "end": {
+                "line": 401,
+                "column": 1
+              }
+            },
+            "body": [
+              {
+                "type": "ReturnStatement",
+                "start": 8366,
+                "end": 8406,
+                "loc": {
+                  "start": {
+                    "line": 400,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 400,
+                    "column": 42
+                  }
+                },
+                "argument": {
+                  "type": "CallExpression",
+                  "start": 8373,
+                  "end": 8405,
+                  "loc": {
+                    "start": {
+                      "line": 400,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 400,
+                      "column": 41
+                    }
+                  },
+                  "callee": {
+                    "type": "Identifier",
+                    "start": 8373,
+                    "end": 8380,
+                    "loc": {
+                      "start": {
+                        "line": 400,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 400,
+                        "column": 16
+                      },
+                      "identifierName": "tResDir"
+                    },
+                    "name": "tResDir"
+                  },
+                  "arguments": [
+                    {
+                      "type": "CallExpression",
+                      "start": 8381,
+                      "end": 8404,
+                      "loc": {
+                        "start": {
+                          "line": 400,
+                          "column": 17
+                        },
+                        "end": {
+                          "line": 400,
+                          "column": 40
+                        }
+                      },
+                      "callee": {
+                        "type": "Identifier",
+                        "start": 8381,
+                        "end": 8386,
+                        "loc": {
+                          "start": {
+                            "line": 400,
+                            "column": 17
+                          },
+                          "end": {
+                            "line": 400,
+                            "column": 22
+                          },
+                          "identifierName": "toDir"
+                        },
+                        "name": "toDir"
+                      },
+                      "arguments": [
+                        {
+                          "type": "CallExpression",
+                          "start": 8387,
+                          "end": 8403,
+                          "loc": {
+                            "start": {
+                              "line": 400,
+                              "column": 23
+                            },
+                            "end": {
+                              "line": 400,
+                              "column": 39
+                            }
+                          },
+                          "callee": {
+                            "type": "Identifier",
+                            "start": 8387,
+                            "end": 8393,
+                            "loc": {
+                              "start": {
+                                "line": 400,
+                                "column": 23
+                              },
+                              "end": {
+                                "line": 400,
+                                "column": 29
+                              },
+                              "identifierName": "expand"
+                            },
+                            "name": "expand"
+                          },
+                          "arguments": [
+                            {
+                              "type": "SpreadElement",
+                              "start": 8394,
+                              "end": 8402,
+                              "loc": {
+                                "start": {
+                                  "line": 400,
+                                  "column": 30
+                                },
+                                "end": {
+                                  "line": 400,
+                                  "column": 38
+                                }
+                              },
+                              "argument": {
+                                "type": "Identifier",
+                                "start": 8397,
+                                "end": 8402,
+                                "loc": {
+                                  "start": {
+                                    "line": 400,
+                                    "column": 33
+                                  },
+                                  "end": {
+                                    "line": 400,
+                                    "column": 38
+                                  },
+                                  "identifierName": "paths"
+                                },
+                                "name": "paths"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "directives": []
+          },
+          "leadingComments": [
+            {
+              "type": "CommentBlock",
+              "value": "*\n* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* @param {...string} paths\n*   Paths to expand.\n* \n* @return {ResDir}\n*   Expanded directory path.\n",
+              "start": 8115,
+              "end": 8302,
+              "loc": {
+                "start": {
+                  "line": 390,
+                  "column": 0
+                },
+                "end": {
+                  "line": 398,
+                  "column": 2
+                }
+              }
+            }
+          ],
+          "trailingComments": []
+        },
+        "leadingComments": [
+          {
+            "type": "CommentBlock",
+            "value": "*\n* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* @param {...string} paths\n*   Paths to expand.\n* \n* @return {ResDir}\n*   Expanded directory path.\n",
+            "start": 8115,
+            "end": 8302,
+            "loc": {
+              "start": {
+                "line": 390,
+                "column": 0
+              },
+              "end": {
+                "line": 398,
                 "column": 2
               }
             }
@@ -15744,16 +16199,32 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   \n",
+      "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* **NOTICE** \n* \n* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably\n* want to use {@link expandDir}, which expands paths that start with `~` to\n* the current user's home direcotry.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   Resolved directory path.\n",
       "start": 7595,
-      "end": 7757,
+      "end": 7993,
       "loc": {
         "start": {
           "line": 370,
           "column": 0
         },
         "end": {
-          "line": 378,
+          "line": 384,
+          "column": 2
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* @param {...string} paths\n*   Paths to expand.\n* \n* @return {ResDir}\n*   Expanded directory path.\n",
+      "start": 8115,
+      "end": 8302,
+      "loc": {
+        "start": {
+          "line": 390,
+          "column": 0
+        },
+        "end": {
+          "line": 398,
           "column": 2
         }
       }
@@ -37853,16 +38324,16 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link Dir}.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   \n",
+      "value": "*\n* Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* **NOTICE** \n* \n* Unless you explicitly *don't* want tilde (`~/...`) expansion you probably\n* want to use {@link expandDir}, which expands paths that start with `~` to\n* the current user's home direcotry.\n* \n* @param {...string} paths\n*   Paths to resolve.\n* \n* @return {ResDir}\n*   Resolved directory path.\n",
       "start": 7595,
-      "end": 7757,
+      "end": 7993,
       "loc": {
         "start": {
           "line": 370,
           "column": 0
         },
         "end": {
-          "line": 378,
+          "line": 384,
           "column": 2
         }
       }
@@ -37882,15 +38353,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 7758,
-      "end": 7764,
+      "start": 7994,
+      "end": 8000,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 0
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 6
         }
       }
@@ -37909,15 +38380,15 @@
         "binop": null
       },
       "value": "function",
-      "start": 7765,
-      "end": 7773,
+      "start": 8001,
+      "end": 8009,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 7
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 15
         }
       }
@@ -37935,15 +38406,15 @@
         "binop": null
       },
       "value": "resolveDir",
-      "start": 7774,
-      "end": 7784,
+      "start": 8010,
+      "end": 8020,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 16
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 26
         }
       }
@@ -37960,15 +38431,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7784,
-      "end": 7785,
+      "start": 8020,
+      "end": 8021,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 26
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 27
         }
       }
@@ -37986,15 +38457,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 7785,
-      "end": 7788,
+      "start": 8021,
+      "end": 8024,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 27
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 30
         }
       }
@@ -38012,15 +38483,15 @@
         "binop": null
       },
       "value": "paths",
-      "start": 7788,
-      "end": 7793,
+      "start": 8024,
+      "end": 8029,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 30
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 35
         }
       }
@@ -38038,15 +38509,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 7793,
-      "end": 7794,
+      "start": 8029,
+      "end": 8030,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 35
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 36
         }
       }
@@ -38064,15 +38535,15 @@
         "binop": null
       },
       "value": "Array",
-      "start": 7795,
-      "end": 7800,
+      "start": 8031,
+      "end": 8036,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 37
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 42
         }
       }
@@ -38091,15 +38562,15 @@
         "updateContext": null
       },
       "value": "<",
-      "start": 7800,
-      "end": 7801,
+      "start": 8036,
+      "end": 8037,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 42
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 43
         }
       }
@@ -38117,15 +38588,15 @@
         "binop": null
       },
       "value": "string",
-      "start": 7801,
-      "end": 7807,
+      "start": 8037,
+      "end": 8043,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 43
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 49
         }
       }
@@ -38144,15 +38615,15 @@
         "updateContext": null
       },
       "value": ">",
-      "start": 7807,
-      "end": 7808,
+      "start": 8043,
+      "end": 8044,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 49
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 50
         }
       }
@@ -38169,15 +38640,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7808,
-      "end": 7809,
+      "start": 8044,
+      "end": 8045,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 50
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 51
         }
       }
@@ -38195,15 +38666,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 7809,
-      "end": 7810,
+      "start": 8045,
+      "end": 8046,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 51
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 52
         }
       }
@@ -38221,15 +38692,15 @@
         "binop": null
       },
       "value": "ResDir",
-      "start": 7811,
-      "end": 7817,
+      "start": 8047,
+      "end": 8053,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 53
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 59
         }
       }
@@ -38246,15 +38717,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7818,
-      "end": 7819,
+      "start": 8054,
+      "end": 8055,
       "loc": {
         "start": {
-          "line": 379,
+          "line": 385,
           "column": 60
         },
         "end": {
-          "line": 379,
+          "line": 385,
           "column": 61
         }
       }
@@ -38274,15 +38745,15 @@
         "updateContext": null
       },
       "value": "return",
-      "start": 7822,
-      "end": 7828,
+      "start": 8058,
+      "end": 8064,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 2
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 8
         }
       }
@@ -38300,15 +38771,15 @@
         "binop": null
       },
       "value": "tResDir",
-      "start": 7829,
-      "end": 7836,
+      "start": 8065,
+      "end": 8072,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 9
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 16
         }
       }
@@ -38325,15 +38796,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7836,
-      "end": 7837,
+      "start": 8072,
+      "end": 8073,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 16
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 17
         }
       }
@@ -38351,15 +38822,15 @@
         "binop": null
       },
       "value": "toDir",
-      "start": 7837,
-      "end": 7842,
+      "start": 8073,
+      "end": 8078,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 17
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 22
         }
       }
@@ -38376,15 +38847,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7842,
-      "end": 7843,
+      "start": 8078,
+      "end": 8079,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 22
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 23
         }
       }
@@ -38402,15 +38873,15 @@
         "binop": null
       },
       "value": "StdlibPath",
-      "start": 7843,
-      "end": 7853,
+      "start": 8079,
+      "end": 8089,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 23
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 33
         }
       }
@@ -38428,15 +38899,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 7853,
-      "end": 7854,
+      "start": 8089,
+      "end": 8090,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 33
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 34
         }
       }
@@ -38454,15 +38925,15 @@
         "binop": null
       },
       "value": "resolve",
-      "start": 7854,
-      "end": 7861,
+      "start": 8090,
+      "end": 8097,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 34
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 41
         }
       }
@@ -38479,15 +38950,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7861,
-      "end": 7862,
+      "start": 8097,
+      "end": 8098,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 41
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 42
         }
       }
@@ -38505,15 +38976,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 7862,
-      "end": 7865,
+      "start": 8098,
+      "end": 8101,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 42
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 45
         }
       }
@@ -38531,15 +39002,15 @@
         "binop": null
       },
       "value": "paths",
-      "start": 7865,
-      "end": 7870,
+      "start": 8101,
+      "end": 8106,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 45
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 50
         }
       }
@@ -38556,15 +39027,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7870,
-      "end": 7871,
+      "start": 8106,
+      "end": 8107,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 50
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 51
         }
       }
@@ -38581,15 +39052,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7871,
-      "end": 7872,
+      "start": 8107,
+      "end": 8108,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 51
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 52
         }
       }
@@ -38606,15 +39077,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7872,
-      "end": 7873,
+      "start": 8108,
+      "end": 8109,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 52
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 53
         }
       }
@@ -38632,15 +39103,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 7873,
-      "end": 7874,
+      "start": 8109,
+      "end": 8110,
       "loc": {
         "start": {
-          "line": 380,
+          "line": 386,
           "column": 53
         },
         "end": {
-          "line": 380,
+          "line": 386,
           "column": 54
         }
       }
@@ -38657,15 +39128,782 @@
         "postfix": false,
         "binop": null
       },
-      "start": 7875,
-      "end": 7876,
+      "start": 8111,
+      "end": 8112,
       "loc": {
         "start": {
-          "line": 381,
+          "line": 387,
           "column": 0
         },
         "end": {
-          "line": 381,
+          "line": 387,
+          "column": 1
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n* Expand paths and apply {@link toDir} to the results to get a {@link ResDir}.\n* \n* @param {...string} paths\n*   Paths to expand.\n* \n* @return {ResDir}\n*   Expanded directory path.\n",
+      "start": 8115,
+      "end": 8302,
+      "loc": {
+        "start": {
+          "line": 390,
+          "column": 0
+        },
+        "end": {
+          "line": 398,
+          "column": 2
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "export",
+        "keyword": "export",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "export",
+      "start": 8303,
+      "end": 8309,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 0
+        },
+        "end": {
+          "line": 399,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "function",
+        "keyword": "function",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "function",
+      "start": 8310,
+      "end": 8318,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 7
+        },
+        "end": {
+          "line": 399,
+          "column": 15
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "expandDir",
+      "start": 8319,
+      "end": 8328,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 16
+        },
+        "end": {
+          "line": 399,
+          "column": 25
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "(",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8328,
+      "end": 8329,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 25
+        },
+        "end": {
+          "line": 399,
+          "column": 26
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "...",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 8329,
+      "end": 8332,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 26
+        },
+        "end": {
+          "line": 399,
+          "column": 29
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "paths",
+      "start": 8332,
+      "end": 8337,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 29
+        },
+        "end": {
+          "line": 399,
+          "column": 34
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 8337,
+      "end": 8338,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 34
+        },
+        "end": {
+          "line": 399,
+          "column": 35
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "Array",
+      "start": 8339,
+      "end": 8344,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 36
+        },
+        "end": {
+          "line": 399,
+          "column": 41
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "</>",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": 7,
+        "updateContext": null
+      },
+      "value": "<",
+      "start": 8344,
+      "end": 8345,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 41
+        },
+        "end": {
+          "line": 399,
+          "column": 42
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "string",
+      "start": 8345,
+      "end": 8351,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 42
+        },
+        "end": {
+          "line": 399,
+          "column": 48
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "</>",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": 7,
+        "updateContext": null
+      },
+      "value": ">",
+      "start": 8351,
+      "end": 8352,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 48
+        },
+        "end": {
+          "line": 399,
+          "column": 49
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ")",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8352,
+      "end": 8353,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 49
+        },
+        "end": {
+          "line": 399,
+          "column": 50
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 8353,
+      "end": 8354,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 50
+        },
+        "end": {
+          "line": 399,
+          "column": 51
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "ResDir",
+      "start": 8355,
+      "end": 8361,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 52
+        },
+        "end": {
+          "line": 399,
+          "column": 58
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "{",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8362,
+      "end": 8363,
+      "loc": {
+        "start": {
+          "line": 399,
+          "column": 59
+        },
+        "end": {
+          "line": 399,
+          "column": 60
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "return",
+        "keyword": "return",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "return",
+      "start": 8366,
+      "end": 8372,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 2
+        },
+        "end": {
+          "line": 400,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "tResDir",
+      "start": 8373,
+      "end": 8380,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 9
+        },
+        "end": {
+          "line": 400,
+          "column": 16
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "(",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8380,
+      "end": 8381,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 16
+        },
+        "end": {
+          "line": 400,
+          "column": 17
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "toDir",
+      "start": 8381,
+      "end": 8386,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 17
+        },
+        "end": {
+          "line": 400,
+          "column": 22
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "(",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8386,
+      "end": 8387,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 22
+        },
+        "end": {
+          "line": 400,
+          "column": 23
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "expand",
+      "start": 8387,
+      "end": 8393,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 23
+        },
+        "end": {
+          "line": 400,
+          "column": 29
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "(",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8393,
+      "end": 8394,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 29
+        },
+        "end": {
+          "line": 400,
+          "column": 30
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "...",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 8394,
+      "end": 8397,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 30
+        },
+        "end": {
+          "line": 400,
+          "column": 33
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "paths",
+      "start": 8397,
+      "end": 8402,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 33
+        },
+        "end": {
+          "line": 400,
+          "column": 38
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ")",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8402,
+      "end": 8403,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 38
+        },
+        "end": {
+          "line": 400,
+          "column": 39
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ")",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8403,
+      "end": 8404,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 39
+        },
+        "end": {
+          "line": 400,
+          "column": 40
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ")",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8404,
+      "end": 8405,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 40
+        },
+        "end": {
+          "line": 400,
+          "column": 41
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ";",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 8405,
+      "end": 8406,
+      "loc": {
+        "start": {
+          "line": 400,
+          "column": 41
+        },
+        "end": {
+          "line": 400,
+          "column": 42
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "}",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 8407,
+      "end": 8408,
+      "loc": {
+        "start": {
+          "line": 401,
+          "column": 0
+        },
+        "end": {
+          "line": 401,
           "column": 1
         }
       }
@@ -38683,15 +39921,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 7877,
-      "end": 7877,
+      "start": 8409,
+      "end": 8409,
       "loc": {
         "start": {
-          "line": 382,
+          "line": 402,
           "column": 0
         },
         "end": {
-          "line": 382,
+          "line": 402,
           "column": 0
         }
       }

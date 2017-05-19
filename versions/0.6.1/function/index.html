@@ -52,6 +52,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-procure">procure</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-commonBase">commonBase</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-expand">expand</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-expandDir">expandDir</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-resolveDir">resolveDir</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-split">split</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toDir">toDir</a></span></span></li>
@@ -440,6 +441,34 @@ doing -- see <span>.appInstance</span>).</p>
         
         <div data-ice="description"><p>Like <span>Path.resolve</span> but it expands tilde paths to the user&apos;s home
 directory.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="function/index.html#static-function-expandDir">expandDir</a></span></span><span data-ice="signature">(paths: ...<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Expand paths and apply <span><a href="function/index.html#static-function-toDir">toDir</a></span> to the results to get a <span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span>.</p>
 </div>
       </div>
     </td>
@@ -1103,7 +1132,7 @@ missing.</p>
       <div>
         
         
-        <div data-ice="description"><p>Resolve paths and apply <span><a href="function/index.html#static-function-toDir">toDir</a></span> to the results to get a <span><a href="typedef/index.html#static-typedef-Dir">Dir</a></span>.</p>
+        <div data-ice="description"><p>Resolve paths and apply <span><a href="function/index.html#static-function-toDir">toDir</a></span> to the results to get a <span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span>.</p>
 </div>
       </div>
     </td>
@@ -2184,6 +2213,80 @@ directory.</p>
         <tr>
           <td class="return-type" data-ice="returnType"><span>ResPath</span></td>
           <td class="return-desc" data-ice="returnDescription"><p>Resolved (absolute) path.</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-function-expandDir">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span data-ice="name">expandDir</span><span data-ice="signature">(paths: ...<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/path.js.html#lineNumber399">source</a></span></span>
+    </span>
+  </h3>
+
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {expandDir} from &apos;<span><a href="file/src/path.js.html#lineNumber399">nrser/src/path.js</a></span>&apos;</code></pre></div>
+  
+  
+  <div data-ice="description"><p>Expand paths and apply <span><a href="function/index.html#static-function-toDir">toDir</a></span> to the results to get a <span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span>.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">paths</td>
+      <td data-ice="type">...<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Paths to expand.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type" data-ice="returnType"><span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Expanded directory path.</p>
 </td>
         </tr>
       </tbody>
@@ -4032,14 +4135,18 @@ missing.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/path.js.html#lineNumber379">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/path.js.html#lineNumber385">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {resolveDir} from &apos;<span><a href="file/src/path.js.html#lineNumber379">nrser/src/path.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {resolveDir} from &apos;<span><a href="file/src/path.js.html#lineNumber385">nrser/src/path.js</a></span>&apos;</code></pre></div>
   
   
-  <div data-ice="description"><p>Resolve paths and apply <span><a href="function/index.html#static-function-toDir">toDir</a></span> to the results to get a <span><a href="typedef/index.html#static-typedef-Dir">Dir</a></span>.</p>
+  <div data-ice="description"><p>Resolve paths and apply <span><a href="function/index.html#static-function-toDir">toDir</a></span> to the results to get a <span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span>.</p>
+<p><strong>NOTICE</strong> </p>
+<p>Unless you explicitly <em>don&apos;t</em> want tilde (<code>~/...</code>) expansion you probably
+want to use <span><a href="function/index.html#static-function-expandDir">expandDir</a></span>, which expands paths that start with <code>~</code> to
+the current user&apos;s home direcotry.</p>
 </div>
 
   
@@ -4070,7 +4177,8 @@ missing.</p>
       <tbody>
         <tr>
           <td class="return-type" data-ice="returnType"><span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span></td>
-          
+          <td class="return-desc" data-ice="returnDescription"><p>Resolved directory path.</p>
+</td>
         </tr>
       </tbody>
     </table>
