@@ -245,6 +245,10 @@ describe('path.js', function() {
         f('/etc', 'x', 'y'), '/etc/x/y',
         f('/etc', '~/temp', 'blah'), `${ process.env.HOME }/temp/blah`,
         f('/x/y'), '/x/y',
+        
+        // need to be careful / aware of ~ paths
+        f('/x', '~', 'y'), `${ process.env.HOME }/y`,
+        f('/x', '~y', 'z'), '/x/~y/z',
       ]
     });
   }); // expand()
