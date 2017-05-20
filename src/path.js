@@ -97,7 +97,7 @@ export const tAbsPath = (({}: any): $Reify<AbsPath>);
 * 
 * [path.resolve]: https://nodejs.org/api/path.html#path_path_resolve_path
 * 
-* @typedef {string} ResolvedPath
+* @typedef {string} ResPath
 */
 export type ResPath = AbsPath & NormPath;
 

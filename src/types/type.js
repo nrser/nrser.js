@@ -29,6 +29,7 @@ export type Meta = {
   identity?: boolean,
 }
 
+
 /**
 * a tcomb type.
 * 
@@ -42,7 +43,13 @@ export type Type = {
   is: (value: any) => boolean,
 }
 
+/**
+* tcomb type for {@link Type}.
+* 
+* @type {Type}
+*/
 export const tType = (({}: any): $Reify<Type>);
+
 
 /**
 * tcomb props - an object mapping property names to their tcomb type.
