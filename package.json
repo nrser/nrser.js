@@ -59,5 +59,8 @@
     "node-notifier": false,
     "chalk": false,
     "untildify": false
+  },
+  "esdoc": {
+    "url": "http://nrser.com/nrser.js/v/<%= version %>/"
   }
 }
