@@ -18,15 +18,13 @@
     minimist "1.2.0"
     taffydb "2.7.2"
 
-"@nrser/ugh@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.6.0.tgz#646017d8dffaa6c33dad865ee272f5a39d9f814b"
+"@nrser/ugh@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.6.2.tgz#3803b4bd787f064f10abb5f6ea5b69ebb695331a"
   dependencies:
     ansi-html "^0.0.7"
-    bluebird ">= 2.3.2 < 3"
     body-parser "^1.16.1"
     bootstrap-sass "^3.3.7"
-    chalk "^1.1.3"
     commander "^2.9.0"
     config "^1.25.1"
     express "^4.14.1"
@@ -42,9 +40,8 @@
     immutable "^3.8.1"
     jquery "^3.1.1"
     js-yaml "^3.8.1"
-    lodash "^4.17.4"
     moment "^2.17.1"
-    nrser "^0.6.0"
+    nrser "^0.6.3"
     react "^15.4.2"
     react-bootstrap "^0.30.7"
     react-dom "^15.4.2"
@@ -2157,13 +2154,6 @@ fs-extra@1.0.0:
     jsonfile "^2.1.0"
     klaw "^1.0.0"
 
-fs-extra@^2.0.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-2.1.1.tgz#f8a34cc890522fc233896f34944ff2e35948959f"
-  dependencies:
-    graceful-fs "^4.1.2"
-    jsonfile "^2.1.0"
-
 fs-extra@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-3.0.1.tgz#3794f378c58b342ea7dbbb23095109c4b3b62291"
@@ -3566,16 +3556,17 @@ normalize-path@^2.0.1:
     gauge "~2.7.1"
     set-blocking "~2.0.0"
 
-nrser@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/nrser/-/nrser-0.6.0.tgz#1b77f3afb9021d3a1aa579a2bb59205f77691bc5"
+nrser@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/nrser/-/nrser-0.6.3.tgz#6e5f82ee376c6ae8c07ff2306e60319d1eb6b74c"
   dependencies:
     bluebird ">= 2.3.2 < 3"
     chalk "^1.1.3"
-    fs-extra "^2.0.0"
+    fs-extra "^3.0.1"
     lodash "^4.17.4"
     minimatch "^3.0.3"
     tcomb "^3.2.20"
+    tildify "^1.2.0"
     untildify "^3.0.2"
 
 nth-check@~1.0.1:
