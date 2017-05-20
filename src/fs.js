@@ -9,9 +9,12 @@
 // Imports
 // ==========================================================================
 
-import _ from '//src/nodash';
+// Deps
 import FsExtra from 'fs-extra';
 import Promise from 'bluebird';
+
+// Package
+import _ from '//src/nodash';
 
 
 // Types
