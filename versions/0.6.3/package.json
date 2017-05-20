@@ -1,0 +1,66 @@
+{
+  "name": "nrser",
+  "version": "0.6.3-dev.0",
+  "description": "my js utils",
+  "main": "lib/index.js",
+  "dependencies": {
+    "bluebird": ">= 2.3.2 < 3",
+    "chalk": "^1.1.3",
+    "fs-extra": "^3.0.1",
+    "lodash": "^4.17.4",
+    "minimatch": "^3.0.3",
+    "tcomb": "^3.2.20",
+    "tildify": "^1.2.0",
+    "untildify": "^3.0.2"
+  },
+  "devDependencies": {
+    "@nrser/esdoc": "^0.5.2",
+    "@nrser/ugh": "^0.6.0",
+    "babel-cli": "^6.23.0",
+    "babel-core": "^6.23.1",
+    "babel-plugin-metalog": "^0.1.0",
+    "babel-plugin-module-resolver": "^2.7.0",
+    "babel-plugin-syntax-flow": "^6.13.0",
+    "babel-plugin-syntax-jsx": "^6.13.0",
+    "babel-plugin-tcomb": "^0.3.19",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.23.0",
+    "babel-preset-stage-2": "^6.22.0",
+    "babel-register": "^6.23.0",
+    "chai": "^3.5.0",
+    "flow-bin": "^0.41.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-spawn-mocha": "^3.1.0",
+    "mocha": "^3.1.0"
+  },
+  "scripts": {
+    "clean": "gulp clean",
+    "build": "gulp build:this",
+    "build-all": "gulp build",
+    "test": "gulp mocha",
+    "watch": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nrser/nrser.js.git"
+  },
+  "author": "nrser",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nrser/nrser.js/issues"
+  },
+  "homepage": "https://github.com/nrser/nrser.js#readme",
+  "browser": {
+    "fs-extra": false,
+    "node-notifier": false,
+    "chalk": false,
+    "untildify": false
+  },
+  "esdoc": {
+    "url": "http://nrser.com/nrser.js/v/<%= version %>/"
+  }
+}
