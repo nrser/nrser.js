@@ -107,34 +107,84 @@ describe('string.js', () => {
     });
   });
   
-  describe('.deindent', () => {
-    const obj = {
-    	buildDirs: [
-    		{
-    			dest: "./lib",
-    			name: "src",
-    			src: "./src/**/*.{js,jsx,es,es6}",
-    		},
-    		{
-    			dest: "./test/lib",
-    			name: "test",
-    			src: "./test/src/**/*.{js,jsx,es,es6}",
-    		}
-    	],
-    	compileExts: [
-    		"js",
-    		"jsx",
-    		"es",
-    		"es6",
-    	],
-    	testFiles: "./test/lib/**/*.tests.{js,jsx,es,es6}",
-    };
+  describe('.deindent', function() {
+    it("doesn't modify output of print", function() {
+      const obj = {
+      	buildDirs: [
+      		{
+      			dest: "./lib",
+      			name: "src",
+      			src: "./src/**/*.{js,jsx,es,es6}",
+      		},
+      		{
+      			dest: "./test/lib",
+      			name: "test",
+      			src: "./test/src/**/*.{js,jsx,es,es6}",
+      		}
+      	],
+      	compileExts: [
+      		"js",
+      		"jsx",
+      		"es",
+      		"es6",
+      	],
+      	testFiles: "./test/lib/**/*.tests.{js,jsx,es,es6}",
+      };
+      
+      const str = print(obj);
+      // 
+      // console.log(str);
+      // console.log(deindent(str));
+      
+      expect(deindent(str)).to.equal(str);
+    });
     
-    const str = print(obj);
-    // 
-    // console.log(str);
-    // console.log(deindent(str));
+    it("doesn't leave empty lines with spaces", function() {
+      
+      const raw = `
+        /**
+        * some stuff
+        */
+      `;
+      
+      const expected = [
+        "",
+        "/**",
+        "* some stuff",
+        "*/",
+        "",
+      ].join("\n");
+      
+      expect(deindent(raw)).to.equal(expected);
+    });
     
-    expect(deindent(str)).to.equal(str);
+    it(
+      "gets weird when whitespace lines don't share the common indent",
+      function() {
+        // Of course it's tabs vs spaces that cause the problem...
+        
+        // Indent is only one character.
+        const indent = "\t";
+        
+        const lines = [
+          `\tf(x) {`,
+          "\t  x + 1;",
+          // Then someone breaks the common indent on a whitespace line
+          "    ",
+          "\t}",
+        ];
+        
+        expect(deindent(lines.join("\n"))).to.equal([
+          "f(x) {",
+          "  x + 1;",
+          // And the result is a whitespace line that sticks out more than 
+          // you probably want it to (you probably want this to be '  ').
+          // 
+          // But that's your fault. Don't mix tabs and spaces.
+          "   ",
+          "}",
+        ].join("\n"));
+      }
+    );
   });
 });

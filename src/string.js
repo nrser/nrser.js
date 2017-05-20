@@ -1,7 +1,39 @@
 // @flow
 
+// Imports
+// ==========================================================================
+
+// Package
 import _ from '//src/nodash';
 import print from './print';
+
+
+// Types
+// ==========================================================================
+
+import type { $Refinement, $Reify } from 'tcomb';
+
+/**
+* Predicate used in {@link Line} to test if a string is a "line" (if the string
+* is free of `\n` and `\r` characters).
+* 
+* @param {string} string
+*   String to test. 
+* 
+* @return {boolean}
+*   `true` if the string is free of line breaks.
+*/
+export function isLine(string: string): boolean {
+  return string.indexOf("\n") === string.indexOf("\r") === -1;
+}
+
+export type Line = string & $Refinement<typeof isLine>;
+
+export const tLine = (({}: any): $Reify<Line>);
+
+
+// Exports
+// ==========================================================================
 
 /**
 * make a tag function for string template literals that applies a function to
@@ -110,9 +142,15 @@ export function indent(
 } // indent()
 
 /**
-* split a string into lines.
+* Split a string into lines WITHOUT line breaks (`\n` and `\r` characters).
+* 
+* @param {string} input
+*   String to split.
+* 
+* @return {Array<Line>}
+*   Array of lines in the string.
 */
-export function lines(input: string): Array<string> {
+export function lines(input: string): Array<Line> {
   var re=/\r\n|\n\r|\n|\r/g;
 
   return input.replace(re,"\n").split("\n");
@@ -130,11 +168,11 @@ export function commonPrefix(strings: Array<string>): string {
 }
 
 export function isWhitespace(input: string): boolean {
-  return !!input.match(/^\s+$/m);
+  return !!input.match(/^\s*$/m);
 }
 
 export function nonWhitespaceLines(input: string): Array<string> {
-  return _.reject(lines(input), line => line.match(/^\s*$/));
+  return _.reject(lines(input), isWhitespace);
 }
 
 export function leadingWhitespace(input: string): string {
@@ -158,9 +196,32 @@ export function deindent(input: string): string {
   const regexp = new RegExp(`^${ indent }`, 'g');
   
   return _.map(lines(input), line => {
-    return line.replace(regexp, '');
+    // When finding the common indent we ignore lines that are all whitespace,
+    // so we need to treat them differently here to get the desired results.
+    if (isWhitespace(line)) {
+      // The line can be any assortment of whitespace - it doesn't have to 
+      // start with `indent` or any sub-string of it.
+      // 
+      // We use this approach because this function is for formatting output
+      // for printing and it's a PITA to have strings not formatting as 
+      // desired because of invisible spacing discrepancies on lines that 
+      // don't even matter. You wouldn't want to use this to generate
+      // whitespace-sensitive code or anything.
+      // 
+      // Anyways, all the most sensible thing to do seems to be just chopping
+      // the first `indent.length` characters off the line. See the 
+      // tests for an example of when this gets wonky, but for the core
+      // purpose it should be fine.
+      return line.slice(indent.length);
+      
+    } else {
+      // Non-whitespace lines were considered when calculating the indent,
+      // so they should all start with it - chop it off.
+      return line.replace(regexp, '');
+      
+    }
   }).join("\n");
-}
+} // deindent()
 
 export function pad(
   number: number,
