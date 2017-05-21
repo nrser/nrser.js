@@ -6,8 +6,19 @@ import _ from '//src/nodash';
 // package
 import * as errors from './errors';
 
-// types
+// Types
+// ==========================================================================
+
+// Type Imports
+// --------------------------------------------------------------------------
+
+import type { $Refinement, $Reify } from 'tcomb';
+
 import type { Collection }  from './types/collection';
+
+// Type Exports
+// --------------------------------------------------------------------------
+
 
 /**
 * extra stuff that would be along the lines of lodash collections functions
@@ -25,7 +36,7 @@ export function findOnly<V>(
   if (results.length == 0) {
     throw new errors.NotFoundError(`no results`);
   } else if (results.length > 1) {
-    throw new errors.NrserError(`multiple results`, results);
+    throw new errors.StateError(`multiple results`, results);
   }
   
   return results[0];
@@ -50,3 +61,8 @@ export function mapDefined<DOMAIN, CODOMAIN>(
   
   return results;
 }
+
+_.mixin({
+  findOnly,
+  mapDefined,
+});
