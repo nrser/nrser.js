@@ -37,6 +37,11 @@
         version: v0.3.7
         depth: 1
       
+      - owner: gcanti
+        name: tcomb
+        version: v3.2.20
+        dir_name: tcomb@3.2.20
+      
       archive: []
       # example:
       # - url: https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.23.zip
