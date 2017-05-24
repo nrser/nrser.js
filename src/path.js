@@ -5,9 +5,11 @@
 // ==========================================================================
 
 import StdlibPath from 'path';
-import _ from '//src/nodash';
 import _untildify from 'untildify';
 import _tildify from 'tildify';
+
+import _ from '//src/nodash';
+import match from '//src/match';
 
 
 // Types
@@ -130,6 +132,21 @@ export type TildePath = string & $Refinement<typeof isTildePath>;
 * @type {Type}
 */
 export const tTildePath = (({}: any): $Reify<TildePath>);
+
+
+/**
+* A path that can be absolute - either {@link AbsPath} or {@link TildePath}.
+* 
+* @typedef {AbsPath|TildePath} AbsOrTildePath
+*/
+export type AbsOrTildePath = AbsPath | TildePath;
+
+/**
+* tcomb type for {@link AbsOrTildePath}.
+* 
+* @type {Type}
+*/
+export const tAbsOrTildePath = (({}: any): $Reify<AbsOrTildePath>);
 
 
 // ### Path Segment
@@ -353,19 +370,80 @@ export function commonBase(...paths: Array<string>): ?ResPath {
 /**
 * Make a path string into a {@link Dir} by appending `/` to it if needed.
 * 
-* @param {string} path
-*   Path to convert.
+* @param {string} ...paths
+*   Paths to join then convert.
 * 
 * @return {Dir}
 *   Directory string.
 */
-export function toDir(path: string): Dir {
-  if (tDir.is(t.String(path))) {
-    return path;
+export function toDir(...paths: Array<string>): Dir {
+  const joined = StdlibPath.join(...paths);
+  
+  if (tDir.is(joined)) {
+    return joined;
   }
   
-  return tDir(path + '/');
+  return tDir(joined + '/');
 } // .toDir()
+
+/**
+* Join paths and convert to {@link AbsPath} by calling `untildify` if 
+* it's a {@link TildePath}.
+* 
+* @param {string} ...paths
+*   String path segments.
+* 
+* @return {AbsPath}
+*   Absolute path.
+* 
+* @throws {TypeError}
+*   If the joined path is not an {@link AbsPath} or {@link TildePath}.
+*/
+export function toAbsPath(...paths: Array<string>): AbsPath {
+  const joined = tAbsOrTildePath(StdlibPath.join(...paths));
+  
+  if (tTildePath.is(joined)) {
+    return untildify(joined)
+  }
+  
+  return joined;
+} // #toAbsPath()
+
+
+/**
+* Join paths and convert to an {@link AbsDir} by calling {@link toDir}
+* and {@link toAbsPath} on them.
+* 
+* @param {string} ...paths
+*   String path segments.
+* 
+* @return {AbsDir}
+*   Absolute directory path.
+* 
+* @throws {TypeError}
+*   If the joined path is not an {@link AbsPath} or {@link TildePath}.
+*/
+export function toAbsDir(...paths: Array<string>): AbsDir {
+  return toDir(toAbsPath(...paths));
+} // #toAbsDir()
+
+
+/**
+* Join paths and convert to a {@link ResDir}.
+* 
+* @param {string} ...paths
+*   String path segments.
+* 
+* @return {ResDir}
+*   Resolved (normalized) absolute directory path.
+* 
+* @throws {TypeError}
+*   If the joined path is not an {@link AbsPath} or {@link TildePath}.
+*/
+export function toResDir(...paths: Array<AbsPath | TildePath>): ResDir {
+  return StdlibPath.normalize(toAbsDir(...paths));
+}
+
 
 /**
 * Resolve paths and apply {@link toDir} to the results to get a {@link ResDir}.

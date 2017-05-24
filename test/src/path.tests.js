@@ -84,50 +84,96 @@ describe('path.js', function() {
   
   
   /** @test {Dir} */
-  describe('tDir', function() {
+  context('tDir', function() {
+    describe('tDir.is()', function() {
+      itMaps({
+        func: NRSER.Path.tDir.is,
+        map: (f, throws) => [
+          // root is a dir
+          f('/'), true,
+          
+          // and the dir we're in
+          f('./'), true,
+          
+          // even if it doesn't end with /
+          f('.'), true,
+          
+          // we take the empty string to mean the current directory, so it
+          // is a directory as well
+          f(''), true,
+          
+          // and the dir above us
+          f('../'), true,
+          
+          // even if it doesn't end with /
+          f('..'), true,
+          
+          // we don't check the file system, so we don't know if these are dirs
+          f('x/y/z'), false,
+          f('/x/y'), false,
+          
+          // but we know these are
+          f('x/y/z/'), true,
+          f('x/y//z/'), true,
+          
+          // what about tilde paths?
+          // 
+          // if it ends with / it's easy
+          f('~/'), true,
+          // and this most certainly isn't
+          f('./~'), false,
+          // but what about just ~?
+          // 
+          // it *expands* to a directory, but it doesn't *resolve* to one...
+          f('~'), false,
+        ]
+      })
+    }); // tDir.is()
+  }); // tDir
+  
+  
+  /** @test {toDir} */
+  describe('toDir()', function() {
     itMaps({
-      func: NRSER.Path.tDir.is,
+      func: NRSER.Path.toDir,
       map: (f, throws) => [
-        // root is a dir
-        f('/'), true,
+        // leaves Dir alone
+        f('/'), '/',
+        f('.'), '.',
+        f('x/y/z/'), 'x/y/z/',
         
-        // and the dir we're in
-        f('./'), true,
+        // this is a weird by-product of Path.join('') => '.'
+        f(''), '.',
         
-        // even if it doesn't end with /
-        f('.'), true,
+        // and of Path.join() => '.'
+        f(), '.',
         
-        // we take the empty string to mean the current directory, so it
-        // is a directory as well
-        f(''), true,
+        // adds slash to non-Dir
+        f('x/y'), 'x/y/',
         
-        // and the dir above us
-        f('../'), true,
+        // barfs on non-string
+        f(1), throws(TypeError, /Path must be a string\. Received 1/),
+      ]
+    });
+  }); // toDir()
+  
+  
+  describe('toResDir()', function() {
+    itMaps({
+      func: NRSER.Path.toResDir,
+      map: (f, throws) => [
+        // f(input), expected,
+        f('/'), '/',
+        f('/x/y/../z'), '/x/z/',
+        f('/', 'x', 'y', '..', 'z'), '/x/z/',
+        f('~/temp'), NRSER.Path.toDir(NRSER.Path.expand('~/temp')),
         
-        // even if it doesn't end with /
-        f('..'), true,
-        
-        // we don't check the file system, so we don't know if these are dirs
-        f('x/y/z'), false,
-        f('/x/y'), false,
-        
-        // but we know these are
-        f('x/y/z/'), true,
-        f('x/y//z/'), true,
-        
-        // what about tilde paths?
-        // 
-        // if it ends with / it's easy
-        f('~/'), true,
-        // and this most certainly isn't
-        f('./~'), false,
-        // but what about just ~?
-        // 
-        // it *expands* to a directory, but it doesn't *resolve* to one...
-        f('~'), false,
+        f(''), throws(TypeError),
+        f('./x/y/'), throws(TypeError),
+        f(1), throws(TypeError),
       ]
     })
-  }); // tDir
+  }); // toResDir()
   
   
   /** @test {NormDir} */
@@ -287,28 +333,6 @@ describe('path.js', function() {
       ]
     });
   }); // commonBase()
-  
-  
-  /** @test {toDir} */
-  describe('toDir()', function() {
-    itMaps({
-      func: NRSER.Path.toDir,
-      map: (f, throws) => [
-        // leaves Dir alone
-        f('/'), '/',
-        f('.'), '.',
-        f(''), '',
-        f('x/y/z/'), 'x/y/z/',
-        
-        // adds slash to non-Dir
-        f('x/y'), 'x/y/',
-        
-        // barfs on non-string
-        f(), throws(TypeError, /Invalid value undefined/),
-        f(1), throws(TypeError, /Invalid value 1/),
-      ]
-    });
-  }); // toDir()
   
   
   /** @test {@link resolveDir} */
