@@ -332,6 +332,11 @@ describe('path.js', function() {
       func: NRSER.Path.expandDir,
       map: (f, throws) => [
         f(), process.cwd() + '/',
+        
+        // want it to throw when passed `undefined` because it's almost
+        // certainly a mistake, something like expandDir(obj.paht)
+        f(undefined), throws(TypeError),
+        
         f('/etc/x', 'y'), '/etc/x/y/',
         f('~'), process.env.HOME + '/',
       ]
