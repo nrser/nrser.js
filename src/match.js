@@ -41,3 +41,5 @@ export function match(value, ...clauses) {
   
   throw new errors.MatchError(message, {value});
 };
+
+export default match;
