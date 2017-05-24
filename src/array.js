@@ -1,6 +1,7 @@
 // @flow
 
 import _ from '//src/nodash';
+import * as errors from './errors';
 
 /**
 * If `subject` is an {@link Array}, return it. Otherwise return a new Array
@@ -117,8 +118,23 @@ export function mapAsArray<Element, Result>(
   }
 } // mapAsArray()
 
+
+/**
+* Get the only element in an array or throw an error.
+*/
+export function only<T>(array: Array<T>): T {
+  if (array.length === 0) {
+    throw new errors.NotFoundError(`array is empty`, {array});
+  } else if (array.length > 1) {
+    throw new errors.ValueError(`array has more than 1 element`, {array});
+  }
+  
+  return array[0];
+}
+
 _.mixin({
   asArray,
   mapAsArray,
   eachAsArray,
+  only,
 });
