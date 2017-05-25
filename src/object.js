@@ -248,6 +248,7 @@ export function mapDefinedValues<DOMAIN, CODOMAIN>(
 }
 
 _.mixin({
+  groupByEach,
   insert,
   need,
   assemble,
