@@ -370,7 +370,7 @@ export function commonBase(...paths: Array<string>): ?ResPath {
 /**
 * Make a path string into a {@link Dir} by appending `/` to it if needed.
 * 
-* @param {string} ...paths
+* @param {...string} paths
 *   Paths to join then convert.
 * 
 * @return {Dir}
@@ -390,7 +390,7 @@ export function toDir(...paths: Array<string>): Dir {
 * Join paths and convert to {@link AbsPath} by calling `untildify` if 
 * it's a {@link TildePath}.
 * 
-* @param {string} ...paths
+* @param {...string} paths
 *   String path segments.
 * 
 * @return {AbsPath}
@@ -414,7 +414,7 @@ export function toAbsPath(...paths: Array<string>): AbsPath {
 * Join paths and convert to an {@link AbsDir} by calling {@link toDir}
 * and {@link toAbsPath} on them.
 * 
-* @param {string} ...paths
+* @param {...string} paths
 *   String path segments.
 * 
 * @return {AbsDir}
@@ -431,7 +431,7 @@ export function toAbsDir(...paths: Array<string>): AbsDir {
 /**
 * Join paths and convert to a {@link ResDir}.
 * 
-* @param {string} ...paths
+* @param {...string} paths
 *   String path segments.
 * 
 * @return {ResDir}
