@@ -65,6 +65,7 @@ function metalog(target, nodeEnv) {
       // 
       // Supported in nrser.metalogger 
       // 
+      "notif",
       "errorRefs",
       "warnRefs",
       "infoRefs",

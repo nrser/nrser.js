@@ -7,12 +7,15 @@
 * 
 */
 
-import _ from '//src/nodash';
 import t from 'tcomb';
 import minimatch from 'minimatch';
+import chalk from 'chalk';
 
-import { IS_NODE, IS_BROWSER } from '../env';
-import print from '../print';
+import _ from '//src/nodash';
+import { IS_NODE, IS_BROWSER } from '//src/env';
+import print from '//src/print';
+import { squish, indent } from '//src/string';
+
 import type { NonNegativeInteger } from '../types/number';
 
 import { Level, LEVEL_NAME_PAD_LENGTH } from './Level';
@@ -26,11 +29,6 @@ import { snapshot } from './snapshot';
 let notifier;
 try {
   notifier = require('node-notifier');
-} catch (e) {}
-
-let chalk;
-try {
-  chalk = require('chalk');
 } catch (e) {}
 
 // types
@@ -58,6 +56,7 @@ type MetalogMessage = {
   content: Array<*>,
   line: number,
   parentPath: Array<string>,
+  binding: ?Object,
 };
 
 /**
@@ -76,14 +75,8 @@ type LogMessage = {
   // the message
   notif: boolean,
   
-  // level formatted for output
-  formattedLevel: string,
-  
   // datetime of the log call
   date: Date,
-  
-  // date formatted for output
-  formattedDate: string,
   
   // the path to the log site that we output,
   // which is <filename>:<parentPath>:<line>
@@ -92,121 +85,45 @@ type LogMessage = {
   // ms since last message logged
   delta: ?number,
   
-  // delta formatted for output
-  formattedDelta: string,
-  
   // the content from the MetalogMessage
   content: Array<*>,
+  
+  // context returned from calling `logContext` on `binding` if it exists.
+  context: *,
+};
+
+// TODO fill out
+type LoggerConfig = {};
+
+
+function dump(value: *): string {
+  return (typeof value === 'string') ? value : print(value);
 }
 
-export class Logger {
-  lastMessageDate: ?Date;
-  specs: Array<LevelSpec>;
-  nodeHeaderFormat: string;
-  browserHeaderFormat: string;
-  dateFormat: string;
-  notifTitle: string;
-  
-  // constants
-  // =========
-  
-  static HEADER_FORMAT_TOKENS = {
-    '%date':  (message: LogMessage): string => message.formattedDate,
-    // '%level': (message: LogMessage) => COLORS[message.level](data.level),
-    '%level': (message: LogMessage): string => message.formattedLevel,
-    '%delta': (message: LogMessage): string => message.formattedDelta,
-    '%path':  (message: LogMessage): string => message.path,
-  };
-  
-  /**
-  * tokens in date format string are replaced with result of calling
-  * the function with the date.
-  */
-  static DATE_FORMAT_TOKENS = {
-    'YYYY': (d: Date): string => _.padStart(d.getFullYear(), 4, "0"),
-    'MM':   (d: Date): string => _.padStart(d.getMonth() + 1, 2, "0"),
-    'DD':   (d: Date): string => _.padStart(d.getDate(), 2, "0"),
-    'HH':   (d: Date): string => _.padStart(d.getHours(), 2, "0"),
-    'mm':   (d: Date): string => _.padStart(d.getMinutes(), 2, "0"),
-    'ss':   (d: Date): string => _.padStart(d.getSeconds(), 2, "0"),
-    'SSS':  (d: Date): string => _.padStart(d.getMilliseconds(), 3, "0"),
-  };
-  
-  static BROWSER_COLORS = {
-    error: '#CC0C39', //'#d8292f',
-    warn: '#E6781E', // '#d39100',
-    info: '#1693A7', // '#337ab7',
-    debug: '#00548b',
-    trace: '#a3aaae',
-  };
-  
-  static NODE_COLORS = chalk ? {
-    error: chalk.red,
-    warn: chalk.yellow,
-    info: chalk.blue,
-    debug: chalk.cyan,
-    trace: chalk.gray,
-  } : {
-    error: x => x,
-    warn: x => x,
-    info: x => x,
-    debug: x => x,
-    trace: x => x,
-  };
-  
-  // static methods
-  // ==============
-  
-  static format(
-    data: *,
-    formatStr: string,
-    tokens: {[token: string]: Function},
-  ): string {
-    let result: string = formatStr;
-    _.each(tokens, (formatter, token) => {
-      if (_.includes(formatStr, token)) {
-        result = result.replace(new RegExp(token, 'g'), formatter(data));
-      }
-    });
-    return result;
+
+export class HeaderFormatter {
+  constructor(message) {
+    this.message = message;
   }
   
-  /**
-  * format a date according to a format string, see `.DATE_FORMAT_TOKENS` for
-  * the available tokens.
-  */
-  static formatDate(date: Date, formatStr: string): string {
-    return this.format(date, formatStr, this.DATE_FORMAT_TOKENS);
-  }
-  
-  /**
-  * format a header according to a format string, see `.HEADER_FORMAT_TOKENS`
-  * for the available tokens.
-  */
-  static formatHeader(message: LogMessage, formatStr: string): string {
-    return this.format(message, formatStr, this.HEADER_FORMAT_TOKENS);
-  }
-  
-  /**
-  * the string output of the level.
-  */
-  static formatLevel(level: Level): string {
+  get level() {
     return _.padEnd(
-      level.name.toUpperCase(),
+      this.message.level.name.toUpperCase(),
       LEVEL_NAME_PAD_LENGTH
     );
   }
   
-  /**
-  * formats a delta in ms for output.
-  * 
-  * when:
-  * 
-  * -   delta is undefined (first message), returns "+----ms"
-  * -   the delta is 9999 or less, returns something like "+0888ms"
-  * -   the delta is over 9999, returns "+++++ms"
-  */
-  static formatDelta(delta: ?NonNegativeInteger): string {
+  get path() {
+    return this.message.path;
+  }
+  
+  get date() {
+    return this.message.date.toISOString();
+  }
+  
+  get delta(): string {
+    const delta = this.message.delta;
+    
     let digits = '----';
     
     if (typeof delta !== 'undefined') {
@@ -214,7 +131,7 @@ export class Logger {
         digits = '++++';
         
       } else {
-        digits = _.padStart(delta, 4, '0');
+        digits = _.padStart(this.message.delta, 4, '0');
         
       }
     }
@@ -222,11 +139,78 @@ export class Logger {
     return `+${ digits }ms`;
   }
   
+  get path(): string {
+    return this.message.path;
+  }
+  
+  get hasContext(): boolean {
+    return !!this.message.context;
+  }
+  
+  get context(): string {
+    return dump(this.message.context);
+  }
+  
+  indent(str: string): string {
+    return indent(str);
+  }
+} // HeaderFormatter
+
+
+export class Logger {
+  lastMessageDate: ?Date;
+  specs: Array<LevelSpec>;
+  config: LoggerConfig;
+  
+  // constants
+  // =========
+  
+  static defaultConfig = {
+    formatter: HeaderFormatter,
+    
+    logContextName: '__logContext',
+    
+    header: {
+      cli: '<%= date %> (<%= delta %>) <%= level %> [<%= path %>]<% if (hasContext) { %>\n<%= indent(context) %><% } %>',
+      browser: '(<%= delta %>) <%= level %> [<%= path %>]<% if (hasContext) { %>\n<%= indent(context) %><% } %>',
+    },
+    
+    notif: {
+      cli: {
+        title: '<%= level %>',
+        preamble: '[<%= path %>]<% if (hasContext) { %>\n<%= indent(context) %><% } %>',
+      },
+    },
+    
+    colors: {
+      cli: {
+        error: 'red',
+        warn: 'yellow',
+        info: 'cyan',
+        debug: 'blue',
+        trace: 'gray',
+        context: 'magenta',
+      },
+      
+      browser: {
+        error: '#CC0C39', //'#d8292f',
+        warn: '#E6781E', // '#d39100',
+        info: '#1693A7', // '#337ab7',
+        debug: '#00548b',
+        trace: '#a3aaae',
+      },
+    },
+  };
+  
+  
+  // Static Methods
+  // =====================================================================
+  
   /**
   * formats the path consisting of filename, parentPath and line for output.
   */
   static formatPath(rawMessage: MetalogMessage): string {
-    const path = [rawMessage.filename];
+    const path = [rawMessage.filename, rawMessage.line];
     
     if (!_.isEmpty(rawMessage.parentPath)) {
       path.push(
@@ -239,38 +223,79 @@ export class Logger {
       );
     }
     
-    path.push(rawMessage.line);
-    
     return path.join(':');
   }
   
-  // ========
   
-  constructor({
-    nodeHeaderFormat = "%date (%delta) %level [%path]",
-    browserHeaderFormat = "(%delta) %level [%path]",
-    dateFormat = "YYYY-MM-DD HH:mm:ss.SSS",
-    notifTitle = 'METALOGGER',
-    levelSpecs,
-  }: {
-    nodeHeaderFormat: string,
-    browserHeaderFormat: string,
-    dateFormat: string,
-    notifTitle: string,
-  } = {}) {
-    this.nodeHeaderFormat = nodeHeaderFormat;
-    this.browserHeaderFormat = browserHeaderFormat;
-    this.dateFormat = dateFormat;
-    this.notifTitle = notifTitle;
+  // Construction
+  // =====================================================================
+  
+  constructor(config = {}) {
+    this.config = _.merge({}, this.constructor.defaultConfig, config);
     this.specs = [];
     
-    if (levelSpecs) {
-      _.each(levelSpecs, (spec) => this.pushSpec(spec));
+    // compile header templates
+    this.headerTemplates = _.mapValues(this.config.header, _.template);
+    
+    // cache compiled templates
+    // TODO needs to be cleaned out if config changes
+    this._templateCache = {};
+    
+    if (config.levelSpecs) {
+      _.each(config.levelSpecs, (spec) => this.pushSpec(spec));
     }
   } // constructor
   
-  // instance methods
-  // ================
+  
+  // Instance Methods
+  // =====================================================================
+  
+  // Utilities
+  // ---------------------------------------------------------------------
+  
+  /**
+  * Gets the ms since the last message was logged, or undefined if it's the
+  * first. Updates {@link #lastMessageDate} to `now`.
+  * 
+  * @param {Date} now
+  *   Time of current message.
+  * 
+  * @return {?NonNegativeInteger}
+  *   Milliseconds since last message, or `undefined` if there isn't one.
+  */
+  getDelta(now: Date): ?NonNegativeInteger {
+    if (this.lastMessageDate) {
+      return now - this.lastMessageDate;
+    }
+  }
+  
+  
+  /**
+  * Render a lodash template in the config at a key path, caching the 
+  * templates.
+  * 
+  * @param {string} keyPath
+  *   Path to template in config, like `'header.cli'`.
+  * 
+  * @param {LogMessage} message
+  *   Message to render against.
+  * 
+  * @return {string}
+  *   Rendered string.
+  */
+  render(keyPath: string, message: LogMessage) {
+    if (!this._templateCache[keyPath]) {
+      this._templateCache[keyPath] = _.template(
+        _.get(this.config, keyPath)
+      );
+    }
+    
+    return this._templateCache[keyPath](new this.config.formatter(message));
+  }
+  
+  
+  // Spec and Level Instance Methods
+  // ---------------------------------------------------------------------
   
   /**
   * adds a spec to the end of the specs array (least priority).
@@ -300,26 +325,6 @@ export class Logger {
     return spec;
   }
   
-  /**
-  * sends a system notification if the node-notifier package is available.
-  */
-  notify(message: LogMessage) {
-    if (notifier) {      
-      notifier.notify({
-        title: this.notifTitle,
-        message: (
-          message.formattedLevel + "\n" + 
-          _.map(message.content, (obj) => {
-            if (typeof obj === 'string') {
-              return obj;
-            } else {
-              return print(obj);
-            }
-          }).join("\n")
-        ),
-      });
-    }
-  }
   
   /**
   * find the active level spec given spec query properties from a log message, 
@@ -361,6 +366,10 @@ export class Logger {
     
     return level.rank <= currentLevel.rank;
   }
+  
+  
+  // Raw Metalog Message Handler
+  // ---------------------------------------------------------------------
   
   /**
   * log a message unless filtered by a level spec.
@@ -405,24 +414,31 @@ export class Logger {
     // do it here so an error outputting won't break `#getDelta`
     this.lastMessageDate = now;
     
+    let context;
+    
+    if (
+      rawMessage.binding &&
+      typeof rawMessage.binding[this.config.logContextName] == 'function'
+    ) {
+      context = rawMessage.binding[this.config.logContextName]();
+    }
+    
     // now we know we're going to output
     // form the log message
     const logMessage: LogMessage = {
       level,
       refs,
       notif,
-      formattedLevel: this.constructor.formatLevel(level),
       date: now,
-      formattedDate: this.constructor.formatDate(now, this.dateFormat),
       path,
       delta,
-      formattedDelta: this.constructor.formatDelta(delta),
       content: rawMessage.content,
+      context,
     };
     
     // do environment-dependent output
     if (IS_NODE) {
-      this.logInNode(logMessage);
+      this.logInCLI(logMessage);
     } else if (IS_BROWSER) {
       this.logInBrowser(logMessage);
     } else {
@@ -431,105 +447,177 @@ export class Logger {
     
     // signal that we output the log
     return true;
-  } // log
+  } // #log()
+  
+  
+  // CLI Instance Methods
+  // ---------------------------------------------------------------------
   
   /**
-  * gets the ms since the last message was logged, or undefined if it's the
-  * first.
+  * sends a system notification if the node-notifier package is available.
   */
-  getDelta(now: Date): ?NonNegativeInteger {
-    if (this.lastMessageDate) {
-      return now - this.lastMessageDate;
+  notifyInCLI(message: LogMessage) {
+    if (notifier) {
+      const title = this.render('notif.cli.title', message);
+      
+      const preamble = this.render('notif.cli.preamble', message);
+      
+      notifier.notify({
+        title,
+        message: preamble + "\n" + _.map(message.content, dump).join("\n"),
+      });
     }
-  }
+  } // #notifyInCLI()
   
   /**
-  * get the proper `console.*` function for the log level.
+  * Color a string for Node CLI output (if we have a color for it's level).
+  * 
+  * @TODO Result could be cached relative to {@link #config}.
+  * 
+  * @param {string} configKey
+  *   Key in `this.config.colors.cli` that has the path to the `chalk`
+  *   method to do the coloring.
+  * 
+  * @param {string} input
+  *   The string to color.
+  * 
+  * @return {string}
+  *   The string with color added (if we found a color for it).
   */
-  getConsoleFunction(level: Level): Function {
-    if (IS_BROWSER) {
-      return console.log;
+  colorForCLI(configKey: string, input: string): string {
+    const chalkKeyPath = _.get(this.config, ['colors', 'cli', configKey]);
+    
+    if (!chalkKeyPath) {
+      return input;
     }
     
-    let fn: Function;
+    const chalker = _.get(chalk, chalkKeyPath);
     
-    switch (level.name) {
-      case 'trace':
-        return console.debug || console.log;
-        
-      case 'debug':
-        return console.debug || console.log;
-        
-      case 'info': 
-        fn = console.info || console.log;
-        break;
-      
-      case 'warn':
-        fn = console.warn || console.log;
-        break;
-        
-      case 'error':
-        fn = console.error || console.log;
-        break;
-      
-      default:
-        throw new TypeError(`bad level name?! ${ level.name }`);
+    if (typeof chalker === 'function') {
+      return chalker(input);
     }
     
-    return fn;
-  }
+    return input;
+  } // #colorForCLI
+  
   
   /**
-  * log the message in node, where we don't need to fuck with
+  * Format a message into an array of strings for the CLI. Broken out to make
+  * testing easier without having to hook `console.log` or IO.
+  * 
+  * @param {LogMessage} message
+  *   Message to log.
+  * 
+  * @return {Array<string>}
+  *   Strings to log. First one is header.
+  */
+  formatForCli(message: LogMessage): Array<string> {
+    const formatted: Array<string> = [
+      this.colorForCLI(
+        message.level.name,
+        this.render('header.cli', message),
+      )
+    ];
+    
+    for (let i = 0, l = message.content.length; i < l; i++) {
+      formatted.push(dump(message.content[i]));
+    }
+    
+    return formatted;
+  } // #formatForCli()
+  
+  
+  /**
+  * Log the message to Node CLI, where we don't need to fuck with
   * values vs. references like we do on the browser since it get spits out
   * text at that time. we also have colors there (easily).
   * 
-  * gonna try out the `print` npm package for display.
+  * Uses our es6-ification of the [print][] package to dump non-strings.
   * 
-  * https://www.npmjs.com/package/print
+  * [print]: https://www.npmjs.com/package/print
+  * 
+  * @param {LogMessage} message
+  *   Message to log.
+  * 
+  * @return {undefined}
   */
-  logInNode(message: LogMessage): void {
-    const header: string = this.constructor.NODE_COLORS[message.level.name](
-      this.constructor.formatHeader(
-        message,
-        this.nodeHeaderFormat
-      )
-    );
+  logInCLI(message: LogMessage): void {
+    // trying to be reasonably efficient here
     
-    const dumps: Array<string> = _.map(message.content, (value: *): string => {
-      if (typeof value === 'string') {
-        return value;
-      } else {
-        return print(value);
-      }
-    });
+    const formatted = this.formatForCli(message);
     
-    this.getConsoleFunction(message.level).call(console, header, ...dumps);
+    // header, don't indent
+    console.log(formatted[0]);
+    
+    // dumps, indent
+    for (let i = 1, l = formatted.length; i < l; i++) {
+      console.log(indent(formatted[i]));
+    }
     
     // send a notif if needed
     if (message.notif) {
-      this.notify(message);
+      this.notifyInCLI(message);
     }
-  }
+  } // #logInCLI()
+  
+  
+  // Browser Instance Methods
+  // ---------------------------------------------------------------------
   
   /**
-  * log the message in the browser, where we want to log the actual
-  * objects so we can explore them in the console, but usually want to log
-  * snapshots of the values as they were at the times they were logged.
+  * Format a message into an array of strings for the browser. Broken out to 
+  * make testing easier without having to hook `console.log`.
+  * 
+  * @param {LogMessage} message
+  *   Message to log.
+  * 
+  * @return {Array<string>}
+  *   Strings to log. First one is header.
   */
-  logInBrowser(message: LogMessage): void {
-    const header: string = this.constructor.formatHeader(
-      message,
-      this.browserHeaderFormat
+  formatForBrowser(message: LogMessage): Array<string> {
+    const formatted: Array<string> = [];
+    
+    const header: string = this.render('header.browser', message);
+    
+    const color = _.get(
+      this.config,
+      ['colors', 'browser', message.level.name]
     );
     
-    this.getConsoleFunction(message.level).call(
-      console,
-      `%c ${ header }`,
-      `color: ${ this.constructor.BROWSER_COLORS[message.level.name] };`,
-      ...(message.refs ? message.content : snapshot(message.content))
+    if (color) {
+      formatted.push(`%c ${ header }`);
+      formatted.push(`color: ${ color };`);
+    } else {
+      formatted.push(header);
+    }
+    
+    // snapshot content if needed
+    const content = (
+      message.refs ? message.content : snapshot(message.content)
     );
-  }
+    
+    for (let i = 0, l = content.length; i < l; i++) {
+      formatted.push(content[i]);
+    }
+    
+    return formatted;
+  } // #formatForBrowser()
+  
+  
+  /**
+  * Log the message in the browser, where we want to log the actual
+  * objects so we can explore them in the console, but usually want to log
+  * snapshots of the values as they were at the times they were logged.
+  * 
+  * @param {LogMessage} message
+  *   Message to log.
+  * 
+  * @return {undefined}
+  */
+  logInBrowser(message: LogMessage): void {
+    console.log(...this.formatForBrowser(message));
+  } // #logInBrowser()
   
 } // class Logger
 
+export default Logger;

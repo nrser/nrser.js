@@ -138,7 +138,7 @@ export function indent(
   } = {}
 ) {
   indent = indent || ' '.repeat(amount);
-  indent + str.split("\n").join(`\n${ indent }`);
+  return indent + str.split("\n").join(`\n${ indent }`);
 } // indent()
 
 /**
