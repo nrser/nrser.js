@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="">
+  <title data-ice="title">Source | nrser API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/nrser/nrser.js" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Deferred.js~Deferred.html">Deferred</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-asArray">asArray</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-eachAsArray">eachAsArray</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mapAsArray">mapAsArray</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-only">only</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findOnly">findOnly</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mapDefined">mapDefined</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-appInstance">appInstance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-env">env</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isDir">isDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isDirSync">isDirSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-match">match</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-assemble">assemble</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-groupByEach">groupByEach</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-insert">insert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mapDefinedValues">mapDefinedValues</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-need">need</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-procure">procure</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-commonBase">commonBase</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-expand">expand</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-expandDir">expandDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-resolveDir">resolveDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-split">split</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toAbsDir">toAbsDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toAbsPath">toAbsPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toDir">toDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toResDir">toResDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-commonPrefix">commonPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deindent">deindent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findCommonIndent">findCommonIndent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-indent">indent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isLine">isLine</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isWhitespace">isWhitespace</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-leadingWhitespace">leadingWhitespace</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-lines">lines</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-nonWhitespaceLines">nonWhitespaceLines</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pad">pad</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-rsplit">rsplit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-squish">squish</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-tag">tag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEFAULT_ENV">DEFAULT_ENV</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IS_BROWSER">IS_BROWSER</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-IS_NODE">IS_NODE</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-isBrowser">isBrowser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-isNode">isNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FS">FS</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tStat">tStat</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNodeCallback">tNodeCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-t">t</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-types">types</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-absolute">absolute</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tAbsDir">tAbsDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tAbsOrTildePath">tAbsOrTildePath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tAbsPath">tAbsPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tDir">tDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNormDir">tNormDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNormPath">tNormPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPathSegment">tPathSegment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPathSegments">tPathSegments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tResDir">tResDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tResPath">tResPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tTildeDir">tTildeDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tTildePath">tTildePath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tildify">tildify</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-untildify">untildify</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-I">I</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-JSONTag">JSONTag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-inspect">inspect</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-j">j</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tLine">tLine</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NodeCallback">NodeCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-AbsDir">AbsDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-AbsOrTildePath">AbsOrTildePath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-AbsPath">AbsPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Dir">Dir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NormDir">NormDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NormPath">NormPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PathSegment">PathSegment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PathSegments">PathSegments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ResDir">ResDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ResPath">ResPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-TildeDir">TildeDir</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-TildePath">TildePath</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">errors</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/KeyError.js~KeyError.html">KeyError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/MatchError.js~MatchError.html">MatchError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/NotFoundError.js~NotFoundError.html">NotFoundError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/NotImplementedError.js~NotImplementedError.html">NotImplementedError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/NrserError.js~NrserError.html">NrserError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/StateError.js~StateError.html">StateError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors/ValueError.js~ValueError.html">ValueError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-BaseError">BaseError</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">metalogger</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/Level.js~Level.html">Level</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/LevelSpec.js~LevelSpec.html">LevelSpec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/Logger.js~HeaderFormatter.html">HeaderFormatter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/Logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/metalogger/snapshot.js~SNAPSHOT_REF.html">SNAPSHOT_REF</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-snapshot">snapshot</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-LEVEL_NAME_PAD_LENGTH">LEVEL_NAME_PAD_LENGTH</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEFAULT_LOGGER">DEFAULT_LOGGER</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">testing</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/testing/Describer.js~Describer.html">Describer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/testing/index.js~Expect.html">Expect</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-itMaps">itMaps</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">types</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-instanceOf">instanceOf</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-nullable">nullable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-subclassOf">subclassOf</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-nonEmptyList">nonEmptyList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-extendProps">extendProps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-struct">struct</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-value">value</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-values">values</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Empty">Empty</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ErrorType">ErrorType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Null">Null</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PromiseType">PromiseType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Undefined">Undefined</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tInteger">tInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNegative">tNegative</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNegativeInteger">tNegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNonNegativeInteger">tNonNegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tNonPositiveInteger">tNonPositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPositive">tPositive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tPositiveInteger">tPositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tZero">tZero</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tIPromise">tIPromise</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tType">tType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-KeyPath">KeyPath</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Integer">Integer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NegativeInteger">NegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NonNegativeInteger">NonNegativeInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-NonPositiveInteger">NonPositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Positive">Positive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PositiveInteger">PositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-PositiveInteger">PositiveInteger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Zero">Zero</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-IPromise">IPromise</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Type">Type</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">90/181</span></h1>
+
+<table class="files-summary" data-ice="files" data-use-coverage="true">
+  <thead>
+    <tr>
+      <td>File</td>
+      <td>Identifier</td>
+      <td class="coverage">Document</td>
+      <td style="display: none;">Size</td>
+      <td style="display: none;">Lines</td>
+      <td style="display: none;">Updated</td>
+    </tr>
+  </thead>
+  <tbody>
+    
+  <tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/Deferred.js.html#errorLines=12,13,14,16">src/Deferred.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/Deferred.js~Deferred.html">Deferred</a></span></td>
+      <td class="coverage"><span data-ice="coverage">20 %</span><span data-ice="coverageCount" class="coverage-count">1/5</span></td>
+      <td style="display: none;" data-ice="size">528 byte</td>
+      <td style="display: none;" data-ice="lines">22</td>
+      <td style="display: none;" data-ice="updated">2016-11-04 12:28:40 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/array.js.html">src/array.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-asArray">asArray</a></span>
+<span><a href="function/index.html#static-function-eachAsArray">eachAsArray</a></span>
+<span><a href="function/index.html#static-function-mapAsArray">mapAsArray</a></span>
+<span><a href="function/index.html#static-function-only">only</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">4/4</span></td>
+      <td style="display: none;" data-ice="size">3701 byte</td>
+      <td style="display: none;" data-ice="lines">140</td>
+      <td style="display: none;" data-ice="updated">2017-05-03 01:46:58 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/collection.js.html">src/collection.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-findOnly">findOnly</a></span>
+<span><a href="function/index.html#static-function-mapDefined">mapDefined</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">2/2</span></td>
+      <td style="display: none;" data-ice="size">1488 byte</td>
+      <td style="display: none;" data-ice="lines">68</td>
+      <td style="display: none;" data-ice="updated">2017-05-07 19:17:25 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/env.js.html">src/env.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-DEFAULT_ENV">DEFAULT_ENV</a></span>
+<span><a href="variable/index.html#static-variable-IS_BROWSER">IS_BROWSER</a></span>
+<span><a href="variable/index.html#static-variable-IS_NODE">IS_NODE</a></span>
+<span><a href="function/index.html#static-function-appInstance">appInstance</a></span>
+<span><a href="function/index.html#static-function-env">env</a></span>
+<span><a href="variable/index.html#static-variable-isBrowser">isBrowser</a></span>
+<span><a href="variable/index.html#static-variable-isNode">isNode</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">7/7</span></td>
+      <td style="display: none;" data-ice="size">4340 byte</td>
+      <td style="display: none;" data-ice="lines">147</td>
+      <td style="display: none;" data-ice="updated">2017-05-02 06:44:28 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/BaseError.js.html">src/errors/BaseError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-BaseError">BaseError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">2404 byte</td>
+      <td style="display: none;" data-ice="lines">93</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/KeyError.js.html">src/errors/KeyError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/errors/KeyError.js~KeyError.html">KeyError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">125 byte</td>
+      <td style="display: none;" data-ice="lines">7</td>
+      <td style="display: none;" data-ice="updated">2016-10-06 01:25:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/MatchError.js.html">src/errors/MatchError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/errors/MatchError.js~MatchError.html">MatchError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">159 byte</td>
+      <td style="display: none;" data-ice="lines">5</td>
+      <td style="display: none;" data-ice="updated">2016-10-06 01:25:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/NotFoundError.js.html">src/errors/NotFoundError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/errors/NotFoundError.js~NotFoundError.html">NotFoundError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">136 byte</td>
+      <td style="display: none;" data-ice="lines">6</td>
+      <td style="display: none;" data-ice="updated">2016-10-05 06:41:41 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/NotImplementedError.js.html#errorLines=7">src/errors/NotImplementedError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/errors/NotImplementedError.js~NotImplementedError.html">NotImplementedError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">50 %</span><span data-ice="coverageCount" class="coverage-count">1/2</span></td>
+      <td style="display: none;" data-ice="size">242 byte</td>
+      <td style="display: none;" data-ice="lines">7</td>
+      <td style="display: none;" data-ice="updated">2016-10-06 01:25:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/NrserError.js.html">src/errors/NrserError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/errors/NrserError.js~NrserError.html">NrserError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">133 byte</td>
+      <td style="display: none;" data-ice="lines">5</td>
+      <td style="display: none;" data-ice="updated">2016-10-06 01:25:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/StateError.js.html">src/errors/StateError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/errors/StateError.js~StateError.html">StateError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">168 byte</td>
+      <td style="display: none;" data-ice="lines">5</td>
+      <td style="display: none;" data-ice="updated">2016-10-05 06:42:16 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/ValueError.js.html">src/errors/ValueError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/errors/ValueError.js~ValueError.html">ValueError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">192 byte</td>
+      <td style="display: none;" data-ice="lines">6</td>
+      <td style="display: none;" data-ice="updated">2016-10-06 01:25:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/errors/index.js.html">src/errors/index.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">-</span></td>
+      <td style="display: none;" data-ice="size">249 byte</td>
+      <td style="display: none;" data-ice="lines">8</td>
+      <td style="display: none;" data-ice="updated">2017-05-02 06:44:28 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/fs.js.html#errorLines=32">src/fs.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-FS">FS</a></span>
+<span><a href="function/index.html#static-function-isDir">isDir</a></span>
+<span><a href="function/index.html#static-function-isDirSync">isDirSync</a></span>
+<span><a href="variable/index.html#static-variable-tStat">tStat</a></span></td>
+      <td class="coverage"><span data-ice="coverage">75 %</span><span data-ice="coverageCount" class="coverage-count">3/4</span></td>
+      <td style="display: none;" data-ice="size">1714 byte</td>
+      <td style="display: none;" data-ice="lines">86</td>
+      <td style="display: none;" data-ice="updated">2017-05-07 08:07:23 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/function.js.html">src/function.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-tNodeCallback">tNodeCallback</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">546 byte</td>
+      <td style="display: none;" data-ice="lines">21</td>
+      <td style="display: none;" data-ice="updated">2017-05-07 06:04:57 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/index.js.html#errorLines=37,41">src/index.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-t">t</a></span>
+<span><a href="variable/index.html#static-variable-types">types</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/2</span></td>
+      <td style="display: none;" data-ice="size">1385 byte</td>
+      <td style="display: none;" data-ice="lines">56</td>
+      <td style="display: none;" data-ice="updated">2017-05-05 11:09:35 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/match.js.html#errorLines=7">src/match.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-match">match</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/1</span></td>
+      <td style="display: none;" data-ice="size">1015 byte</td>
+      <td style="display: none;" data-ice="lines">45</td>
+      <td style="display: none;" data-ice="updated">2017-05-04 09:58:39 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/metalogger/Level.js.html#errorLines=16,36,37,38,40,41,42,43,44,45,47,56,76">src/metalogger/Level.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-LEVEL_NAME_PAD_LENGTH">LEVEL_NAME_PAD_LENGTH</a></span>
+<span><a href="class/src/metalogger/Level.js~Level.html">Level</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/13</span></td>
+      <td style="display: none;" data-ice="size">1929 byte</td>
+      <td style="display: none;" data-ice="lines">80</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/metalogger/LevelSpec.js.html#errorLines=18,19,20,21,22,25,29,44,51,58,69">src/metalogger/LevelSpec.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/metalogger/LevelSpec.js~LevelSpec.html">LevelSpec</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/11</span></td>
+      <td style="display: none;" data-ice="size">1750 byte</td>
+      <td style="display: none;" data-ice="lines">79</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/metalogger/Logger.js.html#errorLines=104,105,106,109,116,120,124,142,146,150,154,160,161,162,163,168,233,238">src/metalogger/Logger.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/metalogger/Logger.js~HeaderFormatter.html">HeaderFormatter</a></span>
+<span><a href="class/src/metalogger/Logger.js~Logger.html">Logger</a></span></td>
+      <td class="coverage"><span data-ice="coverage">45 %</span><span data-ice="coverageCount" class="coverage-count">15/33</span></td>
+      <td style="display: none;" data-ice="size">15216 byte</td>
+      <td style="display: none;" data-ice="lines">622</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 07:05:15 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/metalogger/index.js.html#errorLines=3">src/metalogger/index.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-DEFAULT_LOGGER">DEFAULT_LOGGER</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/1</span></td>
+      <td style="display: none;" data-ice="size">248 byte</td>
+      <td style="display: none;" data-ice="lines">12</td>
+      <td style="display: none;" data-ice="updated">2016-10-05 06:42:16 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/metalogger/snapshot.js.html#errorLines=152,75,76">src/metalogger/snapshot.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/metalogger/snapshot.js~SNAPSHOT_REF.html">SNAPSHOT_REF</a></span>
+<span><a href="function/index.html#static-function-snapshot">snapshot</a></span></td>
+      <td class="coverage"><span data-ice="coverage">25 %</span><span data-ice="coverageCount" class="coverage-count">1/4</span></td>
+      <td style="display: none;" data-ice="size">5138 byte</td>
+      <td style="display: none;" data-ice="lines">154</td>
+      <td style="display: none;" data-ice="updated">2016-10-06 01:25:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/nodash.js.html">src/nodash.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">-</span></td>
+      <td style="display: none;" data-ice="size">89 byte</td>
+      <td style="display: none;" data-ice="lines">5</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:50:41 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/object.js.html">src/object.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-assemble">assemble</a></span>
+<span><a href="function/index.html#static-function-groupByEach">groupByEach</a></span>
+<span><a href="function/index.html#static-function-insert">insert</a></span>
+<span><a href="function/index.html#static-function-mapDefinedValues">mapDefinedValues</a></span>
+<span><a href="function/index.html#static-function-need">need</a></span>
+<span><a href="function/index.html#static-function-procure">procure</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">6/6</span></td>
+      <td style="display: none;" data-ice="size">5727 byte</td>
+      <td style="display: none;" data-ice="lines">257</td>
+      <td style="display: none;" data-ice="updated">2017-05-05 01:28:29 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/path.js.html#errorLines=299,300">src/path.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-absolute">absolute</a></span>
+<span><a href="function/index.html#static-function-commonBase">commonBase</a></span>
+<span><a href="function/index.html#static-function-expand">expand</a></span>
+<span><a href="function/index.html#static-function-expandDir">expandDir</a></span>
+<span><a href="function/index.html#static-function-resolveDir">resolveDir</a></span>
+<span><a href="function/index.html#static-function-split">split</a></span>
+<span><a href="variable/index.html#static-variable-tAbsDir">tAbsDir</a></span>
+<span><a href="variable/index.html#static-variable-tAbsOrTildePath">tAbsOrTildePath</a></span>
+<span><a href="variable/index.html#static-variable-tAbsPath">tAbsPath</a></span>
+<span><a href="variable/index.html#static-variable-tDir">tDir</a></span>
+<span><a href="variable/index.html#static-variable-tNormDir">tNormDir</a></span>
+<span><a href="variable/index.html#static-variable-tNormPath">tNormPath</a></span>
+<span><a href="variable/index.html#static-variable-tPathSegment">tPathSegment</a></span>
+<span><a href="variable/index.html#static-variable-tPathSegments">tPathSegments</a></span>
+<span><a href="variable/index.html#static-variable-tResDir">tResDir</a></span>
+<span><a href="variable/index.html#static-variable-tResPath">tResPath</a></span>
+<span><a href="variable/index.html#static-variable-tTildeDir">tTildeDir</a></span>
+<span><a href="variable/index.html#static-variable-tTildePath">tTildePath</a></span>
+<span><a href="variable/index.html#static-variable-tildify">tildify</a></span>
+<span><a href="function/index.html#static-function-toAbsDir">toAbsDir</a></span>
+<span><a href="function/index.html#static-function-toAbsPath">toAbsPath</a></span>
+<span><a href="function/index.html#static-function-toDir">toDir</a></span>
+<span><a href="function/index.html#static-function-toResDir">toResDir</a></span>
+<span><a href="variable/index.html#static-variable-untildify">untildify</a></span></td>
+      <td class="coverage"><span data-ice="coverage">91 %</span><span data-ice="coverageCount" class="coverage-count">22/24</span></td>
+      <td style="display: none;" data-ice="size">10193 byte</td>
+      <td style="display: none;" data-ice="lines">479</td>
+      <td style="display: none;" data-ice="updated">2017-05-04 10:28:25 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/print.js.html">src/print.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">-</span></td>
+      <td style="display: none;" data-ice="size">9748 byte</td>
+      <td style="display: none;" data-ice="lines">355</td>
+      <td style="display: none;" data-ice="updated">2016-11-04 12:28:40 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/string.js.html#errorLines=113,126,128,130,170,174,178,187,193,226,32,54">src/string.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-I">I</a></span>
+<span><a href="variable/index.html#static-variable-JSONTag">JSONTag</a></span>
+<span><a href="function/index.html#static-function-commonPrefix">commonPrefix</a></span>
+<span><a href="function/index.html#static-function-deindent">deindent</a></span>
+<span><a href="function/index.html#static-function-findCommonIndent">findCommonIndent</a></span>
+<span><a href="function/index.html#static-function-indent">indent</a></span>
+<span><a href="variable/index.html#static-variable-inspect">inspect</a></span>
+<span><a href="function/index.html#static-function-isLine">isLine</a></span>
+<span><a href="function/index.html#static-function-isWhitespace">isWhitespace</a></span>
+<span><a href="variable/index.html#static-variable-j">j</a></span>
+<span><a href="function/index.html#static-function-leadingWhitespace">leadingWhitespace</a></span>
+<span><a href="function/index.html#static-function-lines">lines</a></span>
+<span><a href="function/index.html#static-function-nonWhitespaceLines">nonWhitespaceLines</a></span>
+<span><a href="function/index.html#static-function-pad">pad</a></span>
+<span><a href="function/index.html#static-function-rsplit">rsplit</a></span>
+<span><a href="function/index.html#static-function-squish">squish</a></span>
+<span><a href="variable/index.html#static-variable-tLine">tLine</a></span>
+<span><a href="function/index.html#static-function-tag">tag</a></span></td>
+      <td class="coverage"><span data-ice="coverage">33 %</span><span data-ice="coverageCount" class="coverage-count">6/18</span></td>
+      <td style="display: none;" data-ice="size">6173 byte</td>
+      <td style="display: none;" data-ice="lines">235</td>
+      <td style="display: none;" data-ice="updated">2017-05-05 11:56:05 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/testing/Describer.js.html#errorLines=10,13,21,9">src/testing/Describer.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/testing/Describer.js~Describer.html">Describer</a></span></td>
+      <td class="coverage"><span data-ice="coverage">20 %</span><span data-ice="coverageCount" class="coverage-count">1/5</span></td>
+      <td style="display: none;" data-ice="size">635 byte</td>
+      <td style="display: none;" data-ice="lines">26</td>
+      <td style="display: none;" data-ice="updated">2017-05-02 06:44:28 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/testing/index.js.html#errorLines=123,63,64,65,66,68,87">src/testing/index.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/testing/index.js~Expect.html">Expect</a></span>
+<span><a href="function/index.html#static-function-itMaps">itMaps</a></span></td>
+      <td class="coverage"><span data-ice="coverage">12 %</span><span data-ice="coverageCount" class="coverage-count">1/8</span></td>
+      <td style="display: none;" data-ice="size">5267 byte</td>
+      <td style="display: none;" data-ice="lines">215</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/collection.js.html">src/types/collection.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">-</span></td>
+      <td style="display: none;" data-ice="size">269 byte</td>
+      <td style="display: none;" data-ice="lines">12</td>
+      <td style="display: none;" data-ice="updated">2017-05-07 19:00:21 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/index.js.html#errorLines=17,19,21,25,27,34,41,43">src/types/index.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-Empty">Empty</a></span>
+<span><a href="variable/index.html#static-variable-ErrorType">ErrorType</a></span>
+<span><a href="variable/index.html#static-variable-Null">Null</a></span>
+<span><a href="variable/index.html#static-variable-PromiseType">PromiseType</a></span>
+<span><a href="variable/index.html#static-variable-Undefined">Undefined</a></span>
+<span><a href="function/index.html#static-function-instanceOf">instanceOf</a></span>
+<span><a href="function/index.html#static-function-nullable">nullable</a></span>
+<span><a href="function/index.html#static-function-subclassOf">subclassOf</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/8</span></td>
+      <td style="display: none;" data-ice="size">1159 byte</td>
+      <td style="display: none;" data-ice="lines">50</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/list.js.html#errorLines=3">src/types/list.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-nonEmptyList">nonEmptyList</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/1</span></td>
+      <td style="display: none;" data-ice="size">204 byte</td>
+      <td style="display: none;" data-ice="lines">9</td>
+      <td style="display: none;" data-ice="updated">2016-10-06 01:25:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/number.js.html">src/types/number.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-tInteger">tInteger</a></span>
+<span><a href="variable/index.html#static-variable-tNegative">tNegative</a></span>
+<span><a href="variable/index.html#static-variable-tNegativeInteger">tNegativeInteger</a></span>
+<span><a href="variable/index.html#static-variable-tNonNegativeInteger">tNonNegativeInteger</a></span>
+<span><a href="variable/index.html#static-variable-tNonPositiveInteger">tNonPositiveInteger</a></span>
+<span><a href="variable/index.html#static-variable-tPositive">tPositive</a></span>
+<span><a href="variable/index.html#static-variable-tPositiveInteger">tPositiveInteger</a></span>
+<span><a href="variable/index.html#static-variable-tZero">tZero</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">8/8</span></td>
+      <td style="display: none;" data-ice="size">2866 byte</td>
+      <td style="display: none;" data-ice="lines">164</td>
+      <td style="display: none;" data-ice="updated">2017-05-02 06:44:28 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/promise.js.html">src/types/promise.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-tIPromise">tIPromise</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">899 byte</td>
+      <td style="display: none;" data-ice="lines">42</td>
+      <td style="display: none;" data-ice="updated">2017-05-03 07:42:14 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/string.js.html">src/types/string.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">-</span></td>
+      <td style="display: none;" data-ice="size">627 byte</td>
+      <td style="display: none;" data-ice="lines">27</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/struct.js.html#errorLines=7,75">src/types/struct.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-extendProps">extendProps</a></span>
+<span><a href="function/index.html#static-function-struct">struct</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/2</span></td>
+      <td style="display: none;" data-ice="size">3933 byte</td>
+      <td style="display: none;" data-ice="lines">126</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/type.js.html">src/types/type.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-tType">tType</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">1212 byte</td>
+      <td style="display: none;" data-ice="lines">56</td>
+      <td style="display: none;" data-ice="updated">2017-05-07 10:57:27 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/types/value.js.html">src/types/value.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-value">value</a></span>
+<span><a href="function/index.html#static-function-values">values</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">2/2</span></td>
+      <td style="display: none;" data-ice="size">1283 byte</td>
+      <td style="display: none;" data-ice="lines">56</td>
+      <td style="display: none;" data-ice="updated">2017-05-06 10:51:01 (UTC)</td>
+    </tr>
+</tbody>
+</table>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
