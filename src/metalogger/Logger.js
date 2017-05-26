@@ -62,6 +62,11 @@ type MetalogMessage = {
 /**
 * message we craft in the runtime out of the MetalogMessage with properties
 * we need to actually output.
+* 
+* @typedef {Object} LogMessage
+* 
+* @property {Level} level
+*   Log level.
 */
 type LogMessage = {
   // level of the message
@@ -162,6 +167,24 @@ export class Logger {
   specs: Array<LevelSpec>;
   config: LoggerConfig;
   
+  /**
+  * @private
+  * 
+  * Internal pause state. DON'T TOUCH!
+  * 
+  * @type {boolean}
+  */
+  _isPaused: boolean;
+  
+  /**
+  * @private
+  * 
+  * Internal list of paused messages. DON'T TOUCH!
+  * 
+  * @type {Array<LogMessage>}
+  */
+  _pausedMessages: Array<LogMessage>;
+  
   // constants
   // =========
   
@@ -184,12 +207,11 @@ export class Logger {
     
     colors: {
       cli: {
-        error: 'red',
-        warn: 'yellow',
-        info: 'cyan',
-        debug: 'blue',
-        trace: 'gray',
-        context: 'magenta',
+        error: 'bold.red',
+        warn: 'bold.yellow',
+        info: 'bold.cyan',
+        debug: 'bold.blue',
+        trace: 'bold.gray',
       },
       
       browser: {
@@ -231,6 +253,9 @@ export class Logger {
   // =====================================================================
   
   constructor(config = {}) {
+    this._isPaused = false;
+    this._pausedMessages = [];
+    
     this.config = _.merge({}, this.constructor.defaultConfig, config);
     this.specs = [];
     
@@ -436,6 +461,11 @@ export class Logger {
       context,
     };
     
+    if (this._isPaused) {
+      this._pausedMessages.push(logMessage);
+      return false;
+    }
+    
     // do environment-dependent output
     if (IS_NODE) {
       this.logInCLI(logMessage);
@@ -448,6 +478,58 @@ export class Logger {
     // signal that we output the log
     return true;
   } // #log()
+  
+  
+  
+  // Pause and Play
+  // ---------------------------------------------------------------------
+  
+  isPaused(): boolean {
+    return this._isPaused;
+  }
+  
+  /**
+  * Stop writing messages until {@link #play} is called.
+  * 
+  * @return {undefined}
+  */
+  pause<T>(block: void | () => T): ?T {
+    this._isPaused = true;
+    
+    if (block) {
+      const result: T = block();
+      this.play();
+      return result;
+    }
+  } // #pause()
+  
+  /**
+  * 
+  * 
+  * @return {undefined}
+  */
+  play(): void {
+    this._isPaused = false;
+    
+    if (!_.isEmpty(this._pausedMessages)) {
+      let logFunc;
+      
+      // do environment-dependent output
+      if (IS_NODE) {
+        logFunc = this.logInCLI.bind(this);
+      } else if (IS_BROWSER) {
+        logFunc = this.logInBrowser.bind(this);
+      } else {
+        throw new Error("don't seem to be in node or the browser, can't log");
+      }
+      
+      for (let i = 0, l = this._pausedMessages.length; i < l; i++) {
+        logFunc(this._pausedMessages[i]);
+      }
+    }
+    
+    this._pausedMessages = [];
+  } // #play()
   
   
   // CLI Instance Methods
