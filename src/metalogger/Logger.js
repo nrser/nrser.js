@@ -238,7 +238,7 @@ export class Logger {
   /**
   * @private
   * 
-  * Level to log at if none of {@link #levelSpecs} match a message.
+  * Level to log at if none of {@link Logger#levelSpecs} match a message.
   * 
   * @type {Level}
   */
@@ -318,7 +318,7 @@ export class Logger {
   
   /**
   * Gets the ms since the last message was logged, or undefined if it's the
-  * first. Updates {@link #lastMessageDate} to `now`.
+  * first. Updates {@link Logger#lastMessageDate} to `now`.
   * 
   * @param {Date} now
   *   Time of current message.
@@ -522,14 +522,36 @@ export class Logger {
   // Pause and Play
   // ---------------------------------------------------------------------
   
+  /**
+  * `true` if the logger is paused, `false` otherwise.
+  * 
+  * @type {boolean}
+  */
   isPaused(): boolean {
     return this._isPaused;
   }
   
+  
   /**
-  * Stop writing messages until {@link #play} is called.
+  * Test if there are any paused messages queued.
   * 
-  * @return {undefined}
+  * @return {boolean}
+  *   True if there are any pused messages.
+  */
+  hasPausedMessages(): boolean {
+    return this._pausedMessages.length > 0;
+  }
+  
+  
+  /**
+  * Stop writing messages until {@link Logger#play} is called.
+  * 
+  * @param {?(function(): <T>)} block
+  *   Block to execute while paused, then call {@link Logger#play} and return
+  *   result.
+  * 
+  * @return {?<T>}
+  *   Result of calling `block` if provided, else `undefined`.
   */
   pause<T>(block: void | () => T): ?T {
     this._isPaused = true;
@@ -541,8 +563,10 @@ export class Logger {
     }
   } // #pause()
   
+  
   /**
-  * 
+  * Un-pause the logger and write any messages that were queued while it was
+  * paused.
   * 
   * @return {undefined}
   */
@@ -592,7 +616,7 @@ export class Logger {
   /**
   * Color a string for Node CLI output (if we have a color for it's level).
   * 
-  * @TODO Result could be cached relative to {@link #config}.
+  * @TODO Result could be cached relative to {@link Logger#config}.
   * 
   * @param {string} configKey
   *   Key in `this.config.colors.cli` that has the path to the `chalk`
