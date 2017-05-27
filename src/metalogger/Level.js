@@ -1,7 +1,7 @@
 // @flow
 
 import _ from '//src/nodash';
-import type { $Refinement } from 'tcomb';
+import type { $Refinement, $Reify } from 'tcomb';
 import * as errors from '../errors';
 
 const LEVELS = {
@@ -25,7 +25,27 @@ function isLevelName(string: string) {
   return _.has(LEVELS, string);
 }
 
-export type LevelName = "fatal" | "error" | "warn" | "info" | "debug" | "trace";
+/**
+* A string name of a {@link Level}.
+* 
+* @typedef {string} LevelName
+*/
+export type LevelName = (
+  "fatal" |
+  "error" |
+  "warn"  |
+  "info"  |
+  "debug" |
+  "trace"
+);
+
+/**
+* tcomb type for {@link LevelName}.
+* 
+* @type {Type}
+*/
+export const tLevelName = (({}: any): $Reify<LevelName>);
+
 
 function isLevelRank(number: number) {
   return _.includes(LEVEL_RANKS, number);

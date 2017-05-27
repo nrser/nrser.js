@@ -15,12 +15,15 @@ import _ from '//src/nodash';
 import { IS_NODE, IS_BROWSER } from '//src/env';
 import print from '//src/print';
 import { squish, indent } from '//src/string';
+import match from '//src/match';
 
 import type { NonNegativeInteger } from '../types/number';
 
-import { Level, LEVEL_NAME_PAD_LENGTH } from './Level';
+import { Level, LEVEL_NAME_PAD_LENGTH, tLevelName } from './Level';
 import type { LevelName } from './Level';
+
 import { LevelSpec } from './LevelSpec';
+
 import type { SpecQuery, SpecProps } from './LevelSpec';
 import { snapshot } from './snapshot';
 
@@ -163,32 +166,12 @@ export class HeaderFormatter {
 
 
 export class Logger {
-  lastMessageDate: ?Date;
-  specs: Array<LevelSpec>;
-  config: LoggerConfig;
-  
-  /**
-  * @private
-  * 
-  * Internal pause state. DON'T TOUCH!
-  * 
-  * @type {boolean}
-  */
-  _isPaused: boolean;
-  
-  /**
-  * @private
-  * 
-  * Internal list of paused messages. DON'T TOUCH!
-  * 
-  * @type {Array<LogMessage>}
-  */
-  _pausedMessages: Array<LogMessage>;
-  
-  // constants
-  // =========
+  // Static Properties
+  // =====================================================================
   
   static defaultConfig = {
+    baseLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+    
     formatter: HeaderFormatter,
     
     logContextName: '__logContext',
@@ -222,7 +205,7 @@ export class Logger {
         trace: '#a3aaae',
       },
     },
-  };
+  }; // .defaultConfig
   
   
   // Static Methods
@@ -249,15 +232,54 @@ export class Logger {
   }
   
   
+  // Instance Properties
+  // =====================================================================
+  
+  /**
+  * @private
+  * 
+  * Level to log at if none of {@link #levelSpecs} match a message.
+  * 
+  * @type {Level}
+  */
+  _baseLevel: Level;
+  
+  lastMessageDate: ?Date;
+  
+  specs: Array<LevelSpec>;
+  
+  config: LoggerConfig;
+  
+  /**
+  * @private
+  * 
+  * Internal pause state. DON'T TOUCH!
+  * 
+  * @type {boolean}
+  */
+  _isPaused: boolean;
+  
+  /**
+  * @private
+  * 
+  * Internal list of paused messages. DON'T TOUCH!
+  * 
+  * @type {Array<LogMessage>}
+  */
+  _pausedMessages: Array<LogMessage>;
+  
+  
   // Construction
   // =====================================================================
   
   constructor(config = {}) {
     this._isPaused = false;
     this._pausedMessages = [];
+    this.specs = [];
     
     this.config = _.merge({}, this.constructor.defaultConfig, config);
-    this.specs = [];
+    
+    this.baseLevel = this.config.baseLevel;
     
     // compile header templates
     this.headerTemplates = _.mapValues(this.config.header, _.template);
@@ -270,6 +292,22 @@ export class Logger {
       _.each(config.levelSpecs, (spec) => this.pushSpec(spec));
     }
   } // constructor
+  
+  
+  
+  // Instance Getters and Setters
+  // =====================================================================
+  
+  get baseLevel(): Level {
+    return this._baseLevel;
+  }
+  
+  set baseLevel(level: Level | LevelName): void {
+    this._baseLevel = match(level,
+      Level, level,
+      tLevelName, name => Level.forName(name),
+    )
+  }
   
   
   // Instance Methods
@@ -385,8 +423,8 @@ export class Logger {
     const currentLevel: ?Level = this.levelFor(query);
     
     if (!currentLevel) {
-      // we don't have any matching level spec so log everything
-      return true;
+      // we don't have any matching level spec so compare to baseLevel
+      return level.rank <= this.baseLevel.rank;
     }
     
     return level.rank <= currentLevel.rank;
