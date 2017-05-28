@@ -126,11 +126,13 @@ export function itMaps({
   
   funcName = func.name ? func.name.replace('bound ', '') : 'f',
   
-  tester = ({actual, expected}) => {
+  testMethod = 'eql',
+  
+  tester = ({actual, expected, testMethod}) => {
     if (expected instanceof Expect) {
       expected.test(actual);
     } else {
-      expect(actual).to.eql(expected);
+      expect(actual).to[testMethod](expected);
     }
   },
   
@@ -208,7 +210,7 @@ export function itMaps({
           () => func(...args)
         ).to.throw(expected.errorClass, expected.pattern);
       } else {
-        tester({actual: func(...args), expected});
+        tester({actual: func(...args), expected, testMethod});
       }
     })
   }
