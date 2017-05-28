@@ -223,3 +223,11 @@ export function deindent(input: string): string {
   }).join("\n");
 } // deindent()
 
+_.mixin({
+  squish,
+  indent,
+  deindent,
+  lines,
+  rsplit,
+});
+
