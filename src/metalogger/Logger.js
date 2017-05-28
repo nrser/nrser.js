@@ -573,7 +573,7 @@ export class Logger {
   play(): void {
     this._isPaused = false;
     
-    if (!_.isEmpty(this._pausedMessages)) {
+    if (this._pausedMessages.length > 0) {
       let logFunc;
       
       // do environment-dependent output
