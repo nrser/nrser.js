@@ -192,6 +192,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nrser/src/object.js~assemble",
+    "function/index.html#static-function-assemble",
+    "<span>assemble</span> <span class=\"search-result-import-path\">nrser/src/object.js</span>",
+    "function"
+  ],
+  [
     "nrser/src/path.js~commonbase",
     "function/index.html#static-function-commonBase",
     "<span>commonBase</span> <span class=\"search-result-import-path\">nrser/src/path.js</span>",
@@ -252,9 +258,27 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nrser/src/object.js~groupbyeach",
+    "function/index.html#static-function-groupByEach",
+    "<span>groupByEach</span> <span class=\"search-result-import-path\">nrser/src/object.js</span>",
+    "function"
+  ],
+  [
     "nrser/src/string.js~indent",
     "function/index.html#static-function-indent",
     "<span>indent</span> <span class=\"search-result-import-path\">nrser/src/string.js</span>",
+    "function"
+  ],
+  [
+    "nrser/src/object.js~insert",
+    "function/index.html#static-function-insert",
+    "<span>insert</span> <span class=\"search-result-import-path\">nrser/src/object.js</span>",
+    "function"
+  ],
+  [
+    "nrser/src/object.js~insertdeep",
+    "function/index.html#static-function-insertDeep",
+    "<span>insertDeep</span> <span class=\"search-result-import-path\">nrser/src/object.js</span>",
     "function"
   ],
   [
@@ -342,9 +366,21 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nrser/src/object.js~mapdefinedvalues",
+    "function/index.html#static-function-mapDefinedValues",
+    "<span>mapDefinedValues</span> <span class=\"search-result-import-path\">nrser/src/object.js</span>",
+    "function"
+  ],
+  [
     "nrser/src/match.js~match",
     "function/index.html#static-function-match",
     "<span>match</span> <span class=\"search-result-import-path\">nrser/src/match.js</span>",
+    "function"
+  ],
+  [
+    "nrser/src/object.js~need",
+    "function/index.html#static-function-need",
+    "<span>need</span> <span class=\"search-result-import-path\">nrser/src/object.js</span>",
     "function"
   ],
   [
@@ -369,6 +405,12 @@ window.esdocSearchIndex = [
     "nrser/src/array.js~only",
     "function/index.html#static-function-only",
     "<span>only</span> <span class=\"search-result-import-path\">nrser/src/array.js</span>",
+    "function"
+  ],
+  [
+    "nrser/src/object.js~procure",
+    "function/index.html#static-function-procure",
+    "<span>procure</span> <span class=\"search-result-import-path\">nrser/src/object.js</span>",
     "function"
   ],
   [
@@ -1321,13 +1363,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/metalogger/logger.js~logger#baselevel",
-    "class/src/metalogger/Logger.js~Logger.html#instance-set-baseLevel",
+    "class/src/metalogger/Logger.js~Logger.html#instance-get-baseLevel",
     "src/metalogger/Logger.js~Logger#baseLevel",
     "member"
   ],
   [
     "src/metalogger/logger.js~logger#baselevel",
-    "class/src/metalogger/Logger.js~Logger.html#instance-get-baseLevel",
+    "class/src/metalogger/Logger.js~Logger.html#instance-set-baseLevel",
     "src/metalogger/Logger.js~Logger#baseLevel",
     "member"
   ],
@@ -1509,6 +1551,12 @@ window.esdocSearchIndex = [
     "src/nodash.js",
     "file/src/nodash.js.html",
     "src/nodash.js",
+    "file"
+  ],
+  [
+    "src/object.js",
+    "file/src/object.js.html",
+    "src/object.js",
     "file"
   ],
   [

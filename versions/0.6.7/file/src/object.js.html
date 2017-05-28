@@ -321,7 +321,7 @@ export function assemble(...objects: Array&lt;Object&gt;): Object {
   
   _.each(objects, (object) =&gt; {
     _.each(object, (value, key) =&gt; {
-      if (_.has(result, key)) {
+      if (result.hasOwnProperty(key)) {
         throw new KeyError(
           j`merge conflict for key ${ key }`,
           {objects}

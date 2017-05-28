@@ -1,7 +1,7 @@
 {
-  "coverage": "49.17%",
-  "expectCount": 181,
-  "actualCount": 89,
+  "coverage": "51.06%",
+  "expectCount": 188,
+  "actualCount": 96,
   "files": {
     "src/errors/BaseError.js": {
       "expectCount": 1,
@@ -99,8 +99,8 @@
       "undocumentLines": [
         112,
         168,
-        301,
         305,
+        301,
         251,
         275,
         113,
@@ -210,6 +210,11 @@
     "src/array.js": {
       "expectCount": 4,
       "actualCount": 4,
+      "undocumentLines": []
+    },
+    "src/object.js": {
+      "expectCount": 7,
+      "actualCount": 7,
       "undocumentLines": []
     },
     "src/types/struct.js": {
