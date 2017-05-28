@@ -8,6 +8,7 @@ import {
   assemble,
   need,
   insert,
+  insertDeep,
 } from '//lib/object.js';
 
 import _ from '//lib/nodash';
@@ -23,6 +24,9 @@ describe('object.js', () => {
         f({x: 1}, 'x', 2), throws(KeyError),
         f({x: undefined}, 'x', 2), throws(KeyError),
         f({x: 1}, 'y', 2), {x: 1, y: 2},
+        
+        // should NOT treat strings like key paths
+        f({}, 'x.y', 1), {'x.y': 1},
       ]
     });
     
@@ -34,10 +38,45 @@ describe('object.js', () => {
           f({x: 1}, 'x', 2), throws(KeyError),
           f({x: undefined}, 'x', 2), throws(KeyError),
           f({x: 1}, 'y', 2), {x: 1, y: 2},
+          
+          // should NOT treat strings like key paths
+          f({}, 'x.y', 1), {'x.y': 1},
         ]
       });
     });
   });
+  
+  
+  describe('insertDeep()', () => {
+    itMaps({
+      func: insertDeep,
+      map: (f, throws) => [
+        f({}, 'x', 1), {x: 1},
+        f({x: 1}, 'x', 2), throws(KeyError),
+        f({x: undefined}, 'x', 2), throws(KeyError),
+        f({x: 1}, 'y', 2), {x: 1, y: 2},
+        
+        // should treat strings like key paths
+        f({}, 'x.y', 1), {x: {y: 1}},
+      ]
+    });
+    
+    context("through _.insertDeep", function() {
+      itMaps({
+        func: _.insertDeep.bind(_),
+        map: (f, throws) => [
+          f({}, 'x', 1), {x: 1},
+          f({x: 1}, 'x', 2), throws(KeyError),
+          f({x: undefined}, 'x', 2), throws(KeyError),
+          f({x: 1}, 'y', 2), {x: 1, y: 2},
+          
+          // should treat strings like key paths
+          f({}, 'x.y', 1), {x: {y: 1}},
+        ]
+      });
+    });
+  });
+  
   
   describe('assemble()', () => {
     it("returns {} when args are empty", () => {

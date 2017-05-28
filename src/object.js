@@ -51,9 +51,46 @@ export function groupByEach<V>(
 
 
 /**
-* Set `keyPath` to `value` in `object` only if the key does not exist. The key
-* path must be completely absent -- if it is set to `undefined` or `null` 
-* an error will still be thrown.
+* Set `keyPath` to `value` in `object` only if the key path does not exist.
+* The key path must be completely absent -- if it is set to `undefined` or 
+* `null` an error will still be thrown.
+* 
+* **Mutates `object`.**
+* 
+* @param {Object} object
+*   Object to insert into.
+* 
+* @param {string} key
+*   Key to insert at.
+* 
+* @param {*} value
+*   Value to insert.
+* 
+* @return {Object}
+*   The mutated object.
+* 
+* @throws {KeyError}
+*   If `key` exists in `object`.
+*/
+export function insert(object: Object, key: string, value: any): Object {
+  if (object.hasOwnProperty(t.String(key))) {
+    throw KeyError.squish(`Property '${ key }' exists in object.`, {
+      key,
+      currentValue: object[key],
+      object
+    });
+  }
+  
+  object[key] = value;
+  
+  return object;
+}
+
+
+/**
+* Set `keyPath` to `value` in `object` only if the key path does not exist.
+* The key path must be completely absent -- if it is set to `undefined` or 
+* `null` an error will still be thrown.
 * 
 * **Mutates `object`.**
 * 
@@ -72,7 +109,7 @@ export function groupByEach<V>(
 * @throws {KeyError}
 *   If `keyPath` exists in `object`.
 */
-export function insert(object: Object, keyPath: KeyPath, value: any): Object {
+export function insertDeep(object: Object, keyPath: KeyPath, value: any): Object {
   if (_.has(object, keyPath)) {
     throw KeyError.squish(`Key path ${ keyPath } exists in object.`, {
       keyPath,
@@ -105,7 +142,7 @@ export function assemble(...objects: Array<Object>): Object {
   
   _.each(objects, (object) => {
     _.each(object, (value, key) => {
-      if (_.has(result, key)) {
+      if (result.hasOwnProperty(key)) {
         throw new KeyError(
           j`merge conflict for key ${ key }`,
           {objects}
@@ -250,6 +287,7 @@ export function mapDefinedValues<DOMAIN, CODOMAIN>(
 _.mixin({
   groupByEach,
   insert,
+  insertDeep,
   need,
   assemble,
   procure,
