@@ -1,0 +1,281 @@
+{
+  "coverage": "50.8%",
+  "expectCount": 187,
+  "actualCount": 95,
+  "files": {
+    "src/errors/BaseError.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/metalogger/Level.js": {
+      "expectCount": 14,
+      "actualCount": 1,
+      "undocumentLines": [
+        64,
+        61,
+        60,
+        63,
+        67,
+        16,
+        56,
+        65,
+        62,
+        96,
+        76,
+        57,
+        58
+      ]
+    },
+    "src/env.js": {
+      "expectCount": 7,
+      "actualCount": 7,
+      "undocumentLines": []
+    },
+    "src/metalogger/index.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        3
+      ]
+    },
+    "src/Deferred.js": {
+      "expectCount": 5,
+      "actualCount": 1,
+      "undocumentLines": [
+        16,
+        12,
+        14,
+        13
+      ]
+    },
+    "src/testing/Describer.js": {
+      "expectCount": 5,
+      "actualCount": 1,
+      "undocumentLines": [
+        21,
+        9,
+        13,
+        10
+      ]
+    },
+    "src/types/index.js": {
+      "expectCount": 8,
+      "actualCount": 0,
+      "undocumentLines": [
+        25,
+        41,
+        19,
+        43,
+        17,
+        27,
+        21,
+        34
+      ]
+    },
+    "src/testing/index.js": {
+      "expectCount": 8,
+      "actualCount": 1,
+      "undocumentLines": [
+        68,
+        63,
+        123,
+        66,
+        64,
+        65,
+        87
+      ]
+    },
+    "src/fs.js": {
+      "expectCount": 4,
+      "actualCount": 3,
+      "undocumentLines": [
+        32
+      ]
+    },
+    "src/metalogger/Logger.js": {
+      "expectCount": 39,
+      "actualCount": 19,
+      "undocumentLines": [
+        112,
+        168,
+        305,
+        301,
+        251,
+        275,
+        113,
+        158,
+        128,
+        172,
+        132,
+        154,
+        285,
+        162,
+        247,
+        117,
+        114,
+        150,
+        124,
+        249
+      ]
+    },
+    "src/string.js": {
+      "expectCount": 17,
+      "actualCount": 6,
+      "undocumentLines": [
+        128,
+        193,
+        187,
+        130,
+        126,
+        170,
+        178,
+        174,
+        113,
+        32,
+        54
+      ]
+    },
+    "src/errors/KeyError.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/metalogger/LevelSpec.js": {
+      "expectCount": 11,
+      "actualCount": 0,
+      "undocumentLines": [
+        18,
+        44,
+        29,
+        22,
+        19,
+        51,
+        69,
+        58,
+        25,
+        20,
+        21
+      ]
+    },
+    "src/errors/MatchError.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/errors/NotFoundError.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/errors/NotImplementedError.js": {
+      "expectCount": 2,
+      "actualCount": 1,
+      "undocumentLines": [
+        7
+      ]
+    },
+    "src/errors/NrserError.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/metalogger/snapshot.js": {
+      "expectCount": 4,
+      "actualCount": 1,
+      "undocumentLines": [
+        75,
+        152,
+        76
+      ]
+    },
+    "src/errors/StateError.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/errors/ValueError.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/path.js": {
+      "expectCount": 24,
+      "actualCount": 22,
+      "undocumentLines": [
+        300,
+        299
+      ]
+    },
+    "src/array.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "src/object.js": {
+      "expectCount": 6,
+      "actualCount": 6,
+      "undocumentLines": []
+    },
+    "src/types/struct.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        7,
+        75
+      ]
+    },
+    "src/collection.js": {
+      "expectCount": 2,
+      "actualCount": 2,
+      "undocumentLines": []
+    },
+    "src/match.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        7
+      ]
+    },
+    "src/types/list.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        3
+      ]
+    },
+    "src/index.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        41,
+        37
+      ]
+    },
+    "src/types/promise.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/types/number.js": {
+      "expectCount": 8,
+      "actualCount": 8,
+      "undocumentLines": []
+    },
+    "src/function.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/types/type.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/types/value.js": {
+      "expectCount": 2,
+      "actualCount": 2,
+      "undocumentLines": []
+    }
+  }
+}
