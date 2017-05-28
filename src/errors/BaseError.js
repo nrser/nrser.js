@@ -7,11 +7,13 @@
 * 
 */
 
+// stdlib
+import { inspect } from 'util';
+
 // deps
 import _ from '//src/nodash';
 
 // package
-import print from '../print';
 import { squish } from '../string';
 
 /**
@@ -78,7 +80,7 @@ export const BaseError = function(message, details) {
   
   // add details to message if provided
   if (typeof details !== 'undefined') {
-    message += "\n" + print(details);
+    message += "\n" + inspect(details);
   }
 
   constructor.apply(this, [message, details]);
