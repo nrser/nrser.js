@@ -223,14 +223,3 @@ export function deindent(input: string): string {
   }).join("\n");
 } // deindent()
 
-export function pad(
-  number: number,
-  padLength: number,
-  padWith: string = '0',
-) {
-  let padded = number.toString();
-  while (padded.length < padLength) {
-    padded = padWith + padded;
-  }
-  return padded;
-} // pad()
