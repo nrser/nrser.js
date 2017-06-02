@@ -104,8 +104,18 @@ type LogMessage = {
 type LoggerConfig = {};
 
 
-function dump(value: *): string {
-  return (typeof value === 'string') ? value : print(value);
+function dump(value: *): string | Error {
+  if (typeof value === 'string') {
+    return value;
+  } else if (value instanceof Error) {
+    if (value.stack) {
+      return value.stack;
+    } else {
+      return print(value);
+    }
+  } else {
+    return print(value);
+  }
 }
 
 
