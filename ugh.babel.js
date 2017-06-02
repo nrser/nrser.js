@@ -8,12 +8,10 @@ const ugh = new Ugh({packageDir: __dirname});
 ugh.autoTasks();
 
 // ESDoc generation
-ugh.task(ESDocTask, {
+ugh.task({
+  type: ESDocTask,
   id: 'src',
-  config: {
-    configPath: 'config/esdoc.js',
-  },
-  clean: false,
+  configPath: 'config/esdoc.js',
 });
 
 export default ugh;
