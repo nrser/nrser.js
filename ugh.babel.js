@@ -3,7 +3,19 @@ import {
   ESDocTask,
 } from '@nrser/ugh';
 
-const ugh = new Ugh({packageDir: __dirname});
+import getBabelOptions from './config/getBabelOptions';
+
+const ugh = new Ugh({
+  packageDir: __dirname,
+  
+  config: {
+    tasks: {
+      Babel: {
+        options: getBabelOptions('node'),
+      },
+    },
+  },
+});
 
 ugh.autoTasks();
 
