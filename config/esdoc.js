@@ -1,4 +1,3 @@
-const Paths = require('./Paths');
 const packageJson = require('../package.json');
 const semver = require('semver');
 
