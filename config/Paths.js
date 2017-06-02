@@ -12,7 +12,10 @@ const TEST_SRC_DIR = Path.join(TEST_DIR, 'src');
 const TEST_LIB_DIR = Path.join(TEST_DIR, 'lib');
 
 function resolve() {
-  return Path.resolve.apply(Path, [PACKAGE_ROOT].concat(arguments));
+  return Path.resolve.apply(
+    Path,
+    [PACKAGE_ROOT].concat(Array.from(arguments))
+  );
 }
 
 module.exports = {
