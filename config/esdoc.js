@@ -8,7 +8,7 @@ module.exports = {
   release,
   title: "nrser",
   source: "src",
-  destination: `doc/gh-pages/versions/${ release }`,
+  destination: `doc/site/versions/${ release }`,
   experimentalProposal: {
     "classProperties": true,
     "objectRestSpread": true,
@@ -19,6 +19,9 @@ module.exports = {
     "flow"
   ],
   styles: [
-    "doc/support/esdoc/styles.css"
-  ]
+    "doc/support/esdoc/style.css",
+  ],
+  scripts: [
+    "doc/support/esdoc/script.js",
+  ],
 }
