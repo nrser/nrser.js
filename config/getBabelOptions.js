@@ -29,6 +29,12 @@ const Paths = require('./Paths');
 function env(target, nodeEnv) {
   if (target === 'webpack') {
     return {modules: false};
+  } else if (target === 'node') {
+    return {
+      targets: {
+        node: 'current',
+      },
+    };
   } else {
     return {};
   }
@@ -163,7 +169,9 @@ function getBabelOptions(
     // to prevent weirdness.
     babelrc: false,
     
-    passPerPreset: true,
+    // commenting this out fixes the "Invalid _c" Babel error...
+    // tcomb wanted it, but it seems to work ok without?
+    // passPerPreset: true,
     
     presets: [
       'stage-2',
