@@ -1,10 +1,22 @@
 nrser.js
-========
+==============================================================================
 
-my js utils. pretty big mess right now. don't recommend other people using it quite yet.
+My js utils. pretty big mess right now. don't recommend other people using it
+quite yet.
 
-version
--------
+
+Building
+------------------------------------------------------------------------------
+
+    ugh run -t babel
+    
+Watching & building:
+
+    ugh run -t watch
+
+
+Version
+------------------------------------------------------------------------------
 
 ### 0.6.X
 
