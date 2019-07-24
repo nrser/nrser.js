@@ -39,3 +39,6 @@
 
 # yarn
 /yarn.lock
+
+# Node version
+/.node-version
