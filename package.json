@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@nrser/esdoc": "^0.5.2",
-    "@nrser/ugh": "^0.7.5",
+    "@nrser/ugh": "^0.7.7",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-plugin-metalog": "^0.1.1",
