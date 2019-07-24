@@ -515,10 +515,14 @@ export class Logger {
     }
     
     // do environment-dependent output
-    if (IS_NODE) {
-      this.logInCLI(logMessage);
-    } else if (IS_BROWSER) {
+    // 
+    // Browser take priority - if we think we're in a browser, then use that
+    // method.
+    // 
+    if (IS_BROWSER) {
       this.logInBrowser(logMessage);
+    } else if (IS_NODE) {
+      this.logInCLI(logMessage);
     } else {
       throw new Error("don't seem to be in node or the browser, can't log");
     }
