@@ -45,10 +45,10 @@
     minimist "1.2.0"
     taffydb "2.7.2"
 
-"@nrser/ugh@^0.7.7":
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.7.7.tgz#3faa0fa4bdd9249d2ffda44b110ac7671ae10dcc"
-  integrity sha1-P6oPpL3ZJJ0v/aRLEQrHZxrhDcw=
+"@nrser/ugh@^0.7.8":
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/@nrser/ugh/-/ugh-0.7.8.tgz#eafe46c782778cd6bb3752820222121e060bdc4f"
+  integrity sha512-TO7Wm4RCmTl06abAW1hHy1qZ97h3qQ2/HcTVVDKlfxCP/EXCCONe3i2dgz8VPwNbD78ZJAErCWmKHs2f6xtExQ==
   dependencies:
     ansi-html "^0.0.7"
     body-parser "^1.16.1"
