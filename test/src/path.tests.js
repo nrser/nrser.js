@@ -152,7 +152,11 @@ describe('path.js', function() {
         f('x/y'), 'x/y/',
         
         // barfs on non-string
-        f(1), throws(TypeError, /Path must be a string\. Received 1/),
+        f(1),
+          throws(
+            TypeError,
+            /The "path" argument must be of type string\. Received type number/
+          ),
       ]
     });
   }); // toDir()
