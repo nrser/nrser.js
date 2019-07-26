@@ -1,12 +1,68 @@
-"use strict";
+//////////////////////////////////////////////////////////////////////////////
+// [print][] npm package v1.0.1
+// ===========================================================================
+// 
+// [print]: https://www.npmjs.com/package/print
+// 
+// Originally yanked from
+// 
+// https://raw.githubusercontent.com/Alhadis/Print/v1.0.1/print.js
+// 
+// Which, like all good things, is:
+// 
+// 		Copyright (c) 2016-2018, John Gardner (https://github.com/Alhadis)
+// 		[ISC License](https://github.com/Alhadis/Print/blob/master/LICENSE.md)
+// 
+// Coppied here 'cause meteor is on fuckin' node v4.5.0 and print wants node
+// >=6.0.0 so we'll pass the source through babel.
+// 
+// UPDATE 2019-07-26
+// ---------------------------------------------------------------------------
+// 
+// So since Meteor is approximately dead and reasonably gone, it would 
+// probably work just fine to depend on [print][] at this point. And it does
+// look like Johnny has added some nice new fixes and features since we last 
+// visited. TODO.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+
+// Function Definitions
+// ===========================================================================
 
 /**
-* print npm package v1.0.1
-* https://raw.githubusercontent.com/Alhadis/Print/v1.0.1/print.js
-* 
-* coppied here 'cause meteor is on fuckin' node v4.5.0 and print wants node
-* >=6.0.0 so we'll pass the source through babel.
-*/
+ * Produce a string that says something about what "type" a value is.
+ * 
+ * You know how sometimes you see a string that looks like
+ * 
+ * 		[object Date]
+ * 
+ * or so? Yeah, I'm not sure exactly when it turns up naturally either, but this
+ * function makes it happen, pulls out the second part, and sends it back to 
+ * you.
+ * 
+ * Hey, it's something, right?
+ * 
+ * @param {*} input - Whatever.
+ * 
+ * @return {string} - Something about the type of `input` that's at least better
+ * than `typeof`.
+ */
+function type( input ) {
+	const string = Object.prototype.toString.call( input );
+	
+	let name;
+	
+	if (string.startsWith( '[object ' ) &&
+			string.endsWith( ']' )) {
+				name = string.slice( 8, string.length - 1 );
+	} else {
+		return string;
+	}
+	
+	return name;
+} // name()
+
 
 /**
  * Generate a human-readable representation of a value.
@@ -343,14 +399,67 @@ function print(input, options = {}, /*…Internal:*/ name = "", refs = null){
 	return typeName + (arrayLike
 		? "[" + output + "]"
 		: "{" + output + "}");
+} // print()
+
+
+/**
+ * Wrapper for `console.log( print( … ) )`.
+ * 
+ * @example
+ * 		> const print = require( 'nrser/lib/print' );
+ * 		> print.out( { x: 1 } );
+ * 		{ x: 1 }
+ * 
+ * @note 2019-07-26, while digging back in for Equipd fronts...
+ * 		
+ * 		I *think* this came over when I copied the library, and am not sure
+ * 		I've ever used it.
+ * 		
+ * 		Maybe, because it returns the string as well, and that's really annoying
+ * 		in the `node` repl.
+ * 		
+ * 		So, today, I removed that. Now it returns whatever `console.log()` does!
+ * 		We'll see what collapses...
+ * 
+ * @param {...*} args - Passed to {@link print}, look there.
+ * 
+ * @return {void}*Actually*... whatever `console.log()` returns, but that seems
+ * to be `undefined` everywhere that matters.
+ */
+function out( ...args ) {
+	return console.log( print( ...args ) );
 }
 
+// Exports
+// ===========================================================================
+// 
+// In keeping with the inherited style from the previous author, *my* print 
+// *also* remains very `node` happy, exporting the `print()` function as the 
+// module.
+// 
+// This means that it works a bit like:
+// 
+// 		const print = require( 'nrser/lib/print' );
+// 		const string = print( { x: 1, y: 2 } );
+// 
+// In making nice with the rest of the Babel-type-pack, `print()` is *also* 
+// exported as the `default`:
+// 
+// 		import print from 'nrser/lib/print';
+// 		const string = print( { x: 1, y: 2 } );
+// 
+// Yeah, I guess that's nice.
+// 
+// So, the other functions - `type()` and `out()` - are then available as 
+// properties of the default export as usual. The default export is the 
+// `print()` function, so that is accomplished with this tom-foolery:
+// 
+print.type = type;
+print.out = out;
+// 
+// And the stuff we need to get the "main" export right in both cases:
+// 
 module.exports = print;
-
-
-/** Wrapper for console.log(print(…)) */
-module.exports.out = function(...args){
-	const output = print(...args);
-	console.log(output);
-	return output;
-};
+export default print;
+// 
+// Ok, see ya later!
