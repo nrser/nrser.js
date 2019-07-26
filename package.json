@@ -31,7 +31,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.24.1",
     "chai": "^3.5.0",
-    "flow-bin": "^0.46.0",
+    "flow-bin": ">=0.75.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-spawn-mocha": "^3.3.0",

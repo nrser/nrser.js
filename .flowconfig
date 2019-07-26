@@ -20,8 +20,5 @@
 esproposal.class_static_fields=enable
 esproposal.export_star_as=enable
 
-# it sucks not to able to use getters and setters... safety be damned.
-unsafe.enable_getters_and_setters=true
-
 # needed so Ugh can dynamically include other packages
 module.ignore_non_literal_requires=true
