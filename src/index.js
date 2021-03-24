@@ -28,7 +28,7 @@ export * from './string';
 export * from './collection';
 export * from './match';
 export * from './array';
-export _ from './nodash';
+export { _, λ, _fp } from './nodash';
 
 // our types extend tcomb's
 import tcomb from 'tcomb';

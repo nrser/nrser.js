@@ -452,7 +452,7 @@ export function toResDir(...paths: Array<AbsPath | TildePath>): ResDir {
 * 
 * Unless you explicitly *don't* want tilde (`~/...`) expansion you probably
 * want to use {@link expandDir}, which expands paths that start with `~` to
-* the current user's home direcotry.
+* the current user's home directory.
 * 
 * @param {...string} paths
 *   Paths to resolve.
